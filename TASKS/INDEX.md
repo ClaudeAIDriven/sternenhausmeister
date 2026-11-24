@@ -98,4 +98,4 @@
 | [M-07](M-07.md) | A | nice | ART | Grafik-Update III: UI-Stil, Menühintergrund, HUD, Icons | M | done | – | – |
 | [M-08](M-08.md) | A | nice | GAME | Spaß I: Trampolinwolken, Sternschnuppen-Wünsche, Glühwürmchen | M | done | M-03 | – |
 | [M-09](M-09.md) | A | nice | GAME | Spaß II: Erfolge, Hüte, Putz-Tagebuch | M | done | M-01 | – |
-| [M-10](M-10.md) | A | must | GAME | Finale: Balance, Demo-Durchlauf, Anleitung | M | open | M-02, M-04, M-05, M-06, M-08, M-09 | – |
+| [M-10](M-10.md) | A | must | GAME | Finale: Balance, Demo-Durchlauf, Anleitung | M | done | M-02, M-04, M-05, M-06, M-08, M-09 | – |

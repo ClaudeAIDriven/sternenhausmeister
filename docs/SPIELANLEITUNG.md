@@ -15,6 +15,16 @@
 - Wer ohne Pause wischt, baut eine **Kombo** auf (mehr Staub, höherer Ton). Putzen zwei Spieler denselben Stern, gibt es **Teamarbeit-Bonus**. Mit dem **Ballon** auf der Insel erreichst du hohe Sterne.
 - Am Nachtende (Standard 10 Minuten) zeigt die Zusammenfassung 1 bis 3 Sternchen. Es gibt kein Game Over, du kannst danach weiterputzen.
 
+## Neu im Finale
+- **Karten** (Menü): Mondwiese (klassisch), Lavafelder, Kaktuswüste, Spinnenhöhle. Optional **Insel-Seed** eintragen: gleicher Seed = gleiche Insel (Seed steht im Pausenmenü). Ohne Eingabe ist die Mondwiese klassisch, die anderen Karten würfeln einen Seed.
+- **Utensilien** in der Werkstatt: Wedel, Schwamm, Besen, Staubsauger, Dampfreiniger, Sternpolierer (je 3 Upgrades). **Spinnen** lassen sich nur mit dem **Staubsauger** entfernen, **Wollmäuse** (sie machen geputzte Flecken wieder schmutzig) mit jedem Werkzeug.
+- **Rußwolke** (Boss): nur mit **zwei Spielern gleichzeitig** wischen, allein nur wenn das Schild kurz fällt (alle 25 s für 6 s). Gibt 200 Staub.
+- **Essen:** **F** Früchte aufheben, **Q** essen; in der **Küche** (Feuerstelle) kochen für Buffs. Orte: Brunnen (heilt), Obstgarten, Turm (Gegner auf der Minimap), Schrein (**F**: Wischradius +25 %).
+- **XP und Fähigkeiten:** **K** öffnet den Fähigkeitenbaum. Rollen: Allrounder, Hüpfer, Putzer, Koch, Kletterer (**G** Leiter), Flitzer. Rollen tragen Hüte.
+- **Spaß:** Trampolinwolken (hoher Sprung), Wunsch-Sternschnuppen (fangen = Buff), Glühwürmchen zeigen zum nächsten schmutzigen Stern, mittlere Maustaste = Ping, **H** Hut wechseln (20 Erfolge schalten Hüte frei).
+- **Speichern:** Pause (Esc) → *Spiel speichern* (nur Host/Solo); am Nachtende automatisch („autosave"). Im Hauptmenü *Laden:* wählen.
+- Wenn du am Boden liegst: Mitspieler halten **F** (3 s) zum Wiederbeleben; sonst Neustart nach 60 s mit Staubverlust. Rauflust (Schubsen macht Schaden) ist im Menü optional.
+
 ## Zusammen spielen (2 bis 4 Personen)
 1. Eine Person wählt **Raum eröffnen (Host)**. Oben links erscheint die Adresse (Internet-Adresse nach automatischer Router-Freigabe, sonst die WLAN-Adresse). Mit **Adresse kopieren** in die Zwischenablage.
 2. Alle anderen tragen die Adresse unter **Beitreten** ein (ohne `:24680`) und klicken **Beitreten**.

@@ -428,6 +428,7 @@ func _tick_fun(delta: float) -> void:
 		world.add_child(w)
 		hud.show_puzzle_message("Eine Wunsch-Sternschnuppe! Fang sie!", 5.0)
 		w.caught.connect(func(_p, stat: String):
+			achievements.count("wish")
 			hud.show_puzzle_message("Wunsch erfüllt: %s +20 %% für 60 s" % str(FunItems.WISH_STATS.get(stat, stat)), 5.0))
 
 
