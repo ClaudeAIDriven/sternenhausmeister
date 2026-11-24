@@ -91,7 +91,7 @@
 | [G-33](G-33.md) | C | nice | UI | Minimap-Ping | S | done | I-14 | – |
 | [M-01](M-01.md) | A | must | GAME | Verdrahtung I: Wetter, Utensilien, XP, Fähigkeiten, Küche, Schrein im Spiel | L | done | – | – |
 | [M-02](M-02.md) | A | must | GAME | Verdrahtung II: Speichern/Laden, Seed, Autosave | M | done | M-01 | – |
-| [M-03](M-03.md) | A | must | GAME | Mehrere Karten (Maps) mit Menüauswahl | L | open | M-01 | – |
+| [M-03](M-03.md) | A | must | GAME | Mehrere Karten (Maps) mit Menüauswahl | L | done | M-01 | – |
 | [M-04](M-04.md) | A | must | GAME | Karten-Gefahren aus Seed: Lava, Kakteen, Spinnennester | M | open | M-03 | – |
 | [M-05](M-05.md) | A | must | ART | Grafik-Update I: Himmel, Beleuchtung, Glow, Nebel, Boden | L | open | – | – |
 | [M-06](M-06.md) | A | must | ART | Grafik-Update II: Sterne, Putz-Effekte, Gegner, Spieler | L | open | – | – |

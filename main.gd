@@ -319,10 +319,12 @@ func _build_saving() -> void:
 		GameState.night_ended.connect(func():
 			nights_played += 1
 			save_now("autosave"))
+		world.set_map(str(Menu.launch.get("map", Maps.DEFAULT_ID)))   # M-03: Karte aus dem Menü (Host/Solo)
 		var slot := str(Menu.launch.get("load", ""))
 		if slot != "":
 			loaded_save = SaveGame.load_game(slot)
 			if not loaded_save.is_empty():
+				world.apply_map(str(loaded_save.get("map", Maps.DEFAULT_ID)))
 				SaveGame.apply(loaded_save, world, GameState, shop)
 				nights_played = int(loaded_save.get("night", 0))
 	if not is_client and NetworkManager.is_online():
@@ -349,6 +351,7 @@ func save_now(slot: String = "") -> int:
 	if player != null:
 		pl[my_name] = {"xp": player.xp, "skills": player.skills}
 	var data := SaveGame.capture(world, GameState, shop, pl, nights_played, world.island_seed)
+	data["map"] = world.map_id
 	for n in _peer_progress:   # Mitspieler: zuletzt gemeldeter Stand
 		data["players"][n] = _peer_progress[n]
 	return SaveGame.save(slot if slot != "" else _save_slot_name(), data)

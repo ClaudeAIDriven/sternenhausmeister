@@ -21,6 +21,7 @@ var buttons := {}   # "solo" | "host" | "join" | "settings" | "quit" -> Button
 var main_box: VBoxContainer
 var role_option: OptionButton    # I-13: Rolle
 var brawl_check: CheckBox   # G-32: Rauflust (Schubsen macht Schaden), Standard aus
+var map_option: OptionButton   # M-03: Karte
 var preset_option: OptionButton   # I-08: Spielart (Presets aus G-09)
 var settings_box: VBoxContainer
 var _canvas: CanvasLayer
@@ -83,6 +84,13 @@ func _build_ui() -> void:
 		if rid == str(Settings.get_value("role")):
 			role_option.select(role_option.item_count - 1)
 	main_box.add_child(role_option)
+	main_box.add_child(_label("Karte"))
+	map_option = OptionButton.new()
+	map_option.name = "MapOption"
+	for id in Maps.ids():
+		map_option.add_item("%s – %s" % [Maps.profile(id)["name"], Maps.profile(id)["desc"]])
+		map_option.set_item_metadata(map_option.item_count - 1, id)
+	main_box.add_child(map_option)
 	main_box.add_child(_label("Spielart"))
 	preset_option = OptionButton.new()
 	preset_option.name = "PresetOption"
@@ -211,7 +219,8 @@ func start(mode: String) -> bool:
 	if role_option != null and role_option.selected >= 0:
 		role = str(role_option.get_item_metadata(role_option.selected))
 	Settings.set_value("role", role)
-	launch = {"mode": mode, "ip": ip if mode == "join" else "", "name": pname, "preset": preset, "brawl": brawl_check != null and brawl_check.button_pressed,
+	launch = {"mode": mode, "ip": ip if mode == "join" else "", "name": pname, "preset": preset, "map": str(map_option.get_item_metadata(map_option.selected)) if (map_option != null and map_option.selected >= 0) else Maps.DEFAULT_ID,
+		"brawl": brawl_check != null and brawl_check.button_pressed,
 		"load": str(save_option.get_item_metadata(save_option.selected)) if (save_option != null and save_option.selected > 0 and mode != "join") else ""}
 	start_requested.emit(mode, launch["ip"], pname)
 	if auto_start:
