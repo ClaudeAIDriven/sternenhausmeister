@@ -1775,7 +1775,7 @@
   "title": "Grafik-Update II: Sterne, Putz-Effekte, Gegner, Spieler",
   "deps": [],
   "size": "L",
-  "status": "open",
+  "status": "done",
   "goal": "Sterne mit Strahlenkranz und Pulsieren, Staubpartikel beim Wischen, Glitzer bei Sauberkeit, Wollmaus/Spinne/Rußwolke mit besseren Meshes und Animation, Spieler-Hüte.",
   "files": [
    "star.gd",

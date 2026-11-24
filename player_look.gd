@@ -157,6 +157,57 @@ static func _accessory(root: Node3D, index: int, col: Color) -> void:
 			_add(sc, _box(Vector3(0.14, 0.4, 0.05)), sm, Vector3(0.18, 0.88, -0.42), Vector3(0, 0, 0.1))
 
 
+## Rollen-Hüte (M-06): sichtbar für alle, weil die Rolle repliziert wird. "" = kein Hut.
+const HATS := {"allrounder": "", "putzer": "haube", "springer": "feder", "koch": "kochmuetze", "kletterer": "helm", "flitzer": "stirnband"}
+
+
+## Setzt/ersetzt den Hut passend zur Rolle (oder zu einer Hut-ID aus HATS.values()).
+static func update_hat(look: Node3D, role_or_hat: String) -> void:
+	if look == null:
+		return
+	var hat_id: String = HATS.get(role_or_hat, role_or_hat)
+	var old := look.get_node_or_null("Hat")
+	if old != null and str(old.get_meta("hat_id", "")) == hat_id:
+		return
+	if old != null:
+		old.free()
+	if hat_id == "":
+		return
+	var hat := Node3D.new()
+	hat.name = "Hat"
+	hat.set_meta("hat_id", hat_id)
+	hat.position = Vector3(0, 1.78, 0)
+	look.add_child(hat)
+	var white := _mat(Color(0.96, 0.95, 0.92))
+	var red := _mat(Color(0.85, 0.2, 0.25))
+	var gold := _mat(Color(0.95, 0.78, 0.25), true)
+	var gray := _mat(Color(0.55, 0.58, 0.65))
+	match hat_id:
+		"haube":
+			_add(hat, _cyl(0.3, 0.42, 0.16), white, Vector3(0, 0.03, 0))
+			_add(hat, _cyl(0.0, 0.3, 0.3), white, Vector3(0, 0.22, 0))
+		"feder":
+			_add(hat, _cyl(0.32, 0.4, 0.12), red, Vector3(0, 0.02, 0))
+			_add(hat, _capsule(0.04, 0.5), gold, Vector3(0.16, 0.3, 0.05), Vector3(0, 0, -0.5))
+		"kochmuetze":
+			_add(hat, _cyl(0.28, 0.28, 0.2), white, Vector3(0, 0.05, 0))
+			var puff := SphereMesh.new()
+			puff.radius = 0.34
+			puff.height = 0.5
+			_add(hat, puff, white, Vector3(0, 0.3, 0))
+		"helm":
+			var dome := SphereMesh.new()
+			dome.radius = 0.42
+			dome.height = 0.84
+			_add(hat, dome, gray, Vector3(0, -0.02, 0)).scale = Vector3(1, 0.7, 1)
+			_add(hat, _box(Vector3(0.12, 0.1, 0.12)), gold, Vector3(0, 0.3, -0.35))
+		"stirnband":
+			var band := TorusMesh.new()
+			band.inner_radius = 0.36
+			band.outer_radius = 0.44
+			_add(hat, band, red, Vector3(0, -0.15, 0)).scale = Vector3(1, 1, 0.6)
+
+
 ## Lauf-Animation: Beine und Arme schwingen gegengleich. `phase` wächst mit der Strecke, `amount` (0..1) ist die Lauf-Intensität.
 ## Ruhe (amount 0) stellt die Grundhaltung wieder her. Arme behalten ihre leichte Grund-Neigung (z-Achse).
 static func animate(look: Node3D, phase: float, amount: float) -> void:

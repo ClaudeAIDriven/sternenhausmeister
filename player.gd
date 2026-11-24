@@ -55,6 +55,7 @@ var xp := Xp.new()             # M-01: Erfahrung, nur lokal
 var skills: Skills             # M-01: Fähigkeiten (aus data/skills.json), nur lokal
 var kitchen: Kitchen           # M-01: Küchen-Buffs (main setzt es aus der Welt)
 var _air_jumps_left := 0
+var _hat_role := ""
 var downed := false            # G-20: am Boden, wird mit repliziert
 var respawn_left := 0.0
 var revive_target: Player      # wen ich gerade wiederbelebe (für die Anzeige)
@@ -231,6 +232,9 @@ func _process(delta: float) -> void:
 	if look != null:   # G-20: Gefallene liegen auf der Seite
 		look.rotation.z = lerpf(look.rotation.z, PI * 0.5 if downed else 0.0, clampf(delta * 8.0, 0.0, 1.0))
 	_refresh_tool()
+	if look != null and role != _hat_role:   # M-06: Hut folgt der (replizierten) Rolle
+		_hat_role = role
+		PlayerLook.update_hat(look, role)
 	# Wedel schwingt beim Putzen
 	var t := Time.get_ticks_msec() / 1000.0
 	if cleaning:
@@ -296,6 +300,7 @@ func _refresh_look() -> void:
 	look = PlayerLook.build(idx)
 	look.name = "Look"
 	add_child(look)
+	PlayerLook.update_hat(look, role)
 
 
 # ---------------------------------------------------------------- Gesundheit (I-12)

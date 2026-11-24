@@ -24,6 +24,8 @@ var _spot_mats := {}
 var _look: MeshInstance3D
 var _light: OmniLight3D
 var _hint := false
+var _corona: Sprite3D     # M-06: Strahlenkranz, wächst mit der Sauberkeit
+var _pulse := 0.0
 
 
 func _ready() -> void:
@@ -33,6 +35,7 @@ func _ready() -> void:
 	lm.set_shader_parameter("gold_color", Palette.STAR_GOLD.darkened(0.35))
 	lm.set_shader_parameter("rim_color", Palette.STAR_GOLD.darkened(0.25))
 	add_child(_look)
+	_build_corona()
 
 	var body := StaticBody3D.new()
 	body.collision_layer = 2
@@ -72,6 +75,33 @@ func _build_spots() -> void:
 	_apply_glow()
 
 
+## Strahlenkranz: weicher additiver Lichthof (Radialverlauf) plus vier Strahlen (M-06).
+func _build_corona() -> void:
+	var g := Gradient.new()
+	g.set_color(0, Color(1.0, 0.9, 0.55, 1.0))
+	g.set_color(1, Color(1.0, 0.8, 0.3, 0.0))
+	var gt := GradientTexture2D.new()
+	gt.gradient = g
+	gt.fill = GradientTexture2D.FILL_RADIAL
+	gt.fill_from = Vector2(0.5, 0.5)
+	gt.fill_to = Vector2(1.0, 0.5)
+	gt.width = 128
+	gt.height = 128
+	_corona = Sprite3D.new()
+	_corona.name = "Corona"
+	_corona.texture = gt
+	_corona.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	_corona.shaded = false
+	_corona.double_sided = true
+	_corona.transparent = true
+	_corona.pixel_size = 0.04
+	_corona.no_depth_test = false
+	_corona.alpha_cut = SpriteBase3D.ALPHA_CUT_DISABLED
+	_corona.render_priority = 2
+	_corona.modulate = Color(1, 1, 1, 0.15)
+	add_child(_corona)
+
+
 ## Erzeugt den Fleck mit der ID i (Fibonacci-Kugel, bei allen Spielern gleich) und hängt ihn an den Stern.
 func _make_spot(i: int) -> MeshInstance3D:
 	var y := 1.0 - (float(i) / (spot_count - 1)) * 2.0
@@ -95,6 +125,11 @@ func _make_spot(i: int) -> MeshInstance3D:
 
 func _process(delta: float) -> void:
 	rotate_y(delta * 0.08)
+	_pulse += delta
+	if _corona != null:   # sanftes Pulsieren, stärker bei sauberen Sternen
+		var k := 1.0 + sin(_pulse * (1.6 + progress)) * (0.04 + 0.08 * progress)
+		_corona.scale = Vector3.ONE * radius * 5.2 * k * (0.9 + 0.4 * progress)
+		_corona.modulate.a = 0.12 + 0.75 * progress + (0.3 if is_clean else 0.0)
 
 
 ## Wischt alle Flecken im Radius um einen Weltpunkt weg. Gibt die Anzahl entfernter Flecken zurück.

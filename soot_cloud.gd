@@ -20,6 +20,8 @@ var shield_timer := 0.0   # läuft hoch; im Fenster [SHIELD_PERIOD - SHIELD_DOWN
 var _recent := {}         # Spieler-ID -> Zeitpunkt (s) des letzten Wischtreffers
 var _clock := 0.0
 var _roam_left := ROAM_TIME
+var _puffs: Array[MeshInstance3D] = []
+var _t := 0.0
 
 
 func _init() -> void:
@@ -41,6 +43,39 @@ func _ready() -> void:
 		mi.material_override = mat
 		mi.position = off
 		add_child(mi)
+		_puffs.append(mi)
+	var eye_mat := StandardMaterial3D.new()   # M-06: zornige glühende Augen
+	eye_mat.albedo_color = Color(1.0, 0.35, 0.1)
+	eye_mat.emission_enabled = true
+	eye_mat.emission = Color(1.0, 0.35, 0.1)
+	eye_mat.emission_energy_multiplier = 2.0
+	for sx in [-0.45, 0.45]:
+		var eye := MeshInstance3D.new()
+		var em := SphereMesh.new()
+		em.radius = 0.2
+		em.height = 0.4
+		eye.mesh = em
+		eye.material_override = eye_mat
+		eye.position = Vector3(sx, 0.2, 1.05)
+		add_child(eye)
+	var rain := CPUParticles3D.new()   # Rußflocken
+	rain.amount = 40
+	rain.lifetime = 2.0
+	rain.direction = Vector3(0, -1, 0)
+	rain.spread = 25.0
+	rain.gravity = Vector3(0, -2.0, 0)
+	rain.initial_velocity_min = 0.5
+	rain.initial_velocity_max = 1.2
+	rain.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	rain.emission_sphere_radius = 1.6
+	var rm := SphereMesh.new()
+	rm.radius = 0.06
+	rm.height = 0.12
+	var rmat := StandardMaterial3D.new()
+	rmat.albedo_color = Color(0.05, 0.05, 0.06)
+	rm.material = rmat
+	rain.mesh = rm
+	add_child(rain)
 
 
 func shield_down() -> bool:
@@ -95,3 +130,9 @@ func act(delta: float, world) -> void:
 	if _roam_left <= 0.0:
 		_roam_left = ROAM_TIME
 		world.hop_enemy(self)
+
+
+func _process(delta: float) -> void:   # M-06: Wolke wabert; mit gefallenem Schild leuchten die Puffs auf
+	_t += delta
+	for i in _puffs.size():
+		_puffs[i].scale = Vector3.ONE * (1.0 + sin(_t * 1.3 + i * 1.7) * 0.08)

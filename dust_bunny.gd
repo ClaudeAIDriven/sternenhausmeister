@@ -11,6 +11,8 @@ var _axis := Vector3.RIGHT
 var _turn_left := 0.0
 var _dirty_left := DIRTY_INTERVAL
 var _idle := 0.0
+var _body: MeshInstance3D
+var _t := 0.0
 
 
 func _init() -> void:
@@ -29,6 +31,20 @@ func _ready() -> void:
 	mi.mesh = sm
 	mi.material_override = mat
 	add_child(mi)
+	_body = mi
+	var fur := StandardMaterial3D.new()
+	fur.albedo_color = Color(0.72, 0.7, 0.74)
+	fur.roughness = 1.0
+	for k in 9:   # Fusselbüschel
+		var tuft := MeshInstance3D.new()
+		var tm := SphereMesh.new()
+		tm.radius = 0.13
+		tm.height = 0.26
+		tuft.mesh = tm
+		tuft.material_override = fur
+		var ang := TAU * k / 9.0
+		tuft.position = Vector3(cos(ang) * 0.3, 0.05 + 0.12 * sin(k * 2.0), sin(ang) * 0.3)
+		mi.add_child(tuft)
 	for sx in [-0.12, 0.12]:   # Augen
 		var eye := MeshInstance3D.new()
 		var em := SphereMesh.new()
@@ -62,3 +78,11 @@ func act(delta: float, world) -> void:
 		_dirty_left = DIRTY_INTERVAL
 		if not world.zen:
 			world.enemy_redirty(star)
+
+
+func _process(delta: float) -> void:   # M-06: hüpft und wackelt beim Wuseln
+	_t += delta
+	if _body != null:
+		var hop: float = absf(sin(_t * 7.0)) * 0.12
+		_body.position.y = hop
+		_body.scale = Vector3(1.0 + sin(_t * 14.0) * 0.04, 1.0 - sin(_t * 14.0) * 0.04, 1.0)
