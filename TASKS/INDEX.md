@@ -87,5 +87,5 @@
 | [G-29](G-29.md) | A | nice | GAME | Gegner II: Rußwolke (nur im Team besiegbar) | L | open | G-28 |
 | [G-30](G-30.md) | C | must | GAME | Orte (POI) mit Vorteilen | M | open | G-22 |
 | [G-31](G-31.md) | A | nice | GAME | Prozedurale Insel aus Seed | L | open | G-30 |
-| [G-32](G-32.md) | C | nice | GAME | Friedensvertrag: Schubsen an oder aus | S | open | I-12 |
+| [G-32](G-32.md) | C | nice | GAME | Friedensvertrag: Schubsen an oder aus | S | done | I-12 |
 | [G-33](G-33.md) | C | nice | UI | Minimap-Ping | S | open | I-14 |

@@ -1637,7 +1637,7 @@
    "I-12"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Raumoption 'Friedlich' (Standard): Schubsen stößt nur weg, macht keinen Schaden. 'Rauflust': Schaden wie bisher. Research: Koop-Spieler mögen Griefing nicht.",
   "files": [
    "presets.gd",

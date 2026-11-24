@@ -2,7 +2,7 @@ class_name Presets
 extends RefCounted
 ## G-09: Regel-Presets (Zen, Kinder, Standard) als JSON in data/presets/. Slider-Werte überschreiben das Preset.
 ## Regeln: time_limit_s (Sekunden bis Sonnenaufgang, 30..7200), weather ("normal" | "cosmetic" | "off"),
-## hints ("none" | "after_mistake" | "always": Rätsel-Hinweis auf den nächsten Stern).
+## brawl (optional, Standard false = friedlich: Schubsen stößt nur weg; true = Rauflust, Schubsen macht Schaden), hints ("none" | "after_mistake" | "always": Rätsel-Hinweis auf den nächsten Stern).
 ## Nutzung: `var rules := Presets.effective("zen", {"time_limit_s": 1200})`, dann `Presets.apply(rules, night, weather)`.
 
 const DIR := "res://data/presets"
@@ -50,6 +50,8 @@ static func check_rules(r: Dictionary) -> String:
 		return "weather unbekannt"
 	if not HINT_VALUES.has(r["hints"]):
 		return "hints unbekannt"
+	if r.has("brawl") and not (r["brawl"] is bool):
+		return "brawl muss true/false sein"
 	return ""
 
 
@@ -59,6 +61,8 @@ static func effective(preset_id: String, overrides: Dictionary = {}, all: Dictio
 		all = load_all()
 	var base: Dictionary = all.get(preset_id, all.get(DEFAULT_ID, {}))
 	var rules: Dictionary = (base.get("rules", {}) as Dictionary).duplicate()
+	if not rules.has("brawl"):
+		rules["brawl"] = false   # G-32: Schubsen richtet standardmäßig keinen Schaden an
 	for k in overrides:
 		if not rules.has(k):
 			continue
