@@ -17,6 +17,7 @@ var scrub_sound: AudioStreamWAV
 var chime: Array[AudioStreamWAV] = []
 var night: Night
 var pause: Pause
+var summary: NightSummary
 var combo := Combo.new()   # G-12
 var shop: Shop
 var note_idx := 0
@@ -49,6 +50,9 @@ func _ready() -> void:
 	shop = Shop.new()   # G-05: Upgrades (Wischradius wirkt hier, Tempo/Reichweite folgen mit player.gd)
 	add_child(shop)
 	add_child(HostInfo.new())   # I-07: eigene Adresse beim Hosten
+	summary = NightSummary.new()   # U-05: Übersicht am Nachtende
+	add_child(summary)
+	summary.bind(world)
 	pause = Pause.new()   # U-03: Esc
 	add_child(pause)
 	NetworkManager.disconnected.connect(func(): get_tree().change_scene_to_file("res://menu.tscn"))
@@ -153,7 +157,7 @@ func _build_player() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED and not pause.is_open:
+	if event is InputEventMouseButton and event.pressed and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED and not pause.is_open and not summary.is_open:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 

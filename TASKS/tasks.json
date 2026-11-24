@@ -1195,7 +1195,7 @@
    "U-02"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Am Nachtende Übersicht mit 1 bis 3 Sternchen, geputzte Sterne, gelöstes Sternbild, Beitrag je Spieler. Siehe IB-08.",
   "files": [
    "night_summary.gd",
