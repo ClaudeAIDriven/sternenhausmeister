@@ -25,6 +25,8 @@ func _ready() -> void:
 	_build_sky_stars()
 	_build_moon()
 	_build_cloud_island()
+	_build_milky_way()
+	_build_aurora()
 	set_phase(phase, 0.0)
 	var gs := get_node_or_null("/root/GameState")
 	if gs and gs.has_signal("phase_changed"):
@@ -107,6 +109,14 @@ func _build_environment() -> void:
 	env.glow_bloom = 0.15
 	env.glow_hdr_threshold = 0.9
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	env.tonemap_exposure = 1.0
+	env.glow_blend_mode = Environment.GLOW_BLEND_MODE_SOFTLIGHT
+	env.adjustment_enabled = true   # M-05: etwas kräftigere Farben und Kontrast
+	env.adjustment_contrast = 1.08
+	env.adjustment_saturation = 1.1
+	env.ssao_enabled = true         # nur Forward+; sonst wirkungslos, aber harmlos
+	env.ssao_radius = 1.2
+	env.ssao_intensity = 1.6
 	var we := WorldEnvironment.new()
 	we.environment = env
 	add_child(we)
@@ -116,6 +126,9 @@ func _build_environment() -> void:
 	var moon := DirectionalLight3D.new()
 	moon.light_color = Color(0.7, 0.8, 1.0)
 	moon.light_energy = 0.55
+	moon.shadow_enabled = true      # M-05: weiche Mondschatten
+	moon.directional_shadow_max_distance = 90.0
+	moon.shadow_blur = 1.6
 	moon.rotation_degrees = Vector3(-50, 30, 0)
 	add_child(moon)
 	_moon_light = moon
@@ -204,6 +217,105 @@ func _build_moon() -> void:
 
 
 ## Koroutine-Selbsttest: `await NightSky.selftest(root)`. Prüft Phasenfarben, Sternanteil und dass sich die Phasen unterscheiden.
+const MILKY_SHADER := "
+shader_type spatial;
+render_mode unshaded, cull_front, depth_draw_never, blend_add, fog_disabled;
+uniform vec3 tint = vec3(0.55, 0.5, 0.95);
+uniform float strength = 0.28;
+varying vec3 wdir;
+float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float noise(vec2 p) {
+	vec2 i = floor(p); vec2 f = fract(p); f = f * f * (3.0 - 2.0 * f);
+	return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x), f.y);
+}
+float fbm(vec2 p) {
+	float v = 0.0; float a = 0.5;
+	for (int i = 0; i < 5; i++) { v += a * noise(p); p *= 2.0; a *= 0.5; }
+	return v;
+}
+void vertex() { wdir = normalize(VERTEX); }
+void fragment() {
+	vec3 d = normalize(wdir);
+	vec3 n = normalize(vec3(0.3, 0.8, 0.5));
+	float dist = abs(dot(d, n));
+	float band = exp(-dist * dist * 34.0);
+	float cl = fbm(d.xz * 4.0 + vec2(d.y * 3.0, 0.0));
+	float dust = smoothstep(0.3, 0.85, cl);
+	vec2 sph = vec2(atan(d.z, d.x), asin(clamp(d.y, -1.0, 1.0)));
+	float grain = step(0.965, hash(floor(sph * vec2(260.0, 260.0))));
+	vec3 col = tint * band * (0.15 + dust * 0.7) + vec3(grain * band * 0.35);
+	ALBEDO = col * strength;
+}
+"
+
+const AURORA_SHADER := "
+shader_type spatial;
+render_mode unshaded, cull_disabled, depth_draw_never, blend_add, fog_disabled;
+uniform vec3 col_a = vec3(0.2, 1.0, 0.6);
+uniform vec3 col_b = vec3(0.6, 0.3, 1.0);
+uniform float strength = 0.55;
+float hash(float p) { return fract(sin(p * 127.1) * 43758.5453); }
+float noise1(float x) { float i = floor(x); float f = fract(x); f = f * f * (3.0 - 2.0 * f); return mix(hash(i), hash(i + 1.0), f); }
+void fragment() {
+	float x = UV.x;
+	float wave = 0.5 + 0.5 * sin(x * 18.0 + TIME * 0.4 + noise1(x * 6.0 + TIME * 0.1) * 4.0);
+	float curtain = pow(noise1(x * 12.0 + TIME * 0.15), 1.4);
+	float vfade = smoothstep(0.0, 0.12, UV.y) * pow(1.0 - UV.y, 1.8);
+	vec3 c = mix(col_a, col_b, UV.y);
+	ALBEDO = c * strength * vfade * (0.25 + 0.75 * curtain * wave);
+}
+"
+
+
+## Milchstraße: schwach leuchtendes Band auf einer riesigen Innenkugel (M-05).
+func _build_milky_way() -> void:
+	var mi := MeshInstance3D.new()
+	mi.name = "Milchstrasse"
+	var sm := SphereMesh.new()
+	sm.radius = 420.0
+	sm.height = 840.0
+	sm.radial_segments = 48
+	sm.rings = 24
+	mi.mesh = sm
+	var sh := Shader.new()
+	sh.code = MILKY_SHADER
+	var mat := ShaderMaterial.new()
+	mat.shader = sh
+	mi.material_override = mat
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(mi)
+
+
+## Polarlicht: ein gebogenes Band am Nordhimmel, wogt langsam (M-05).
+func _build_aurora() -> void:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var segs := 40
+	var r := 330.0
+	for i in segs:
+		var a0 := deg_to_rad(-70.0 + 140.0 * i / segs)
+		var a1 := deg_to_rad(-70.0 + 140.0 * (i + 1) / segs)
+		var u0 := float(i) / segs
+		var u1 := float(i + 1) / segs
+		var p0b := Vector3(sin(a0) * r, 40.0, -cos(a0) * r)
+		var p1b := Vector3(sin(a1) * r, 40.0, -cos(a1) * r)
+		var p0t := p0b + Vector3(0, 110.0, 0)
+		var p1t := p1b + Vector3(0, 110.0, 0)
+		for v in [[p0b, Vector2(u0, 0)], [p1b, Vector2(u1, 0)], [p1t, Vector2(u1, 1)], [p0b, Vector2(u0, 0)], [p1t, Vector2(u1, 1)], [p0t, Vector2(u0, 1)]]:
+			st.set_uv(v[1])
+			st.add_vertex(v[0])
+	var mi := MeshInstance3D.new()
+	mi.name = "Polarlicht"
+	mi.mesh = st.commit()
+	var sh := Shader.new()
+	sh.code = AURORA_SHADER
+	var mat := ShaderMaterial.new()
+	mat.shader = sh
+	mi.material_override = mat
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(mi)
+
+
 static func selftest(root: Node) -> bool:
 	var sky := NightSky.new()
 	root.add_child(sky)
