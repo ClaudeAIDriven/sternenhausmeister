@@ -760,5 +760,229 @@
   "skills": "Doku, Game-Design",
   "owner": "C",
   "prio": "nice"
+ },
+ {
+  "id": "A-06",
+  "area": "ART",
+  "title": "Styleguide und Farbpalette (Midnight Toy Garden)",
+  "deps": [
+   "A-01"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Verbindlicher Styleguide: Stilregeln, Palette (Himmel, Insel, Sterne, UI, 4 Spielerfarben) als `Palette`-Klasse und docs/STYLEGUIDE.md, inkl. Farbenblind-Hinweisen und Texturvorgaben.",
+  "files": [
+   "docs/STYLEGUIDE.md",
+   "palette.gd"
+  ],
+  "accept": "Selftest: alle Hex-Werte aus dem Styleguide stimmen; Spielerfarben unterscheidbar (Kontrastprüfung).",
+  "skills": "Art Direction, GDScript",
+  "owner": "C",
+  "prio": "nice"
+ },
+ {
+  "id": "A-17",
+  "area": "ART",
+  "title": "Asset-Katalog mit Produktionsdaten",
+  "deps": [
+   "A-06"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Liste aller Assets mit Name, Zweck, Format, Auflösung, Transparenz, Kachelbarkeit, Priorität, Godot-Hinweis, gegliedert nach Phase 1 bis 4.",
+  "files": [
+   "docs/ASSETS.md"
+  ],
+  "accept": "Katalog deckt alle Abschnitte des Art-Prompts ab; jede Zeile hat Priorität und Phase.",
+  "skills": "Doku, Technical Art",
+  "owner": "C",
+  "prio": "nice"
+ },
+ {
+  "id": "A-07",
+  "area": "ART",
+  "title": "Himmelsphasen: Dämmerung, Mitternacht, Morgenrot",
+  "deps": [
+   "A-06",
+   "A-04"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "NightSky bekommt `set_phase(name)` mit weichem Farbübergang, weniger Hintergrundsterne, Mond.",
+  "files": [
+   "sky.gd"
+  ],
+  "accept": "Screenshots der drei Phasen sind klar unterscheidbar; Selbsttest: set_phase ändert die Himmelsfarben.",
+  "skills": "Godot, Visual",
+  "owner": "C",
+  "prio": "nice"
+ },
+ {
+  "id": "A-08",
+  "area": "ART",
+  "title": "Spieler-Look: Körper, Gliedmaßen, 4 Varianten mit Symbolen",
+  "deps": [
+   "A-06"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "`PlayerLook.build(index)`: Capsule, Augen, Arme/Beine, gleiche Geometrie, Varianten per Material und Zubehör (Wedel, Mütze, Sternanhänger, Schal), Fußring und Symbol für Farbenblindheit.",
+  "files": [
+   "player_look.gd"
+  ],
+  "accept": "Screenshot: 4 Varianten nebeneinander, Front/Seite/Rück; unterscheidbar auch in Graustufen.",
+  "skills": "Godot, Low-Poly",
+  "owner": "C",
+  "prio": "nice"
+ },
+ {
+  "id": "A-09",
+  "area": "ART",
+  "title": "Werkzeug-Modelle: Wedel, Sauger, Tuch, Polierpad",
+  "deps": [
+   "A-06"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "`ToolModels.build(kind)` mit vier an der Silhouette unterscheidbaren Werkzeugen und Einsatz-Effekt-Markern.",
+  "files": [
+   "tool_models.gd"
+  ],
+  "accept": "Screenshot aller vier; Silhouetten (schwarz gefüllt) sind verschieden.",
+  "skills": "Godot, Low-Poly",
+  "owner": "C",
+  "prio": "nice"
+ },
+ {
+  "id": "A-10",
+  "area": "ART",
+  "title": "Schmutz-Texturen: Ruß, Flecken, Patina (Form statt nur Farbe)",
+  "deps": [
+   "A-06"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Prozedurale Overlay-Texturen (256 px) für drei Schmutztypen: Ruß = runde ausgefranste Flecken, Flecken = Ringe/Tropfen, Patina = kantige verzweigte Risse, plus Schmutzmaske.",
+  "files": [
+   "dirt_textures.gd"
+  ],
+  "accept": "Screenshot der drei Texturen; in Graustufen weiterhin unterscheidbar; Selbsttest Größe 256x256.",
+  "skills": "Textur, GDScript",
+  "owner": "C",
+  "prio": "nice"
+ },
+ {
+  "id": "A-11",
+  "area": "ART",
+  "title": "Stern-Look: Reinigungsübergang schmutzig zu golden",
+  "deps": [
+   "A-06",
+   "A-10",
+   "A-01"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Stern-Shader/-Material mit Parameter `clean` 0..1 (0/25/50/75/100 %), goldene Stellen wachsen, Leuchten und Rim-Light steigen.",
+  "files": [
+   "shaders/star_clean.gdshader",
+   "star_look.gd"
+  ],
+  "accept": "Screenshot-Reihe 0/25/50/75/100 % mit einem Basismodell; läuft im Compatibility-Renderer.",
+  "skills": "Shader, Godot",
+  "owner": "C",
+  "prio": "nice"
+ },
+ {
+  "id": "A-12",
+  "area": "ART",
+  "title": "Insel-Assets: Gras, Felsen, Büsche, Laternen, Schild",
+  "deps": [
+   "A-06",
+   "A-03"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "`IslandProps` mit wiederverwendbaren Low-Poly-Dekos (Gras-Büschel, Steine, Büsche, Laterne mit warmem Licht, Werkstatt-Schild) und Boden-Textur (256 px, seamless).",
+  "files": [
+   "island_props.gd"
+  ],
+  "accept": "Screenshot-Diorama; Bodentextur ist nachweislich kachelbar (Randpixel-Test).",
+  "skills": "Godot, Low-Poly",
+  "owner": "C",
+  "prio": "nice"
+ },
+ {
+  "id": "A-13",
+  "area": "ART",
+  "title": "Sternbild-Linien: handgezeichnet, golden, pulsierend",
+  "deps": [
+   "A-06"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "`ConstellationLines.build(points)`: dünne goldene Linien mit runden Enden, Lichtpunkte an Knoten, sanftes Pulsieren, Fertig-Burst.",
+  "files": [
+   "constellation_lines.gd"
+  ],
+  "accept": "Screenshot eines Beispiel-Sternbilds; Selbsttest: n Punkte erzeugen n-1 Segmente.",
+  "skills": "Godot, Shader",
+  "owner": "C",
+  "prio": "nice"
+ },
+ {
+  "id": "A-14",
+  "area": "ART",
+  "title": "Himmelseffekte: weiche Wolken und Sternschnuppe",
+  "deps": [
+   "A-07"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Wolken weich, rund, langsam; Sternschnuppe als kurzer Streifen mit Schweif; Option `reduced_motion`.",
+  "files": [
+   "sky_fx.gd"
+  ],
+  "accept": "Screenshot mit Wolken und Schnuppe; Selbsttest: reduced_motion stoppt Bewegung.",
+  "skills": "Godot, Partikel",
+  "owner": "C",
+  "prio": "nice"
+ },
+ {
+  "id": "A-15",
+  "area": "ART",
+  "title": "UI-Theme und Icons (Notizbuch-Look)",
+  "deps": [
+   "A-06"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "`UiTheme` (abgerundete Panels, Dunkelblau/Violett, Gold, Elfenbein, Textgrößen laut Styleguide) und `UiIcons` (Zeit, Phasen, Sternenstaub, Stern, vier Werkzeuge) prozedural, 64-128 px.",
+  "files": [
+   "ui_theme.gd",
+   "ui_icons.gd"
+  ],
+  "accept": "Screenshot: Beispiel-HUD und Icon-Reihe; Sternenstaub-Icon bei 32 px erkennbar.",
+  "skills": "Godot UI, Icon-Design",
+  "owner": "C",
+  "prio": "nice"
+ },
+ {
+  "id": "A-16",
+  "area": "ART",
+  "title": "Logo als SVG und Hauptmenü-Hintergrund",
+  "deps": [
+   "A-15"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Logo `Sternenhausmeister` als SVG (skalierbar) und einfacher Menü-Hintergrund (Insel vor Himmel) als Szenenbeschreibung.",
+  "files": [
+   "assets/ui/logo.svg",
+   "menu_backdrop.gd"
+  ],
+  "accept": "Logo rendert in Godot-Screenshot lesbar; SVG ist valide.",
+  "skills": "SVG, Godot",
+  "owner": "C",
+  "prio": "nice"
  }
 ]
