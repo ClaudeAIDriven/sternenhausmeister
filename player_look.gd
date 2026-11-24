@@ -157,6 +157,24 @@ static func _accessory(root: Node3D, index: int, col: Color) -> void:
 			_add(sc, _box(Vector3(0.14, 0.4, 0.05)), sm, Vector3(0.18, 0.88, -0.42), Vector3(0, 0, 0.1))
 
 
+## Lauf-Animation: Beine und Arme schwingen gegengleich. `phase` wächst mit der Strecke, `amount` (0..1) ist die Lauf-Intensität.
+## Ruhe (amount 0) stellt die Grundhaltung wieder her. Arme behalten ihre leichte Grund-Neigung (z-Achse).
+static func animate(look: Node3D, phase: float, amount: float) -> void:
+	var li := 0
+	var ai := 0
+	for c in look.get_children():
+		var part: String = c.get_meta("part", "")
+		if part == "Leg":
+			var sgn := 1.0 if li == 0 else -1.0
+			c.rotation.x = sin(phase) * 0.8 * amount * sgn
+			c.position.y = 0.16 + maxf(0.0, sin(phase + (0.0 if li == 0 else PI))) * 0.05 * amount
+			li += 1
+		elif part == "Arm":
+			var sgn2 := -1.0 if ai == 0 else 1.0
+			c.rotation.x = sin(phase) * 0.7 * amount * sgn2
+			ai += 1
+
+
 ## Selbsttest: 4 Varianten, eindeutige Symbole und Zubehör, jeweils Körper/Augen/Arme/Beine/Fußring/2 Symbole.
 static func selftest() -> bool:
 	var ok := true

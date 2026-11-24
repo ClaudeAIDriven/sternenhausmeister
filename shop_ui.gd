@@ -5,6 +5,9 @@ extends CanvasLayer
 ## Nutzung: `var ui := ShopUI.new(); add_child(ui); ui.bind(shop)`.
 
 var is_open := false
+var player_ref: Node3D            # I-11: eigener Spieler; null = keine Nähe-Prüfung (Tests)
+var workshop_pos := World.WORKSHOP_POS
+var prompt_label: Label
 var rows := {}        # Upgrade-ID -> {"label": Label, "button": Button}
 var dust_label: Label
 var hint_label: Label
@@ -17,7 +20,7 @@ func _ready() -> void:
 	layer = 30
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	hint_label = Label.new()
-	hint_label.text = "B: Werkstatt"
+	hint_label.text = "In der Nähe der Werkstatt: F"
 	hint_label.add_theme_font_size_override("font_size", UiTheme.FONT_HINT)
 	hint_label.add_theme_color_override("font_color", Palette.UI_IVORY)
 	hint_label.add_theme_color_override("font_outline_color", Palette.UI_PANEL)
@@ -26,6 +29,17 @@ func _ready() -> void:
 	hint_label.offset_left = 14
 	hint_label.offset_top = -34
 	add_child(hint_label)
+	prompt_label = Label.new()
+	prompt_label.text = "F: Werkstatt betreten (Upgrades)"
+	prompt_label.add_theme_font_size_override("font_size", UiTheme.FONT_MENU)
+	prompt_label.add_theme_color_override("font_color", Palette.STAR_GOLD)
+	prompt_label.add_theme_color_override("font_outline_color", Palette.UI_PANEL)
+	prompt_label.add_theme_constant_override("outline_size", 8)
+	prompt_label.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	prompt_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	prompt_label.offset_top = -120
+	prompt_label.visible = false
+	add_child(prompt_label)
 	_root = Control.new()
 	_root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_root.visible = false
@@ -99,10 +113,27 @@ func refresh() -> void:
 			b.disabled = not _shop.can_buy(id)
 
 
+## Nähe zur Werkstatt (waagerecht). Ohne Spieler-Referenz (Tests, Menü) gilt: immer nah.
+func is_near() -> bool:
+	if player_ref == null or not is_instance_valid(player_ref):
+		return true
+	var d := player_ref.global_position - workshop_pos
+	d.y = 0.0
+	return d.length() <= World.WORKSHOP_RANGE
+
+
+func _process(_delta: float) -> void:
+	prompt_label.visible = player_ref != null and is_near() and not is_open
+	hint_label.visible = not prompt_label.visible
+	if is_open and not is_near():
+		close()   # zu weit weggeschubst oder gelaufen
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
-		if event.physical_keycode == KEY_B:
-			toggle()
+		if event.physical_keycode == KEY_B or event.physical_keycode == KEY_F:
+			if is_open or is_near():
+				toggle()
 		elif event.physical_keycode == KEY_ESCAPE and is_open:
 			close()
 			get_viewport().set_input_as_handled()

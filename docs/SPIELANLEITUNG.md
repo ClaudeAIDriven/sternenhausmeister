@@ -6,7 +6,11 @@
 
 ## Spielen
 - Im Hauptmenü Namen eintragen, **Spielart** wählen (Standard, Kinder, Zen), dann **Allein putzen**.
-- Steuerung: **WASD** laufen, **Maus** umsehen, **Leertaste** springen, **linke Maustaste** oder **E** putzen, **B** Werkstatt, **Esc** Pause und Einstellungen. In der Werkstatt (Taste **B**) kaufst du mit Sternenstaub einen größeren Wedel, schnellere Sohlen und einen längeren Stiel.
+- Steuerung: **WASD** laufen, **Maus** umsehen, **Leertaste** springen, **linke Maustaste** oder **E** putzen, **rechte Maustaste** schubsen, **F** an der Werkstatt, **Esc** Pause und Einstellungen. Die Werkstatt (Haus mit rotem Dach, auf der Minimap oben rechts) öffnest du in ihrer Nähe mit **F**; dort kaufst du mit Sternenstaub einen größeren Wedel, schnellere Sohlen und einen längeren Stiel.
+- Rollen (im Menü wählen): **Allrounder** (ausgeglichen), **Hüpfer** (springt viel höher, danach 2,5 s Pause), **Gründlicher Putzer** (wischt 50 % breiter, traut sich nicht an Spinnennester), **Flitzer** (sehr schnell, wischt aber nur 60 % so breit).
+- Lebensleiste (unten Mitte): Schaden gibt es bei Stürzen über 5 m, durch Schubser anderer Spieler, in Lava (rot leuchtend) und an Kakteen. Nach 6 s ohne Schaden füllt sie sich langsam wieder. Bei 0 bist du benommen und startest an der Laterne neu.
+- Ballon: Einfach auf die Plattform laufen, er steigt. Oben lenkst du ihn mit **WASD**; zum Absteigen springen.
+- Minimap oben rechts: Werkstatt (Haus), Ballon (rot), Sterne (gold = schmutzig, grün = sauber), Gefahren, Mitspieler; darunter Fortschritt und Restzeit.
 - Ziel: Alle Sterne sauber wischen. Das Sternbild muss in der **richtigen Reihenfolge** geputzt werden (der Hinweis zeigt den nächsten Stern). Falsche Reihenfolge: Die Sterne werden wieder schmutzig, ohne Strafe.
 - Wer ohne Pause wischt, baut eine **Kombo** auf (mehr Staub, höherer Ton). Putzen zwei Spieler denselben Stern, gibt es **Teamarbeit-Bonus**. Mit dem **Ballon** auf der Insel erreichst du hohe Sterne.
 - Am Nachtende (Standard 10 Minuten) zeigt die Zusammenfassung 1 bis 3 Sternchen. Es gibt kein Game Over, du kannst danach weiterputzen.
