@@ -1658,7 +1658,7 @@
    "I-14"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Mittlere Maustaste setzt einen Ping (Hilfe/Stern hier) auf der Minimap aller Spieler, 8 s sichtbar, Pfeil am Bildschirmrand.",
   "files": [
    "minimap.gd",

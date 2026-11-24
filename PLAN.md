@@ -88,3 +88,4 @@ I-11 Spielwelt: Lauf-Animation, Ballon ebenerdig und lenkbar, Kollision Haus/Lat
 I-12 Gesundheit: Lebensleiste, Regeneration nach 6 s, Fallschaden ab 5 m, Schubsen (rechte Maustaste), Lava, Kaktus, Respawn
 I-13 Rollen: Allrounder, Hüpfer, Gründlicher Putzer (Spinnenangst), Flitzer
 I-14 Minimap mit Werkstatt, Ballon, Sternen, Gefahren, Spielern, Fortschritt und Zeit
+G-33 (bot-A): Minimap-Ping: Mittlere Maustaste -> Player.send_ping(aim_point) (Abklingzeit 1 s) -> RPC rpc_ping (any_peer, call_local) -> Signal ping_received; Minimap sammelt Pings (8 s, einer je Spieler), pulsierender Ring in Spielerfarbe auf der Karte, Randpfeil bzw. Ring am Bildschirm (Minimap.edge_point). 🟢 tests/test_ping.gd OK (Offline, Ablauf, Ersetzen, Abklingzeit, Randpunkt), run_tests grün. 🔴 Netzübertragung (RPC an alle Spieler-Knoten), Pfeilaussehen und Mittelklick im echten Spiel ungetestet; kein Screenshot (kein GPU).

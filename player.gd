@@ -5,6 +5,7 @@ extends CharacterBody3D
 signal wipe_requested(point: Vector3)
 signal health_changed(value: float)
 signal died
+signal ping_received(sender: int, point: Vector3)   # G-33
 signal hit_landed(target: Player)
 
 const SPEED := 6.0
@@ -36,6 +37,8 @@ var look: Node3D
 var look_index := -1
 var nameplate: Label3D
 var _shop: Node
+var _ping_cd := 0.0
+const PING_COOLDOWN := 1.0
 var health := MAX_HEALTH
 var role := Roles.DEFAULT_ID      # I-13, wird mit repliziert
 var _jump_cd := 0.0
@@ -104,6 +107,10 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_multiplayer_authority():
+		return
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_MIDDLE and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		if aim_valid:
+			send_ping(aim_point)   # G-33: Mittlere Maustaste = Ping
 		return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		var sens := float(Settings.get_value("mouse_sens"))
@@ -347,3 +354,21 @@ func knock(v: Vector3) -> void:
 ## Wischradius-Faktor der Rolle (main.gd multipliziert damit den Shop-Radius).
 func wipe_factor() -> float:
 	return Roles.factor(role, "wipe")
+
+
+## G-33: Ping an einen Weltpunkt, sichtbar auf der Minimap aller Spieler (Abklingzeit PING_COOLDOWN). false = zu früh oder ungültig.
+func send_ping(point: Vector3) -> bool:
+	var now := Time.get_ticks_msec() / 1000.0
+	if now < _ping_cd or not point.is_finite():
+		return false
+	_ping_cd = now + PING_COOLDOWN
+	rpc_ping.rpc(point)
+	return true
+
+
+@rpc("any_peer", "call_local", "reliable")
+func rpc_ping(point: Vector3) -> void:
+	if not point.is_finite() or point.length() > 200.0:
+		return
+	var sender := multiplayer.get_remote_sender_id()
+	ping_received.emit(sender if sender != 0 else str(name).to_int(), point)
