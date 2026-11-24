@@ -10,3 +10,4 @@ Nur CC0 oder eigene Assets (siehe docs/ARCHITECTURE.md, Regel 5).
 | Godot Engine 4.3 | godotengine.org | MIT |
 
 Neue Fremdassets (z. B. Kenney, Quaternius) hier mit Quelle, URL und Lizenz eintragen, bevor sie ins Repo kommen.
+- Poppins Bold (OFL, Google Fonts): Schriftzug im Logo (assets/ui/logo.svg)
