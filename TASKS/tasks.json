@@ -250,7 +250,7 @@
    "C-02"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Nachtablauf als State-Machine, sanftes Zeitlimit (kein Game Over), Signale an GameState.",
   "files": [
    "night.gd"

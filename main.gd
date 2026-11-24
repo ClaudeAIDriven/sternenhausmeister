@@ -13,6 +13,7 @@ var dust: CPUParticles3D
 var notes: Array[AudioStreamWAV] = []
 var scrub_sound: AudioStreamWAV
 var chime: Array[AudioStreamWAV] = []
+var night: Night
 var note_idx := 0
 var scrub_cooldown := 0.0
 
@@ -30,7 +31,9 @@ func _ready() -> void:
 	world.star_scrubbed.connect(_on_star_scrubbed)
 	world.star_cleaned.connect(_on_star_cleaned)
 	_refresh_hud()
-	GameState.start_night()
+	night = Night.new()
+	add_child(night)
+	night.start()   # G-01: Nacht mit sanftem Zeitlimit (Standard 10 Minuten)
 	if "--selftest" in OS.get_cmdline_user_args():
 		call_deferred("_selftest")
 
