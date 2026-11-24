@@ -52,6 +52,7 @@ var revive_progress := 0.0     # 0..1
 var last_dust_lost := 0
 var _revive_held := 0.0
 var role := Roles.DEFAULT_ID      # I-13, wird mit repliziert
+var food := Food.new()            # G-21: Sättigung, nur lokal beim Besitzer
 var _jump_cd := 0.0
 var _impulse := Vector3.ZERO
 var _since_damage := 0.0
@@ -136,7 +137,7 @@ func _physics_process(delta: float) -> void:
 	update_revive(delta, Input.is_physical_key_pressed(KEY_F) and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED)
 	var input_dir := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var dir := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-	var speed := stat("speed", SPEED) * Roles.factor(role, "speed")
+	var speed := stat("speed", SPEED) * Roles.factor(role, "speed") * food.speed_factor()
 	_jump_cd = maxf(_jump_cd - delta, 0.0)
 	if _on_balloon != null and is_instance_valid(_on_balloon) and _on_balloon.is_aloft():
 		# Ballon lenken (I-11): Auf der Plattform in der Luft steuert WASD den Ballon statt den Spieler.
@@ -154,6 +155,7 @@ func _physics_process(delta: float) -> void:
 	elif Input.is_action_just_pressed("jump") and _jump_cd <= 0.0:
 		velocity.y = JUMP_VELOCITY * Roles.factor(role, "jump")
 		_jump_cd = Roles.factor(role, "jump_cd")
+		food.jumped()
 	move_and_slide()
 	_track_floor()
 	_track_fall(delta)
@@ -169,6 +171,8 @@ func _physics_process(delta: float) -> void:
 	cleaning = Input.is_action_pressed("clean") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED
 	if cleaning and aim_valid:
 		wipe_requested.emit(aim_point)
+	var walked := 0.0 if (_on_balloon != null and is_instance_valid(_on_balloon) and _on_balloon.is_aloft()) else input_dir.length()
+	food.tick(delta, walked, cleaning and aim_valid)
 
 
 func _update_aim() -> void:
@@ -298,8 +302,10 @@ func _tick_health(delta: float) -> void:
 	_attack_cd = maxf(_attack_cd - delta, 0.0)
 	_since_damage += delta
 	if health < MAX_HEALTH and _since_damage >= REGEN_DELAY:
-		health = minf(health + REGEN_RATE * delta, MAX_HEALTH)
-		health_changed.emit(health)
+		var rate := REGEN_RATE * food.regen_factor()   # G-21: satt x2, leer 0
+		if rate > 0.0:
+			health = minf(health + rate * delta, MAX_HEALTH)
+			health_changed.emit(health)
 
 
 ## Schaden (nur beim Besitzer-Peer wirksam). Bei 0: kurz benommen, zurück zur Startlaterne mit voller Gesundheit.
@@ -476,4 +482,4 @@ func knock(v: Vector3) -> void:
 
 ## Wischradius-Faktor der Rolle (main.gd multipliziert damit den Shop-Radius).
 func wipe_factor() -> float:
-	return Roles.factor(role, "wipe")
+	return Roles.factor(role, "wipe") * food.wipe_factor()   # G-21: satt +10 %
