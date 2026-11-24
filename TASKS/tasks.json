@@ -1669,5 +1669,206 @@
   "skills": "GDScript",
   "owner": "C",
   "prio": "nice"
+ },
+ {
+  "id": "M-01",
+  "area": "GAME",
+  "title": "Verdrahtung I: Wetter, Utensilien, XP, Fähigkeiten, Küche, Schrein im Spiel",
+  "deps": [],
+  "size": "L",
+  "status": "open",
+  "goal": "main.gd/player.gd binden alles Gebaute ein: world.attach_weather, Player.tool_kind() an wipe_at, XP-Vergabe (Fleck/Stern/Gegner/Revive/Kochen), Fähigkeiten (K) und Küchen-/Schrein-Buffs wirken im Player, Shop/Küche/Fähigkeiten-UIs öffnen im Spiel, enemy_removed gibt XP.",
+  "files": [
+   "main.gd",
+   "player.gd",
+   "hud.gd",
+   "tests/test_wiring.gd"
+  ],
+  "accept": "Test: Wisch gibt XP, Skill ändert wipe_rate, Küchen-Buff wirkt, Schrein wirkt, Spinne nur mit Sauger im echten Spielaufbau.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
+ },
+ {
+  "id": "M-02",
+  "area": "GAME",
+  "title": "Verdrahtung II: Speichern/Laden, Seed, Autosave",
+  "deps": [
+   "M-01"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Pause-Speichern, Menü-Laden (launch[load]), Autosave am Nachtende, Seed im Pausenmenü sichtbar und im Speicherstand; Karte + Seed werden mitgeladen.",
+  "files": [
+   "main.gd",
+   "pause.gd",
+   "save_game.gd",
+   "tests/test_save_wiring.gd"
+  ],
+  "accept": "Test: Spiel starten, putzen, speichern, neu laden, gleicher Zustand inkl. Seed.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
+ },
+ {
+  "id": "M-03",
+  "area": "GAME",
+  "title": "Mehrere Karten (Maps) mit Menüauswahl",
+  "deps": [
+   "M-01"
+  ],
+  "size": "L",
+  "status": "open",
+  "goal": "maps.gd mit 4 Karten: Mondwiese (klassisch), Lavafelder, Kaktuswüste, Spinnenhöhle. Jede mit Bodenfarbe, Himmel, Gefahrendichte (Lava/Kaktus), Gegnerdichte, Starthinweis. Auswahl im Hauptmenü, Host verteilt die Karte.",
+  "files": [
+   "maps.gd",
+   "world.gd",
+   "menu.gd",
+   "tests/test_maps.gd"
+  ],
+  "accept": "Test: jede Karte baut sich, hat Lava/Kaktus/Spinnen gemäß Profil, Seed+Karte = gleiche Insel; Netz: Client bekommt Karte.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
+ },
+ {
+  "id": "M-04",
+  "area": "GAME",
+  "title": "Karten-Gefahren aus Seed: Lava, Kakteen, Spinnennester",
+  "deps": [
+   "M-03"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "IslandGen verteilt Lava, Kakteen und Spinnennester je Karte mit Mindestabständen und freiem Weg zu allen Sternen/Orten.",
+  "files": [
+   "island_gen.gd",
+   "world.gd",
+   "tests/test_island_hazards.gd"
+  ],
+  "accept": "Test: 300 Seeds je Karte gültig, jeder Ort vom Start erreichbar (Flood-Fill).",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
+ },
+ {
+  "id": "M-05",
+  "area": "ART",
+  "title": "Grafik-Update I: Himmel, Beleuchtung, Glow, Nebel, Boden",
+  "deps": [],
+  "size": "L",
+  "status": "open",
+  "goal": "WorldEnvironment mit Glow/Bloom, Tonemapping, Nebel, Sternenhimmel mit Milchstraße und Polarlicht, bessere Mondbeleuchtung, Boden-Shader mit Gras-Wind, Schatten.",
+  "files": [
+   "sky.gd",
+   "sky_fx.gd",
+   "island_props.gd"
+  ],
+  "accept": "Spiel startet ohne Fehler; Screenshot (falls Renderer vorhanden) oder ehrlich als ungetestet markiert.",
+  "skills": "GDScript, Shader",
+  "owner": "A",
+  "prio": "must"
+ },
+ {
+  "id": "M-06",
+  "area": "ART",
+  "title": "Grafik-Update II: Sterne, Putz-Effekte, Gegner, Spieler",
+  "deps": [],
+  "size": "L",
+  "status": "open",
+  "goal": "Sterne mit Strahlenkranz und Pulsieren, Staubpartikel beim Wischen, Glitzer bei Sauberkeit, Wollmaus/Spinne/Rußwolke mit besseren Meshes und Animation, Spieler-Hüte.",
+  "files": [
+   "star.gd",
+   "effects.gd",
+   "dust_bunny.gd",
+   "spider.gd",
+   "soot_cloud.gd",
+   "player_look.gd"
+  ],
+  "accept": "Tests bleiben grün; Screenshot oder ehrlich ungetestet.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
+ },
+ {
+  "id": "M-07",
+  "area": "ART",
+  "title": "Grafik-Update III: UI-Stil, Menühintergrund, HUD, Icons",
+  "deps": [],
+  "size": "M",
+  "status": "open",
+  "goal": "Einheitlicher UI-Stil, animierter Menühintergrund, bessere Fortschrittsbalken, Utensil- und Frucht-Icons, Kartenvorschau im Menü.",
+  "files": [
+   "hud.gd",
+   "menu_backdrop.gd",
+   "palette.gd"
+  ],
+  "accept": "Tests grün; Screenshot oder ehrlich ungetestet.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "nice"
+ },
+ {
+  "id": "M-08",
+  "area": "GAME",
+  "title": "Spaß I: Trampolinwolken, Sternschnuppen-Wünsche, Glühwürmchen",
+  "deps": [
+   "M-03"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Trampolinwolken (hoher Sprung zu hohen Sternen), Sternschnuppe fangen = Wunsch (Zufalls-Buff 60 s), Glühwürmchen-Schwarm folgt dem Spieler und zeigt den nächsten schmutzigen Stern.",
+  "files": [
+   "fun_items.gd",
+   "tests/test_fun.gd"
+  ],
+  "accept": "Test: Trampolin gibt Sprungboost, Wunsch gibt Buff, Schwarm zeigt auf Stern.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "nice"
+ },
+ {
+  "id": "M-09",
+  "area": "GAME",
+  "title": "Spaß II: Erfolge, Hüte, Putz-Tagebuch",
+  "deps": [
+   "M-01"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "20 Erfolge (Spinne gefressen, Boss im Team, 100 Früchte ...), kosmetische Hüte als Belohnung, Tagebuch pro Nacht (Sterne, Staub, Zeit).",
+  "files": [
+   "achievements.gd",
+   "tests/test_achievements.gd"
+  ],
+  "accept": "Test: Erfolge lösen aus, speichern und laden.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "nice"
+ },
+ {
+  "id": "M-10",
+  "area": "GAME",
+  "title": "Finale: Balance, Demo-Durchlauf, Anleitung",
+  "deps": [
+   "M-02",
+   "M-04",
+   "M-05",
+   "M-06",
+   "M-08",
+   "M-09"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Balance prüfen, kompletter Headless-Durchlauf (Solo + Netz), Spielanleitung aktualisieren, bekannte Lücken dokumentieren.",
+  "files": [
+   "docs/SPIELANLEITUNG.md",
+   "docs/KNOWN_ISSUES.md",
+   "tests/test_playthrough.gd"
+  ],
+  "accept": "Durchlauf-Test grün; Lücken ehrlich dokumentiert.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  }
 ]

@@ -89,3 +89,13 @@
 | [G-31](G-31.md) | A | nice | GAME | Prozedurale Insel aus Seed | L | done | G-30 | – |
 | [G-32](G-32.md) | C | nice | GAME | Friedensvertrag: Schubsen an oder aus | S | done | I-12 | – |
 | [G-33](G-33.md) | C | nice | UI | Minimap-Ping | S | done | I-14 | – |
+| [M-01](M-01.md) | A | must | GAME | Verdrahtung I: Wetter, Utensilien, XP, Fähigkeiten, Küche, Schrein im Spiel | L | open | – | – |
+| [M-02](M-02.md) | A | must | GAME | Verdrahtung II: Speichern/Laden, Seed, Autosave | M | open | M-01 | – |
+| [M-03](M-03.md) | A | must | GAME | Mehrere Karten (Maps) mit Menüauswahl | L | open | M-01 | – |
+| [M-04](M-04.md) | A | must | GAME | Karten-Gefahren aus Seed: Lava, Kakteen, Spinnennester | M | open | M-03 | – |
+| [M-05](M-05.md) | A | must | ART | Grafik-Update I: Himmel, Beleuchtung, Glow, Nebel, Boden | L | open | – | – |
+| [M-06](M-06.md) | A | must | ART | Grafik-Update II: Sterne, Putz-Effekte, Gegner, Spieler | L | open | – | – |
+| [M-07](M-07.md) | A | nice | ART | Grafik-Update III: UI-Stil, Menühintergrund, HUD, Icons | M | open | – | – |
+| [M-08](M-08.md) | A | nice | GAME | Spaß I: Trampolinwolken, Sternschnuppen-Wünsche, Glühwürmchen | M | open | M-03 | – |
+| [M-09](M-09.md) | A | nice | GAME | Spaß II: Erfolge, Hüte, Putz-Tagebuch | M | open | M-01 | – |
+| [M-10](M-10.md) | A | must | GAME | Finale: Balance, Demo-Durchlauf, Anleitung | M | open | M-02, M-04, M-05, M-06, M-08, M-09 | – |
