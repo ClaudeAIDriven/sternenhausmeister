@@ -1155,10 +1155,11 @@
    "N-03"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Putzen zwei oder mehr Spieler denselben Stern in kurzer Zeit, bekommen alle Beteiligten Bonusstaub. Siehe IB-06.",
   "files": [
    "world.gd",
+   "main.gd",
    "tests/test_coop_bonus.gd"
   ],
   "accept": "Test: Bonus nur bei >= 2 Beteiligten, einmal pro Stern; run_tests und Netztests grün.",
