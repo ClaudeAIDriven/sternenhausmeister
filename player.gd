@@ -18,6 +18,9 @@ var brush: Node3D
 var cleaning := false
 var aim_point := Vector3.ZERO
 var aim_valid := false
+var look: Node3D
+var look_index := -1
+var _shop: Node
 
 
 func _enter_tree() -> void:
@@ -37,66 +40,20 @@ func _ready() -> void:
 	cs.position.y = 0.85
 	add_child(cs)
 
-	var body := MeshInstance3D.new()
-	var bm := CapsuleMesh.new()
-	bm.radius = 0.4
-	bm.height = 1.7
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0.3, 0.55, 0.9)
-	mat.roughness = 0.8
-	body.mesh = bm
-	body.material_override = mat
-	body.position.y = 0.85
-	add_child(body)
-
-	var face := MeshInstance3D.new()
-	var fm := SphereMesh.new()
-	fm.radius = 0.12
-	fm.height = 0.24
-	var fmat := StandardMaterial3D.new()
-	fmat.albedo_color = Color(1, 0.95, 0.8)
-	fmat.emission_enabled = true
-	fmat.emission = Color(1, 0.95, 0.8)
-	face.mesh = fm
-	face.material_override = fmat
-	face.position = Vector3(0.15, 1.35, -0.33)
-	add_child(face)
-	var face2 := face.duplicate()
-	face2.position = Vector3(-0.15, 1.35, -0.33)
-	add_child(face2)
-
-	# Staubwedel: Stiel + Federbüschel
+	# Figur (A-08) und Werkzeug (A-09); Farbe/Symbol hängen vom Platz in der Spielerliste ab
 	brush = Node3D.new()
 	brush.position = Vector3(0.55, 1.1, -0.5)
 	add_child(brush)
-	var stick := MeshInstance3D.new()
-	var sm := CylinderMesh.new()
-	sm.top_radius = 0.03
-	sm.bottom_radius = 0.03
-	sm.height = 1.0
-	var smat := StandardMaterial3D.new()
-	smat.albedo_color = Color(0.55, 0.35, 0.2)
-	stick.mesh = sm
-	stick.material_override = smat
-	stick.position.y = 0.5
-	brush.add_child(stick)
-	var tip := MeshInstance3D.new()
-	var tm := SphereMesh.new()
-	tm.radius = 0.2
-	tm.height = 0.4
-	var tmat := StandardMaterial3D.new()
-	tmat.albedo_color = Color(1.0, 0.8, 0.9)
-	tip.mesh = tm
-	tip.material_override = tmat
-	tip.position.y = 1.05
-	brush.add_child(tip)
+	brush.add_child(ToolModels.build("duster"))
+	_refresh_look()
+	NetworkManager.players_changed.connect(_refresh_look)
 
 	arm = Node3D.new()
 	arm.position.y = 1.5
 	add_child(arm)
 	cam = Camera3D.new()
 	cam.position = Vector3(0, 0.7, 5.0)
-	cam.fov = 70.0
+	cam.fov = float(Settings.get_value("fov"))
 	cam.current = is_multiplayer_authority()
 	arm.add_child(cam)
 	arm.rotation.x = pitch
@@ -117,8 +74,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not is_multiplayer_authority():
 		return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		yaw -= event.relative.x * MOUSE_SENS
-		pitch = clampf(pitch - event.relative.y * MOUSE_SENS, -1.2, 0.7)
+		var sens := float(Settings.get_value("mouse_sens"))
+		yaw -= event.relative.x * sens
+		pitch = clampf(pitch - event.relative.y * sens, -1.2, 0.7)
 		rotation.y = yaw
 		arm.rotation.x = pitch
 
@@ -128,8 +86,9 @@ func _physics_process(delta: float) -> void:
 		return   # fremde Spieler werden per Synchronisation bewegt
 	var input_dir := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var dir := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-	velocity.x = dir.x * SPEED
-	velocity.z = dir.z * SPEED
+	var speed := stat("speed", SPEED)
+	velocity.x = dir.x * speed
+	velocity.z = dir.z * speed
 	if not is_on_floor():
 		velocity.y -= GRAVITY * delta
 	elif Input.is_action_just_pressed("jump"):
@@ -147,13 +106,14 @@ func _physics_process(delta: float) -> void:
 
 func _update_aim() -> void:
 	var from := cam.global_position
-	var to := from - cam.global_transform.basis.z * (REACH + 5.0)
+	var reach := stat("reach", REACH)
+	var to := from - cam.global_transform.basis.z * (reach + 5.0)
 	var q := PhysicsRayQueryParameters3D.create(from, to, 2)
 	var hit := get_world_3d().direct_space_state.intersect_ray(q)
 	aim_valid = false
 	if not hit.is_empty():
 		var p: Vector3 = hit["position"]
-		if p.distance_to(global_position + Vector3(0, 1.2, 0)) <= REACH:
+		if p.distance_to(global_position + Vector3(0, 1.2, 0)) <= reach:
 			aim_point = p
 			aim_valid = true
 
@@ -165,3 +125,34 @@ func _process(_delta: float) -> void:
 		brush.rotation = Vector3(-0.9 + sin(t * 18.0) * 0.5, 0, sin(t * 9.0) * 0.3)
 	else:
 		brush.rotation = brush.rotation.lerp(Vector3(-0.3, 0, 0.2), 0.15)
+
+
+## Wert aus dem Shop (G-05), falls ein Shop im Spiel hängt, sonst der Standardwert.
+func stat(key: String, fallback: float) -> float:
+	if _shop == null or not is_instance_valid(_shop):
+		_shop = get_tree().root.find_child("Shop", true, false) if is_inside_tree() else null
+	if _shop != null and _shop.has_method("value"):
+		var v: float = _shop.value(key)
+		if v > 0.0:
+			return v
+	return fallback
+
+
+## Platz in der Spielerliste (0..3): Host zuerst, danach nach Peer-ID. Offline 0.
+func slot_index() -> int:
+	var ids := NetworkManager.players.keys()
+	ids.sort()
+	var i := ids.find(str(name).to_int())
+	return clampi(i, 0, 3) if i >= 0 else 0
+
+
+func _refresh_look() -> void:
+	var idx := slot_index()
+	if idx == look_index and look != null:
+		return
+	look_index = idx
+	if look != null:
+		look.queue_free()
+	look = PlayerLook.build(idx)
+	look.name = "Look"
+	add_child(look)
