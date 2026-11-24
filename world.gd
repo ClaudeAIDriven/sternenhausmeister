@@ -13,6 +13,12 @@ const MIN_STARS := 3
 const STARS_PER_EXTRA_PLAYER := 1
 
 signal layout_changed(star_count: int)
+signal puzzle_changed(done: int, total: int)    # Fortschritt im Sternbild
+signal puzzle_wrong(hint_star: int)             # falsche Reihenfolge: Sterne wurden zurückgesetzt, hint_star ist als Nächstes dran
+signal puzzle_solved(bonus: int)                # Sternbild gelöst, Bonus-Staub gutgeschrieben (Host)
+
+var puzzle: Constellation
+var lines: ConstellationLines
 
 var stars: Array[Star] = []
 
@@ -85,6 +91,8 @@ func _on_player_joined(id: int) -> void:
 
 func _send_state(peer: int) -> void:
 	_rpc_layout.rpc_id(peer, stars.size())   # zuerst das Layout, dann die entfernten Flecken
+	if puzzle != null:
+		_rpc_puzzle.rpc_id(peer, puzzle.done, puzzle.is_solved, [])
 	for i in stars.size():
 		if not stars[i].removed_ids.is_empty():
 			_rpc_removed.rpc_id(peer, i, stars[i].removed_ids)
@@ -216,6 +224,94 @@ func _build_stars(count: int) -> void:
 		s.scrubbed.connect(func(n: int): star_scrubbed.emit(s, n))
 		s.cleaned.connect(func():
 			Effects.sparkle_burst(self, s.position, s.radius)   # A-05: Funkel-Burst beim Abschluss
-			star_cleaned.emit(s))
+			star_cleaned.emit(s)
+			_on_star_cleaned(s))
 		stars.append(s)
+	_setup_puzzle()
 	layout_changed.emit(count)
+
+
+# ---------------------------------------------------------------- Sternbild-Rätsel (I-04)
+
+## Größtes Beispiel-Sternbild, das zur Sternzahl passt (3 Sterne: Dreieck, 5-6: Kassiopeia, 7-8: Kleiner Wagen).
+## Seine Sterne sind die ersten n Welt-Sterne; weitere Sterne sind frei (kein Rätsel).
+func _setup_puzzle() -> void:
+	if lines != null:
+		lines.queue_free()
+		lines = null
+	puzzle = null
+	var best: Dictionary = {}
+	for d in ConstellationLoader.load_dir("res://data/constellations"):
+		var n: int = d["stars"].size()
+		if n <= stars.size() and (best.is_empty() or n > best["stars"].size()):
+			best = d
+	if best.is_empty():
+		return
+	puzzle = Constellation.from_data(best)
+	puzzle.wrong.connect(func(_s: int, _h: int, red: Array): _last_redirty = red)
+	lines = ConstellationLines.new()
+	lines.name = "Sternbild"
+	add_child(lines)
+	var pts: Array[Vector3] = []
+	for id in puzzle.order:
+		pts.append(stars[id].position)
+	lines.build(pts)
+	_show_puzzle()
+	puzzle_changed.emit(0, puzzle.total())
+
+
+func _star_index(s: Star) -> int:
+	return stars.find(s)
+
+
+func _on_star_cleaned(s: Star) -> void:
+	if puzzle == null or (NetworkManager.is_online() and not multiplayer.is_server()):
+		return   # nur der Host entscheidet
+	var idx := _star_index(s)
+	if idx < 0 or not puzzle.positions.has(idx):
+		return
+	var result := puzzle.report_cleaned(idx)
+	var redirty: Array = []
+	if result == "wrong":
+		# Sterne zurücksetzen (alle bisherigen plus der falsche); Hinweis = nächster richtiger
+		redirty = _last_redirty
+		for i in redirty:
+			stars[i].reset()
+	if result == "solved":
+		GameState.add_dust(puzzle.bonus())
+		puzzle_solved.emit(puzzle.bonus())
+	_show_puzzle()
+	if NetworkManager.is_online():
+		_rpc_puzzle.rpc(puzzle.done, puzzle.is_solved, redirty)
+	if result == "wrong":
+		puzzle_wrong.emit(puzzle.hint())
+
+
+var _last_redirty: Array = []
+
+
+func _show_puzzle() -> void:
+	if puzzle == null or lines == null:
+		return
+	var n := puzzle.total()
+	if puzzle.is_solved:
+		lines.finish()
+	else:
+		lines.set_progress(float(maxi(puzzle.done - 1, 0)) / float(maxi(n - 1, 1)))
+	for i in stars.size():
+		stars[i].set_hint(not puzzle.is_solved and puzzle.positions.has(i) and puzzle.hint() == i and puzzle.done > 0)
+	puzzle_changed.emit(puzzle.done, n)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_puzzle(done: int, solved: bool, redirty: Array) -> void:
+	if puzzle == null:
+		return
+	for i in redirty:
+		if i >= 0 and i < stars.size():
+			stars[i].reset()
+	puzzle.done = done
+	puzzle.is_solved = solved
+	_show_puzzle()
+	if not redirty.is_empty():
+		puzzle_wrong.emit(puzzle.hint())
