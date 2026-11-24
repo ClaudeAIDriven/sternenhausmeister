@@ -8,6 +8,7 @@ extends Node
 signal start_requested(mode: String, ip: String, player_name: String)
 
 static var launch := {}
+var save_option: OptionButton   # G-27: gespeicherte Spielstände (Solo/Host)
 
 @export var auto_start := true
 @export var game_scene := "res://main.tscn"
@@ -100,6 +101,13 @@ func _build_ui() -> void:
 	brawl_check.text = "Rauflust: Schubsen macht Schaden (nur Host)"
 	brawl_check.tooltip_text = "Aus = Friedlich: Schubsen stößt nur weg."
 	main_box.add_child(brawl_check)
+	save_option = OptionButton.new()
+	save_option.add_item("Neues Spiel")
+	save_option.set_item_metadata(0, "")
+	for n in SaveGame.list():
+		save_option.add_item("Laden: " + n)
+		save_option.set_item_metadata(save_option.item_count - 1, n)
+	main_box.add_child(save_option)
 	buttons["solo"] = _button(main_box, "Allein putzen", func(): start("solo"))
 	buttons["host"] = _button(main_box, "Raum eröffnen (Host)", func(): start("host"))
 	main_box.add_child(_label("Beitreten: Adresse des Hosts"))
@@ -203,7 +211,8 @@ func start(mode: String) -> bool:
 	if role_option != null and role_option.selected >= 0:
 		role = str(role_option.get_item_metadata(role_option.selected))
 	Settings.set_value("role", role)
-	launch = {"mode": mode, "ip": ip if mode == "join" else "", "name": pname, "preset": preset, "brawl": brawl_check != null and brawl_check.button_pressed}
+	launch = {"mode": mode, "ip": ip if mode == "join" else "", "name": pname, "preset": preset, "brawl": brawl_check != null and brawl_check.button_pressed,
+		"load": str(save_option.get_item_metadata(save_option.selected)) if (save_option != null and save_option.selected > 0 and mode != "join") else ""}
 	start_requested.emit(mode, launch["ip"], pname)
 	if auto_start:
 		get_tree().change_scene_to_file(game_scene)

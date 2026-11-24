@@ -13,6 +13,9 @@ signal closed
 const KEYS := [["Bewegen", "W A S D"], ["Springen", "Leertaste"], ["Putzen", "Linke Maustaste oder E"], ["Pause", "Esc"]]
 const MENU_SCENE := "res://menu.tscn"
 
+## G-27: Callable ohne Argumente, speichert den Spielstand und gibt OK (0) oder einen Fehlercode zurück; nur der Host/Solo setzt sie.
+var save_handler: Callable
+var save_label: Label
 var accessibility: Node   # I-08: optional, bringt das Barrierefreiheit-Panel mit
 var is_open := false
 var buttons := {}
@@ -70,6 +73,11 @@ func _build_ui() -> void:
 	keys.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	keys.add_theme_font_size_override("font_size", UiTheme.FONT_HINT)
 	col.add_child(keys)
+	buttons["save"] = _button(col, "Spiel speichern", func(): save_now())
+	buttons["save"].visible = save_handler.is_valid()
+	save_label = Label.new()
+	save_label.add_theme_font_size_override("font_size", UiTheme.FONT_HINT)
+	col.add_child(save_label)
 	buttons["resume"] = _button(col, "Weiter", func(): close())
 	buttons["menu"] = _button(col, "Zum Hauptmenü", func(): to_menu())
 	buttons["quit"] = _button(col, "Beenden", func(): get_tree().quit())
@@ -125,6 +133,16 @@ func open() -> void:
 		get_tree().paused = true
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	opened.emit()
+
+
+## Speichert über `save_handler`; zeigt das Ergebnis im Pausenmenü. Gibt true bei Erfolg zurück.
+func save_now() -> bool:
+	if not save_handler.is_valid():
+		return false
+	var err: int = int(save_handler.call())
+	if save_label != null:
+		save_label.text = "Gespeichert." if err == OK else "Speichern fehlgeschlagen (Fehler %d)." % err
+	return err == OK
 
 
 func close() -> void:
