@@ -1617,7 +1617,7 @@
    "G-30"
   ],
   "size": "L",
-  "status": "open",
+  "status": "done",
   "goal": "Insel-Layout aus einem Seed: Sterne, Orte, Gefahren, Gegner und Deko werden mit Mindestabständen verteilt; der Seed steht im Pausenmenü und im Speicherstand. Host verteilt den Seed an alle.",
   "files": [
    "island_gen.gd",
