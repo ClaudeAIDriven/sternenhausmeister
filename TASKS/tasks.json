@@ -473,7 +473,7 @@
    "P-001"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "CC0-Assets (z. B. Kenney/Quaternius) oder Blender; Lizenz in docs/CREDITS.md.",
   "files": [
    "assets/props/",
