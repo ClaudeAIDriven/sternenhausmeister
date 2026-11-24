@@ -78,7 +78,7 @@
 | [G-20](G-20.md) | A | must | GAME | Tod: 60-s-Respawn, 10 % Staubverlust, Wiederbeleben | M | done | I-12 | – |
 | [G-21](G-21.md) | A | must | GAME | Essen: Food-Leiste mit Bonus statt Zwang | M | done | I-12 | – |
 | [G-22](G-22.md) | A | must | GAME | Früchte finden und Inventar | M | done | G-21 | – |
-| [G-23](G-23.md) | A | must | GAME | Küche mit Rezepten | M | open | G-22 | – |
+| [G-23](G-23.md) | A | must | GAME | Küche mit Rezepten | M | done | G-22 | – |
 | [G-24](G-24.md) | A | must | GAME | Rollen II: Koch und Kletterer | M | open | I-13, G-23 | – |
 | [G-25](G-25.md) | A | must | GAME | Putz-Utensilien freischalten und aufrüsten | L | done | I-09 | – |
 | [G-26](G-26.md) | A | must | GAME | XP und Fähigkeiten | L | open | G-25 | – |
