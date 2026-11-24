@@ -5,6 +5,10 @@ extends CanvasLayer
 ## darunter Fortschrittsbalken (geputzte Sterne) und verbleibende Zeit.
 
 const SIZE := 190.0
+const PING_SECONDS := 8.0   # G-33
+
+var pings: Array = []   # {"pos": Vector3, "left": float, "slot": int, "owner": String}
+var _overlay: Control   # Randpfeile über dem ganzen Bildschirm
 
 var world: World
 var night: Night
@@ -45,6 +49,11 @@ func _ready() -> void:
 	_time_label.add_theme_color_override("font_outline_color", Palette.UI_PANEL)
 	_time_label.add_theme_constant_override("outline_size", 6)
 	add_child(_time_label)
+	_overlay = Control.new()
+	_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_overlay.draw.connect(_draw_ping_arrows)
+	add_child(_overlay)
 
 
 func bind(w: World, n: Night, root: Node3D) -> void:
@@ -59,7 +68,10 @@ static func to_map(pos: Vector3, size := SIZE) -> Vector2:
 	return Vector2(size * 0.5 + pos.x * k, size * 0.5 + pos.z * k)
 
 
-func _process(_d: float) -> void:
+func _process(delta: float) -> void:
+	_connect_players()
+	tick_pings(delta)
+	_overlay.queue_redraw()
 	if world == null:
 		return
 	var total := world.stars.size()
@@ -98,6 +110,12 @@ func _draw_map() -> void:
 	for s in world.stars:
 		var sp := to_map(s.position)
 		c.draw_circle(sp, 4.0, Color(0.4, 0.9, 0.5) if s.is_clean else Palette.STAR_GOLD)
+	for pg in pings:   # G-33: pulsierender Ring in der Farbe des Absenders
+		var pm2 := to_map(pg["pos"])
+		var pulse := fmod(Time.get_ticks_msec() / 1000.0, 1.0)
+		var pc := Palette.player_color(int(pg["slot"]))
+		c.draw_arc(pm2, 4.0 + pulse * 8.0, 0.0, TAU, 20, Color(pc.r, pc.g, pc.b, 1.0 - pulse), 2.0)
+		c.draw_circle(pm2, 3.0, pc)
 	if players_root != null:
 		for n in players_root.get_children():
 			var p := n as Player
@@ -110,3 +128,67 @@ func _draw_map() -> void:
 				c.draw_arc(pm, 6.5, 0.0, TAU, 20, Color.WHITE, 1.5)
 				var f := Vector2(-sin(p.rotation.y), -cos(p.rotation.y))
 				c.draw_line(pm, pm + f * 12.0, Color.WHITE, 2.0)
+
+
+# ---------------------------------------------------------------- Pings (G-33)
+
+## Hört auf alle Spieler (auch später beigetretene): jeder Ping kommt per RPC bei jedem Spieler-Knoten an.
+func _connect_players() -> void:
+	if players_root == null:
+		return
+	for n in players_root.get_children():
+		var p := n as Player
+		if p != null and not p.has_meta("ping_hooked"):
+			p.set_meta("ping_hooked", true)
+			p.ping_received.connect(func(_sender: int, pt: Vector3): add_ping(pt, p))
+
+
+## Ping setzen. Pro Spieler gibt es nur einen aktiven Ping (der neue ersetzt den alten).
+func add_ping(pos: Vector3, from: Player = null) -> void:
+	var owner_name := str(from.name) if from != null else ""
+	for i in range(pings.size() - 1, -1, -1):
+		if pings[i]["owner"] == owner_name and owner_name != "":
+			pings.remove_at(i)
+	pings.append({"pos": pos, "left": PING_SECONDS, "slot": from.slot_index() if from != null else 0, "owner": owner_name})
+
+
+func tick_pings(delta: float) -> void:
+	for i in range(pings.size() - 1, -1, -1):
+		pings[i]["left"] = float(pings[i]["left"]) - delta
+		if float(pings[i]["left"]) <= 0.0:
+			pings.remove_at(i)
+
+
+## Punkt am Bildschirmrand in Richtung `screen_pos` (vom Mittelpunkt aus), mit Abstand `margin`.
+static func edge_point(screen_pos: Vector2, size: Vector2, margin: float = 36.0) -> Vector2:
+	var center := size * 0.5
+	var d := screen_pos - center
+	if d.length() < 0.001:
+		return center
+	var half := center - Vector2(margin, margin)
+	var s := minf(half.x / maxf(absf(d.x), 0.001), half.y / maxf(absf(d.y), 0.001))
+	return center + d * s
+
+
+## Randpfeil nötig? Ja, wenn der Punkt hinter der Kamera oder außerhalb des Bildschirms liegt.
+func _draw_ping_arrows() -> void:
+	if pings.is_empty() or local_player == null or not is_instance_valid(local_player) or local_player.cam == null:
+		return
+	var cam := local_player.cam
+	var size := get_viewport().get_visible_rect().size
+	for pg in pings:
+		var wp: Vector3 = pg["pos"] + Vector3(0, 1.0, 0)
+		var col := Palette.player_color(int(pg["slot"]))
+		var behind := cam.is_position_behind(wp)
+		var sp := cam.unproject_position(wp)
+		var inside := not behind and Rect2(Vector2.ZERO, size).grow(-24.0).has_point(sp)
+		if inside:
+			_overlay.draw_arc(sp, 14.0, 0.0, TAU, 24, col, 3.0)
+			_overlay.draw_circle(sp, 4.0, col)
+			continue
+		if behind:
+			sp = size * 0.5 + (size * 0.5 - sp)   # hinter dem Rücken: Richtung spiegeln
+		var ep := edge_point(sp, size)
+		var dir := (ep - size * 0.5).normalized()
+		var perp := Vector2(-dir.y, dir.x)
+		_overlay.draw_colored_polygon(PackedVector2Array([ep + dir * 16.0, ep - dir * 8.0 + perp * 10.0, ep - dir * 8.0 - perp * 10.0]), col)
