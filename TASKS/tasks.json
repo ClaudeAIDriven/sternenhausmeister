@@ -382,7 +382,7 @@
    "N-02"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Himmelsgröße und Ereignisdichte aus player_count (1–4+); Zeitlimit bleibt gleich.",
   "files": [
    "world.gd"
