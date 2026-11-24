@@ -98,7 +98,7 @@
    "C-01"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Lautstärke, Mausempfindlichkeit, FOV, UI-Skalierung in user://settings.cfg speichern/laden.",
   "files": [
    "settings.gd",

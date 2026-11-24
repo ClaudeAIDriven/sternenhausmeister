@@ -10,6 +10,7 @@ config/features=PackedStringArray("4.3", "Forward Plus")
 [autoload]
 
 GameState="*res://game_state.gd"
+Settings="*res://settings.gd"
 
 [display]
 
