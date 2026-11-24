@@ -825,7 +825,7 @@
    "A-06"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "`PlayerLook.build(index)`: Capsule, Augen, Arme/Beine, gleiche Geometrie, Varianten per Material und Zubehör (Wedel, Mütze, Sternanhänger, Schal), Fußring und Symbol für Farbenblindheit.",
   "files": [
    "player_look.gd"

@@ -46,7 +46,7 @@
 | [A-06](A-06.md) | C | nice | ART | Styleguide und Farbpalette (Midnight Toy Garden) | S | done | A-01 |
 | [A-17](A-17.md) | C | nice | ART | Asset-Katalog mit Produktionsdaten | S | done | A-06 |
 | [A-07](A-07.md) | C | nice | ART | Himmelsphasen: Dämmerung, Mitternacht, Morgenrot | S | done | A-06, A-04 |
-| [A-08](A-08.md) | C | nice | ART | Spieler-Look: Körper, Gliedmaßen, 4 Varianten mit Symbolen | M | open | A-06 |
+| [A-08](A-08.md) | C | nice | ART | Spieler-Look: Körper, Gliedmaßen, 4 Varianten mit Symbolen | M | done | A-06 |
 | [A-09](A-09.md) | C | nice | ART | Werkzeug-Modelle: Wedel, Sauger, Tuch, Polierpad | M | open | A-06 |
 | [A-10](A-10.md) | C | nice | ART | Schmutz-Texturen: Ruß, Flecken, Patina (Form statt nur Farbe) | M | open | A-06 |
 | [A-11](A-11.md) | C | nice | ART | Stern-Look: Reinigungsübergang schmutzig zu golden | M | open | A-06, A-10, A-01 |
