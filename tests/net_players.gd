@@ -39,7 +39,7 @@ func _process(delta: float) -> bool:
 	t += delta
 	var n: int = spawner.player_count()
 	if int(t) != int(t - delta) and OS.get_environment("NETP_DEBUG") != "":
-		print("NETP dbg ", role, " t=", int(t), " n=", n, " status=", root.multiplayer.multiplayer_peer.get_connection_status() if root.multiplayer.multiplayer_peer else -1, " players=", NetworkManager.players.size())
+		print("NETP dbg ", role, " t=", int(t), " n=", n, " status=", root.multiplayer.multiplayer_peer.get_connection_status() if root.multiplayer.multiplayer_peer else -1, " players=", root.get_node("NetworkManager").players.size())
 	if role == "host":
 		if n == 4 and moved_at < 0.0:
 			moved_at = t
