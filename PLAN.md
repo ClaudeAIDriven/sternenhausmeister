@@ -11,7 +11,7 @@ Godot-Binary lokal: /home/claude/tools/Godot_v4.3-stable_linux.x86_64
 - [ ] Block 5: Politur (Menü, Einstellungen, Zen-Modus, Fehlerbehebung)
 
 ## Notizen
-- Test ohne GPU: `xvfb-run ... godot --rendering-method gl_compatibility --rendering-driver opengl3 --write-movie /tmp/shots/f.png --quit-after 45`
+- Test ohne GPU: `xvfb-run ... godot --rendering-method gl_compatibility --rendering-driver opengl3 --write-movie /tmp/shots/f.png --quit-after 45 -- --nomenu` (ohne `--nomenu` startet das Spiel im Hauptmenü)
 - Logik-Selbsttest: `godot --headless --quit-after 60 -- --selftest`
 - Offen: Renderer (Forward+ braucht Vulkan, Compatibility läuft auf mehr PCs) – vor Release entscheiden.
 - Feel (Putzen) kann nur der Nutzer beurteilen.
@@ -61,3 +61,4 @@ G-08 (A): Sternzahl und Ereignisdichte aus Spielerzahl (1 Spieler 3 Sterne, 4 Sp
 U-01 (A): Hauptmenü (menu.tscn/menu.gd): Name, Solo, Host, Beitreten mit Adressprüfung, Einstellungen (Regler), Beenden; Wahl in Menu.launch + Signal (tests/test_menu.gd OK, Screenshot mit Backdrop 🟢; 🟡 noch offen: main.gd muss Menu.launch auswerten und project.godot main_scene auf menu.tscn zeigen, bis dahin startet Host/Join nur per Kommandozeile)
 N-06 (A): docs/INTERNET.md (VPN-Tipps Tailscale/Radmin/ZeroTier, UPnP, Port-Weiterleitung, Fehlersuche) und UPnP-Versuch beim Hosten in eigenem Thread, Fehler brechen das Hosten nie ab (tests/test_upnp.gd OK ohne Router 🟢; ❌ mit echtem Router/Internet ungetestet; installer.nsi nennt noch Port 7777 statt 24680)
 U-03 (A): Pause- und Einstellungsmenü (pause.gd): Esc, Regler Lautstärke/Maus/FOV/UI-Größe wirken sofort und werden gespeichert, Tastenübersicht, Weiter/Hauptmenü/Beenden (tests/test_pause.gd OK 🟢; 🟡 kein Screenshot, Maus-Empfindlichkeit wirkt erst wenn player.gd die Einstellung nutzt, Tasten umbelegen = C-04; noch nicht in main.gd eingehängt)
+I-01 (A): main.gd startet ohne Option im Hauptmenü (--nomenu überspringt), wertet Menu.launch aus (Solo/Host/Join), hängt Pause und Shop ein, Wischradius aus Shop (tests/test_main_flow.gd OK 🟢, Screenshots Menü und Spiel 🟢; 🟡 Menü-Host/Join nur lokal-headless nicht per Klick getestet; Tempo/Reichweite/Maus-Empfindlichkeit brauchen player.gd)
