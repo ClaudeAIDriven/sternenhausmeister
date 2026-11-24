@@ -56,3 +56,14 @@ func spend_dust(amount: int) -> bool:
 		return false
 	add_dust(-amount)
 	return true
+
+
+## G-20: Zieht `fraction` (0..1) des Sternenstaubs ab (abgerundet). Gibt den Verlust zurück.
+func lose_dust_fraction(fraction: float) -> int:
+	if dust <= 0:
+		return 0
+	var lost := clampi(int(floor(dust * fraction)), 0, dust)
+	if lost <= 0:
+		return 0
+	add_dust(-lost)
+	return lost
