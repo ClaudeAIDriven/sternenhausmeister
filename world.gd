@@ -19,6 +19,7 @@ signal puzzle_solved(bonus: int)                # Sternbild gelöst, Bonus-Staub
 
 var puzzle: Constellation
 var lines: ConstellationLines
+var balloon: Balloon
 
 var stars: Array[Star] = []
 
@@ -207,6 +208,11 @@ func _decorate_island() -> void:
 	shop_house.position = Vector3(-8, 0, -6)
 	shop_house.rotation.y = 0.6
 	add_child(shop_house)
+	# Ballon (G-10): steigt mit Mitfahrern, so werden die hohen Sterne erreichbar
+	balloon = Balloon.new()
+	balloon.name = "Ballon"
+	balloon.position = Vector3(9.5, 0.15, -2.0)
+	add_child(balloon)
 	var sign := IslandProps.sign_post("Werkstatt")
 	sign.position = Vector3(-5, 0, -3.5)
 	add_child(sign)

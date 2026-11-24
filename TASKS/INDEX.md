@@ -60,4 +60,4 @@
 | [I-03](I-03.md) | A | must | ART | Integration: Sternlook, Insel-Props und Staub-Effekt in world.gd/star.gd | S | done | I-01, A-11, A-12, A-05 |
 | [I-04](I-04.md) | A | must | GAME | Integration: Sternbild-Rätsel mit Linien in world.gd/star.gd | M | done | I-03, G-03, A-13 |
 | [I-05](I-05.md) | A | must | UI | HUD: Sternbild-Fortschritt und Hinweise | S | done | I-04 |
-| [I-06](I-06.md) | A | must | GAME | Ballon in die Welt einbauen | S | open | I-03, G-10 |
+| [I-06](I-06.md) | A | must | GAME | Ballon in die Welt einbauen | S | done | I-03, G-10 |
