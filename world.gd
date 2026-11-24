@@ -33,6 +33,14 @@ var balloon: Balloon
 
 var stars: Array[Star] = []
 
+## G-15: Sternschnuppen-Treffer bringen wenige Flecken auf einen geputzten Stern zurück (nur Host entscheidet, wird synchronisiert).
+## Zen (`zen = true`) schaltet das ab. Beim erneuten Putzen zählt der Stern nicht noch einmal fürs Sternbild/den Team-Bonus.
+const METEOR_SPOTS_MIN := 3
+const METEOR_SPOTS_MAX := 6
+signal star_redirtied(star: Star, restored: int)
+var zen := false
+var _recleaning := {}   # Stern-Index -> true, solange er nach einem Treffer wieder sauber gewischt werden muss
+
 
 func _init() -> void:
 	name = "World"   # fester Name: RPC-Pfade müssen bei allen Spielern gleich sein
@@ -326,6 +334,10 @@ func _rpc_coop(amount: int) -> void:
 
 
 func _on_star_cleaned(s: Star) -> void:
+	var cidx := _star_index(s)
+	if _recleaning.has(cidx):
+		_recleaning.erase(cidx)
+		return   # G-15: nur wieder sauber gemacht, Sternbild und Team-Bonus zählen den Stern nicht doppelt
 	if not (NetworkManager.is_online() and not multiplayer.is_server()):
 		_pending_coop.append(_star_index(s))
 	if puzzle == null or (NetworkManager.is_online() and not multiplayer.is_server()):
@@ -340,6 +352,7 @@ func _on_star_cleaned(s: Star) -> void:
 		redirty = _last_redirty
 		for i in redirty:
 			stars[i].reset()
+			_recleaning.erase(i)
 	if result == "solved":
 		GameState.add_dust(puzzle.bonus())
 		puzzle_solved.emit(puzzle.bonus())
@@ -378,3 +391,46 @@ func _rpc_puzzle(done: int, solved: bool, redirty: Array) -> void:
 	_show_puzzle()
 	if not redirty.is_empty():
 		puzzle_wrong.emit(puzzle.hint())
+
+
+# ---------------------------------------------------------------- Sternschnuppen (G-15)
+
+## Meteor-Treffer (Host): `star_idx` ist das Ziel; ist er nicht sauber, trifft es einen zufälligen geputzten Stern.
+## Gibt die Zahl zurückgekehrter Flecken zurück (0: Zen, Client, nichts Sauberes, Sternbild schon gelöst).
+func meteor_strike(star_idx: int, rng: RandomNumberGenerator = null) -> int:
+	if zen or (NetworkManager.is_online() and not multiplayer.is_server()):
+		return 0
+	if puzzle != null and puzzle.is_solved:
+		return 0   # gelöstes Sternbild bleibt gelöst
+	var clean: Array[int] = []
+	for i in stars.size():
+		if stars[i].is_clean:
+			clean.append(i)
+	if clean.is_empty():
+		return 0
+	var idx := star_idx
+	if not clean.has(idx):
+		idx = clean[(rng.randi() if rng != null else randi()) % clean.size()]
+	var n := METEOR_SPOTS_MIN + (rng.randi() if rng != null else randi()) % (METEOR_SPOTS_MAX - METEOR_SPOTS_MIN + 1)
+	var ids := stars[idx].redirty(n, rng)
+	if ids.is_empty():
+		return 0
+	_recleaning[idx] = true
+	if NetworkManager.is_online():
+		_rpc_restored.rpc(idx, ids)
+	star_redirtied.emit(stars[idx], ids.size())
+	return ids.size()
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_restored(star_idx: int, ids: Array) -> void:
+	if star_idx >= 0 and star_idx < stars.size():
+		var n := stars[star_idx].apply_restored(ids)
+		if n > 0:
+			star_redirtied.emit(stars[star_idx], n)
+
+
+## Verbindet ein Weather mit der Welt (Zen = `cosmetic` schaltet Treffer aus). Aufruf ersetzt keine Sternpositionen.
+func attach_weather(w: Weather) -> void:
+	w.meteor_strike.connect(func(i: int): meteor_strike(i))
+	zen = w.cosmetic
