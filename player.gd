@@ -5,6 +5,7 @@ extends CharacterBody3D
 signal wipe_requested(point: Vector3)
 signal health_changed(value: float)
 signal died
+signal revived(by_teammate: bool)   # G-20
 signal hit_landed(target: Player)
 
 const SPEED := 6.0
@@ -23,6 +24,13 @@ const ATTACK_RANGE := 2.4
 const ATTACK_COOLDOWN := 0.7
 const RESPAWN_INVULN := 2.0
 const SPAWN_POINT := Vector3(0, 2, 6)
+## G-20: Bei 0 Leben fällt der Spieler um, verliert 10 % Sternenstaub und wartet RESPAWN_TIME Sekunden. Ein Mitspieler
+## beendet das sofort, wenn er REVIVE_TIME Sekunden F hält (Reichweite REVIVE_RANGE). Wiederbelebte starten mit halber Gesundheit.
+const DEATH_DUST_LOSS := 0.10
+const RESPAWN_TIME := 60.0
+const REVIVE_TIME := 3.0
+const REVIVE_RANGE := 2.5
+const REVIVE_HEALTH := 0.5
 
 var yaw := 0.0
 var pitch := -0.25
@@ -38,6 +46,13 @@ var nameplate: Label3D
 var _shop: Node
 var _shown_tool := "wedel"   # G-25: welches Utensil gerade als Modell in der Hand ist
 var health := MAX_HEALTH
+var food := Food.new()         # G-21: Sättigung, nur lokal
+var downed := false            # G-20: am Boden, wird mit repliziert
+var respawn_left := 0.0
+var revive_target: Player      # wen ich gerade wiederbelebe (für die Anzeige)
+var revive_progress := 0.0     # 0..1
+var last_dust_lost := 0
+var _revive_held := 0.0
 var role := Roles.DEFAULT_ID      # I-13, wird mit repliziert
 var _jump_cd := 0.0
 var _impulse := Vector3.ZERO
@@ -93,7 +108,7 @@ func _ready() -> void:
 
 	# Position und Blickrichtung an die anderen Spieler senden
 	var cfg := SceneReplicationConfig.new()
-	for prop in [^":position", ^":rotation", ^":health", ^":role"]:
+	for prop in [^":position", ^":rotation", ^":health", ^":role", ^":downed"]:
 		cfg.add_property(prop)
 		cfg.property_set_replication_mode(prop, SceneReplicationConfig.REPLICATION_MODE_ALWAYS)
 	var sync := MultiplayerSynchronizer.new()
@@ -117,9 +132,13 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(delta: float) -> void:
 	if not is_multiplayer_authority():
 		return   # fremde Spieler werden per Synchronisation bewegt
+	if downed:
+		_physics_downed(delta)
+		return
+	update_revive(delta, Input.is_physical_key_pressed(KEY_F) and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED)
 	var input_dir := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var dir := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-	var speed := stat("speed", SPEED) * Roles.factor(role, "speed")
+	var speed := stat("speed", SPEED) * Roles.factor(role, "speed") * food.speed_factor()
 	_jump_cd = maxf(_jump_cd - delta, 0.0)
 	if _on_balloon != null and is_instance_valid(_on_balloon) and _on_balloon.is_aloft():
 		# Ballon lenken (I-11): Auf der Plattform in der Luft steuert WASD den Ballon statt den Spieler.
@@ -136,6 +155,7 @@ func _physics_process(delta: float) -> void:
 		velocity.y -= GRAVITY * delta
 	elif Input.is_action_just_pressed("jump") and _jump_cd <= 0.0:
 		velocity.y = JUMP_VELOCITY * Roles.factor(role, "jump")
+		food.on_jump()
 		_jump_cd = Roles.factor(role, "jump_cd")
 	move_and_slide()
 	_track_floor()
@@ -144,6 +164,7 @@ func _physics_process(delta: float) -> void:
 		_airborne = false
 		global_position = SPAWN_POINT
 		velocity = Vector3.ZERO
+	food.tick(delta, Vector2(velocity.x, velocity.z).length() > 0.5, cleaning)
 	_tick_health(delta)
 	if InputMap.has_action("attack") and Input.is_action_just_pressed("attack") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		try_attack()
@@ -179,6 +200,8 @@ func _process(delta: float) -> void:
 		_phase += _anim_speed * delta * 1.7
 		if look != null:
 			PlayerLook.animate(look, _phase, clampf(_anim_speed / SPEED, 0.0, 1.0))
+	if look != null:   # G-20: Gefallene liegen auf der Seite
+		look.rotation.z = lerpf(look.rotation.z, PI * 0.5 if downed else 0.0, clampf(delta * 8.0, 0.0, 1.0))
 	_refresh_tool()
 	# Wedel schwingt beim Putzen
 	var t := Time.get_ticks_msec() / 1000.0
@@ -280,25 +303,135 @@ func _tick_health(delta: float) -> void:
 	_attack_cd = maxf(_attack_cd - delta, 0.0)
 	_since_damage += delta
 	if health < MAX_HEALTH and _since_damage >= REGEN_DELAY:
-		health = minf(health + REGEN_RATE * delta, MAX_HEALTH)
+		health = minf(health + REGEN_RATE * delta * food.regen_factor(), MAX_HEALTH)
 		health_changed.emit(health)
 
 
 ## Schaden (nur beim Besitzer-Peer wirksam). Bei 0: kurz benommen, zurück zur Startlaterne mit voller Gesundheit.
 func damage(amount: float) -> void:
-	if amount <= 0.0 or _invuln > 0.0 or not is_multiplayer_authority():
+	if amount <= 0.0 or _invuln > 0.0 or downed or not is_multiplayer_authority():
 		return
 	health = maxf(health - amount, 0.0)
 	_since_damage = 0.0
 	health_changed.emit(health)
 	if health <= 0.0:
+		_go_down()
+
+
+## G-20: Umfallen. 10 % des Sternenstaubs gehen verloren, dann läuft der Respawn-Zähler.
+func _go_down() -> void:
+	downed = true
+	cleaning = false
+	respawn_left = RESPAWN_TIME
+	revive_target = null
+	revive_progress = 0.0
+	_revive_held = 0.0
+	velocity = Vector3.ZERO
+	_impulse = Vector3.ZERO
+	_airborne = false
+	last_dust_lost = GameState.lose_dust_fraction(DEATH_DUST_LOSS)
+	died.emit()
+
+
+## Am Boden: Zähler läuft, bei 0 Rückkehr zur Startlaterne mit voller Gesundheit.
+func _physics_downed(delta: float) -> void:
+	if not is_on_floor():
+		velocity.y -= GRAVITY * delta
+	velocity.x = 0.0
+	velocity.z = 0.0
+	move_and_slide()
+	tick_downed(delta)
+	_follow_spectated()
+
+
+func tick_downed(delta: float) -> void:
+	if not downed:
+		return
+	respawn_left = maxf(respawn_left - delta, 0.0)
+	if respawn_left <= 0.0:
+		get_up(false)
+
+
+## Aufstehen. Mitspieler-Hilfe: sofort, an Ort und Stelle, halbe Gesundheit. Zeitablauf: volle Gesundheit an der Startlaterne.
+func get_up(by_teammate: bool) -> void:
+	if not downed:
+		return
+	downed = false
+	respawn_left = 0.0
+	_invuln = RESPAWN_INVULN
+	_since_damage = 0.0
+	if by_teammate:
+		health = MAX_HEALTH * REVIVE_HEALTH
+	else:
 		health = MAX_HEALTH
 		global_position = SPAWN_POINT
-		velocity = Vector3.ZERO
-		_airborne = false
-		_invuln = RESPAWN_INVULN
-		health_changed.emit(health)
-		died.emit()
+	velocity = Vector3.ZERO
+	_airborne = false
+	if arm != null:
+		arm.top_level = false
+		arm.position = Vector3(0, 1.5, 0)
+		arm.rotation = Vector3(pitch, 0, 0)
+	health_changed.emit(health)
+	revived.emit(by_teammate)
+
+
+## Mitspieler halten F neben einem Gefallenen. Sammelt Haltezeit; nach REVIVE_TIME wird er sofort wiederbelebt.
+## `held` = F gerade gedrückt. Gibt true zurück, wenn in diesem Schritt jemand aufgeholfen wurde.
+func update_revive(delta: float, held: bool) -> bool:
+	var target: Player = null
+	if held:
+		var best := REVIVE_RANGE
+		for n in get_tree().get_nodes_in_group("players"):
+			var o := n as Player
+			if o == null or o == self or not o.downed:
+				continue
+			var d := o.global_position.distance_to(global_position)
+			if d < best:
+				best = d
+				target = o
+	if target == null or target != revive_target:
+		_revive_held = 0.0
+	revive_target = target
+	if target == null:
+		revive_progress = 0.0
+		return false
+	_revive_held += delta
+	revive_progress = clampf(_revive_held / REVIVE_TIME, 0.0, 1.0)
+	if _revive_held >= REVIVE_TIME:
+		_revive_held = 0.0
+		revive_progress = 0.0
+		revive_target = null
+		if target.is_multiplayer_authority():
+			target.get_up(true)
+		else:
+			target.rpc_revive.rpc_id(target.get_multiplayer_authority())
+		return true
+	return false
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func rpc_revive() -> void:
+	if is_multiplayer_authority():
+		get_up(true)
+
+
+## Zuschauer-Kamera: Der Gefallene schaut einem noch stehenden Mitspieler über die Schulter (wenn es einen gibt).
+func _follow_spectated() -> void:
+	if arm == null or cam == null or not cam.current:
+		return
+	var tgt: Player = null
+	for n in get_tree().get_nodes_in_group("players"):
+		var o := n as Player
+		if o != null and o != self and not o.downed:
+			tgt = o
+			break
+	if tgt == null:
+		arm.top_level = false
+		arm.position = Vector3(0, 1.5, 0)
+		return
+	arm.top_level = true
+	arm.global_position = tgt.global_position + Vector3(0, 1.5, 0)
+	arm.global_rotation = Vector3(-0.25, tgt.rotation.y, 0)
 
 
 ## Schlag auf den nächsten anderen Spieler vor dir (Reichweite ATTACK_RANGE, Abklingzeit ATTACK_COOLDOWN).
@@ -348,7 +481,7 @@ func knock(v: Vector3) -> void:
 
 ## Wischradius-Faktor der Rolle (main.gd multipliziert damit den Shop-Radius).
 func wipe_factor() -> float:
-	return Roles.factor(role, "wipe")
+	return Roles.factor(role, "wipe") * food.clean_factor()
 
 
 ## G-25: Ausgerüstetes Utensil aus der Werkstatt (leer = Wedel ohne Shop).
