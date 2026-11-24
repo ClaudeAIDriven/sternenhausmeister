@@ -1510,7 +1510,7 @@
    "G-25"
   ],
   "size": "L",
-  "status": "open",
+  "status": "done",
   "goal": "XP für Putzen, Sterne, Sternbilder, Gegner, Kochen, Wiederbeleben. Stufenaufstieg gibt einen Fähigkeitspunkt. Fähigkeitsbaum: allgemein (Ausdauer, Lunge, Taschen) und je Rolle 3 Fähigkeiten (z. B. Hüpfer: Doppelsprung; Koch: Festmahl; Putzer: Glanzwisch).",
   "files": [
    "xp.gd",
