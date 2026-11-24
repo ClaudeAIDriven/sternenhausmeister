@@ -881,7 +881,7 @@
    "A-01"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Stern-Shader/-Material mit Parameter `clean` 0..1 (0/25/50/75/100 %), goldene Stellen wachsen, Leuchten und Rim-Light steigen.",
   "files": [
    "shaders/star_clean.gdshader",
