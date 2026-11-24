@@ -4,12 +4,15 @@ var frames := 0
 var main
 func _process(_d: float) -> bool:
 	frames += 1
+	if frames == 2 and OS.get_environment("SHOT_CAM") == "menu":
+		change_scene_to_file("res://menu.tscn")
+		return false
 	if frames == 2:
 		var menu = load("res://menu.gd")
 		menu.launch = {"mode": "solo", "name": "Foto", "preset": "standard", "map": OS.get_environment("SHOT_MAP") if OS.get_environment("SHOT_MAP") != "" else "mondwiese"}
 		main = load("res://main.gd").new()
 		root.add_child(main)
-	if frames == 40 and OS.get_environment("SHOT_CAM") != "":
+	if frames == 40 and OS.get_environment("SHOT_CAM") not in ["", "menu"]:
 		var cam := Camera3D.new()
 		root.add_child(cam)
 		var what := OS.get_environment("SHOT_CAM")   # star | spider | bunny | cloud | player

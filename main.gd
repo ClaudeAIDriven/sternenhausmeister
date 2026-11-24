@@ -319,7 +319,12 @@ func _build_saving() -> void:
 		GameState.night_ended.connect(func():
 			nights_played += 1
 			save_now("autosave"))
-		world.set_map(str(Menu.launch.get("map", Maps.DEFAULT_ID)))   # M-03: Karte aus dem Menü (Host/Solo)
+		var map_choice := str(Menu.launch.get("map", Maps.DEFAULT_ID))
+		world.set_map(map_choice)   # M-03: Karte aus dem Menü (Host/Solo)
+		var seed_txt := str(Menu.launch.get("seed", ""))   # M-07: eigener Seed, sonst klassisch (Mondwiese) bzw. zufällig
+		var seed_val := int(seed_txt) if seed_txt.is_valid_int() else (0 if map_choice == Maps.DEFAULT_ID else randi_range(1, 99999))
+		if seed_val != 0 and str(Menu.launch.get("load", "")) == "":
+			world.set_island_seed(seed_val)
 		var slot := str(Menu.launch.get("load", ""))
 		if slot != "":
 			loaded_save = SaveGame.load_game(slot)
