@@ -788,7 +788,7 @@
    "A-06"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Liste aller Assets mit Name, Zweck, Format, Auflösung, Transparenz, Kachelbarkeit, Priorität, Godot-Hinweis, gegliedert nach Phase 1 bis 4.",
   "files": [
    "docs/ASSETS.md"
