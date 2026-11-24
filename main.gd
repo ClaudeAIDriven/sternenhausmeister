@@ -16,11 +16,26 @@ var notes: Array[AudioStreamWAV] = []
 var scrub_sound: AudioStreamWAV
 var chime: Array[AudioStreamWAV] = []
 var night: Night
+var pause: Pause
+var shop: Shop
 var note_idx := 0
 var scrub_cooldown := 0.0
 
 
+## Ohne Startoption (Kommandozeile oder Menü-Wahl) geht es ins Hauptmenü (U-01). `--nomenu` überspringt das Menü (Tests, Screenshots).
+static func wants_menu(args: PackedStringArray, launch: Dictionary) -> bool:
+	if not launch.is_empty():
+		return false
+	for a in ["--selftest", "--host", "--join", "--nomenu"]:
+		if a in args:
+			return false
+	return true
+
+
 func _ready() -> void:
+	if wants_menu(OS.get_cmdline_user_args(), Menu.launch):
+		get_tree().change_scene_to_file.call_deferred("res://menu.tscn")
+		return
 	_setup_input()
 	sky = NightSky.new()
 	add_child(sky)
@@ -30,6 +45,11 @@ func _ready() -> void:
 	_build_player()
 	hud = Hud.new()
 	add_child(hud)
+	shop = Shop.new()   # G-05: Upgrades (Wischradius wirkt hier, Tempo/Reichweite folgen mit player.gd)
+	add_child(shop)
+	pause = Pause.new()   # U-03: Esc
+	add_child(pause)
+	NetworkManager.disconnected.connect(func(): get_tree().change_scene_to_file("res://menu.tscn"))
 	world.star_scrubbed.connect(_on_star_scrubbed)
 	world.star_cleaned.connect(_on_star_cleaned)
 	_refresh_hud()
@@ -80,13 +100,24 @@ func _build_player() -> void:
 	spawner = PlayerSpawner.new()
 	add_child(spawner)
 	spawner.setup(players_root)
-	# Testbetrieb per Kommandozeile: -- --host   oder   -- --join <IP>
+	# Startart: Menü-Wahl (Menu.launch) oder Kommandozeile: -- --host   bzw.   -- --join <IP>
 	var args := OS.get_cmdline_user_args()
+	var pname := str(Settings.get_value("player_name"))
+	var mode: String = str(Menu.launch.get("mode", ""))
+	var ip: String = str(Menu.launch.get("ip", ""))
 	if "--host" in args:
-		NetworkManager.host(NetworkManager.DEFAULT_PORT, str(Settings.get_value("player_name")))
+		mode = "host"
 	elif "--join" in args and args.find("--join") + 1 < args.size():
-		NetworkManager.join(args[args.find("--join") + 1], NetworkManager.DEFAULT_PORT, str(Settings.get_value("player_name")))
-	else:
+		mode = "join"
+		ip = args[args.find("--join") + 1]
+	var err := OK
+	if mode == "host":
+		err = NetworkManager.host(NetworkManager.DEFAULT_PORT, pname)
+	elif mode == "join":
+		err = NetworkManager.join(ip, NetworkManager.DEFAULT_PORT, pname)
+	if mode == "" or mode == "solo" or err != OK:
+		if err != OK:
+			push_warning("Netzwerkstart fehlgeschlagen (Fehler %d), starte allein." % err)
 		spawner.spawn_offline()
 
 	dust = CPUParticles3D.new()
@@ -112,10 +143,8 @@ func _build_player() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+	if event is InputEventMouseButton and event.pressed and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED and not pause.is_open:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
 func _process(delta: float) -> void:
@@ -134,7 +163,7 @@ func _refresh_hud(extra := "") -> void:
 
 
 func _on_wipe_requested(point: Vector3) -> void:
-	world.wipe_at(point, 0.9)
+	world.wipe_at(point, shop.value("wipe_radius"))
 	if scrub_cooldown <= 0.0:
 		sfx.play(scrub_sound, randf_range(0.9, 1.15), -6.0)
 		scrub_cooldown = 0.11
