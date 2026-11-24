@@ -89,6 +89,23 @@ func diary_text(last: int = 5) -> String:
 	return "\n".join(lines)
 
 
+## M-13: Übersicht für das Pausenmenü: Erfolge (✓ erreicht, · offen mit Zähler, Hut-Belohnung) und Tagebuch.
+func journal_text() -> String:
+	var lines: Array[String] = [progress_text()]
+	for d in DEFS:
+		var hat: String = str(d[4])
+		var reward := ("  (Hut: %s)" % hat) if hat != "" else ""
+		if done.has(d[0]):
+			lines.append("✓ %s%s" % [d[1], reward])
+		else:
+			lines.append("· %s  [%d/%d]%s" % [d[1], mini(int(counts.get(d[2], 0)), int(d[3])), int(d[3]), reward])
+	var dt := diary_text()
+	lines.append("")
+	lines.append("Tagebuch:")
+	lines.append(dt if dt != "" else "(noch keine Nacht beendet)")
+	return "\n".join(lines)
+
+
 func progress_text() -> String:
 	return "%d / %d Erfolge · %d Hüte" % [done.size(), DEFS.size(), hats.size()]
 

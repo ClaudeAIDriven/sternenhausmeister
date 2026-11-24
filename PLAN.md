@@ -117,3 +117,4 @@ G-30 (bot-A): Orte (poi.gd, Gruppe pois): Brunnen (heilt 2/s in 4 m), Obstgarten
 - M-10 (bot-A): Finale – Durchlauf-Test über alle 4 Karten (Start, Putzen, Gegner, Boss im Team, Speichern/Autosave), Spielanleitung und KNOWN_ISSUES aktualisiert, net_stars-Test mit Zen (Wollmäuse verfälschten die Fleckzahl). Alle Headless-Tests und 9 Netztests grün. 🔴 Von Menschen ungetestet: Gefühl, Balance, Netz zu zweit auf echten Rechnern, Windows, echte GPU.
 M-11 Lücken geschlossen: climb/ladder_time-Fähigkeiten, Wiederbeleben-XP, Sternzähler einmal pro Stern
 M-12 Ballon host-autoritativ: Host rechnet, Clients lenken per RPC (tools/test_netballoon.sh)
+M-13 Hut repliziert, Erfolge/Tagebuch im Pausenmenü
