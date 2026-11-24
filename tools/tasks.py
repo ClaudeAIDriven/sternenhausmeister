@@ -97,6 +97,11 @@ def main():
         print("Stand:", dict(Counter(x["status"] for x in t)))
         print("Beansprucht:", claims() or "nichts")
         print("Startbar:", [x["id"] for x in ready(t)])
+        import importlib.util, pathlib
+        sp = importlib.util.spec_from_file_location("ideas", pathlib.Path(__file__).with_name("ideas.py"))
+        im = importlib.util.module_from_spec(sp); sp.loader.exec_module(im)
+        n = len(im.open_ideas(im.p.read_text(encoding="utf-8")))
+        print(f"IDEEN: {n} offen -> `python3 tools/ideas.py`, jede entscheiden (Pflicht, AGENT_PROMPT Schritt 1)" if n else "Ideen: keine offenen")
     elif cmd == "index":
         save(t)
     else:
