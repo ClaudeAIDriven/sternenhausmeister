@@ -1135,7 +1135,7 @@
    "G-04"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Wer ohne Pause wischt, baut eine Serie auf: Tonhöhe steigt, Staub +10 % je Stufe bis +50 %; Pause > 1,5 s setzt zurück. Siehe IB-05.",
   "files": [
    "combo.gd",
