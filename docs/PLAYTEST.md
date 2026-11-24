@@ -52,7 +52,7 @@ Für Menschen: Spielgefühl beurteilt kein Modell. Pro Punkt ✅ / ❌ und eine 
 ## 6b. Schnelltest für die Demo (10 Minuten, bitte zuerst)
 Build: Release `latest`, `StarScrubber-Setup.exe`. Alles ungetestet unter Windows, bitte abhaken oder als Issue melden.
 - [ ] Setup installiert, Spiel startet, Hauptmenü mit Logo „StarScrubber“ erscheint (Windows-Warnung „unbekannter Herausgeber“ ist erwartet).
-- [ ] „Allein putzen“: Hinweise erscheinen (nur beim ersten Spiel), Stern wischen klappt, Staub steigt, Taste B öffnet die Werkstatt, Kauf funktioniert.
+- [ ] „Allein putzen“: Hinweise erscheinen (nur beim ersten Spiel), Stern wischen klappt, Staub steigt, an der Werkstatt öffnet F die Upgrades, Kauf funktioniert.
 - [ ] Alle Sterne putzen, Sternbild in richtiger Reihenfolge: Linien leuchten, Bonus-Staub. Falsche Reihenfolge: Sterne werden wieder schmutzig.
 - [ ] Esc: Pause mit Reglern und Barrierefreiheit-Panel; „Zum Hauptmenü“ geht.
 - [ ] Zu zweit: Host „Raum eröffnen“, Adresse oben links, zweite Person tritt bei, beide sehen sich, Putzen und Kauf wirken bei beiden. Teamarbeit-Bonus erscheint, wenn beide denselben Stern putzen.

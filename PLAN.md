@@ -84,3 +84,7 @@ I-08 Presets (Spielart im Menü, Zeitlimit, Hinweise) und Barrierefreiheit-Panel
 I-09 Werkstatt-Oberfläche: Taste B, Upgrades kaufen (Shop hatte keine UI); Online-Kauf über Host ungetestet im echten Netz
 U-06 Anfängerhilfe: Hinweise in 3 Schritten beim ersten Spiel, erster Sternbild-Stern pulsiert (Texte/Timing ungetestet von Menschen)
 I-10 Shop-Kauf im Netz: Preis wird bei allen abgebucht (Staub ist je Spieler gespiegelt, kleine Abweichungen durch Kombo möglich)
+I-11 Spielwelt: Lauf-Animation, Ballon ebenerdig und lenkbar, Kollision Haus/Laternen/Schild, Werkstatt mit F in der Nähe, Insel Radius 32
+I-12 Gesundheit: Lebensleiste, Regeneration nach 6 s, Fallschaden ab 5 m, Schubsen (rechte Maustaste), Lava, Kaktus, Respawn
+I-13 Rollen: Allrounder, Hüpfer, Gründlicher Putzer (Spinnenangst), Flitzer
+I-14 Minimap mit Werkstatt, Ballon, Sternen, Gefahren, Spielern, Fortschritt und Zeit

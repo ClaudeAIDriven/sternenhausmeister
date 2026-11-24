@@ -18,6 +18,7 @@ var ip_edit: LineEdit
 var status: Label
 var buttons := {}   # "solo" | "host" | "join" | "settings" | "quit" -> Button
 var main_box: VBoxContainer
+var role_option: OptionButton    # I-13: Rolle
 var preset_option: OptionButton   # I-08: Spielart (Presets aus G-09)
 var settings_box: VBoxContainer
 var _canvas: CanvasLayer
@@ -71,6 +72,15 @@ func _build_ui() -> void:
 	name_edit.text = str(Settings.get_value("player_name"))
 	name_edit.max_length = 16
 	main_box.add_child(name_edit)
+	main_box.add_child(_label("Rolle"))
+	role_option = OptionButton.new()
+	role_option.name = "RoleOption"
+	for rid in Roles.ids():
+		role_option.add_item("%s – %s" % [Roles.data(rid)["name"], Roles.data(rid)["desc"]])
+		role_option.set_item_metadata(role_option.item_count - 1, rid)
+		if rid == str(Settings.get_value("role")):
+			role_option.select(role_option.item_count - 1)
+	main_box.add_child(role_option)
 	main_box.add_child(_label("Spielart"))
 	preset_option = OptionButton.new()
 	preset_option.name = "PresetOption"
@@ -183,6 +193,10 @@ func start(mode: String) -> bool:
 	var preset: String = Presets.DEFAULT_ID
 	if preset_option != null and preset_option.selected >= 0:
 		preset = str(preset_option.get_item_metadata(preset_option.selected))
+	var role: String = Roles.DEFAULT_ID
+	if role_option != null and role_option.selected >= 0:
+		role = str(role_option.get_item_metadata(role_option.selected))
+	Settings.set_value("role", role)
 	launch = {"mode": mode, "ip": ip if mode == "join" else "", "name": pname, "preset": preset}
 	start_requested.emit(mode, launch["ip"], pname)
 	if auto_start:
