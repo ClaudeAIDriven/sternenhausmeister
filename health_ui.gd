@@ -4,6 +4,8 @@ extends CanvasLayer
 
 var bar: ProgressBar
 var msg: Label
+var down_label: Label   # G-20: Zähler in der Bildschirmmitte, solange man am Boden liegt
+var revive_label: Label # G-20: Hinweis/Fortschritt beim Wiederbeleben
 var _flash: ColorRect
 var _player: Player
 var _msg_left := 0.0
@@ -47,14 +49,32 @@ func _ready() -> void:
 	msg.add_theme_color_override("font_outline_color", Palette.UI_PANEL)
 	msg.add_theme_constant_override("outline_size", 6)
 	add_child(msg)
+	down_label = Label.new()
+	down_label.set_anchors_preset(Control.PRESET_CENTER)
+	down_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	down_label.grow_vertical = Control.GROW_DIRECTION_BOTH
+	down_label.add_theme_font_size_override("font_size", 26)
+	down_label.add_theme_color_override("font_color", Palette.UI_IVORY)
+	down_label.add_theme_color_override("font_outline_color", Palette.UI_PANEL)
+	down_label.add_theme_constant_override("outline_size", 8)
+	down_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	add_child(down_label)
+	revive_label = Label.new()
+	revive_label.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	revive_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	revive_label.offset_top = -120
+	revive_label.add_theme_color_override("font_color", Palette.UI_IVORY)
+	revive_label.add_theme_color_override("font_outline_color", Palette.UI_PANEL)
+	revive_label.add_theme_constant_override("outline_size", 6)
+	add_child(revive_label)
 
 
 func bind(p: Player) -> void:
 	_player = p
 	p.health_changed.connect(_on_health)
 	p.died.connect(func():
-		msg.text = "Benommen! Zurück bei der Laterne."
-		_msg_left = 3.0)
+		msg.text = "Benommen! -%d Sternenstaub" % p.last_dust_lost if p.last_dust_lost > 0 else "Benommen!"
+		_msg_left = 4.0)
 	_on_health(p.health)
 
 
@@ -75,3 +95,27 @@ func _process(delta: float) -> void:
 			msg.text = ""
 	if _player != null and is_instance_valid(_player):
 		bar.value = _player.health
+	_update_down_texts()
+
+
+## Text für den Zähler am Boden bzw. das Wiederbeleben (testbar ohne Bildschirm).
+func _update_down_texts() -> void:
+	if _player == null or not is_instance_valid(_player):
+		return
+	if _player.downed:
+		down_label.text = "Benommen – Aufstehen in %d s\nEin Mitspieler kann dich mit F wiederbeleben." % int(ceil(_player.respawn_left))
+	else:
+		down_label.text = ""
+	if _player.revive_target != null and is_instance_valid(_player.revive_target):
+		revive_label.text = "Wiederbeleben … %d %%" % int(round(_player.revive_progress * 100.0))
+	else:
+		var near := _downed_nearby()
+		revive_label.text = "F halten: Mitspieler wiederbeleben" if near else ""
+
+
+func _downed_nearby() -> bool:
+	for n in _player.get_tree().get_nodes_in_group("players"):
+		var o := n as Player
+		if o != null and o != _player and o.downed and o.global_position.distance_to(_player.global_position) < Player.REVIVE_RANGE:
+			return true
+	return false
