@@ -7,3 +7,5 @@ Du arbeitest am Godot-Projekt "Sternenhausmeister" (Ordner sternenhausmeister/, 
 4. Danach die nächste startbare Aufgabe, solange Limit und Zeit reichen. Pro Aufgabe sofort `done` setzen, damit nach einem Abbruch nichts doppelt gemacht wird.
 5. Godot liegt unter /home/claude/tools; fehlt es: Godot 4.3 von github.com/godotengine/godot/releases laden.
 6. Ehrlich bleiben: Was nicht getestet wurde, als ungetestet notieren (PLAN.md). Keine Spielgefühl-Behauptungen ohne Nutzertest.
+
+Hinweis: Mit Bereichsangabe (z. B. `next GAME,UI`) siehst du nur Aufgaben deines Bereichs. Person A: CORE,NET · B: GAME,UI · C: ART,AUDIO,BUILD,DOC.
