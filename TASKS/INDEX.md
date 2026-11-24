@@ -56,3 +56,5 @@
 | [A-15](A-15.md) | C | nice | ART | UI-Theme und Icons (Notizbuch-Look) | M | done | A-06 |
 | [A-16](A-16.md) | C | nice | ART | Logo als SVG und Hauptmenü-Hintergrund | S | done | A-15 |
 | [I-01](I-01.md) | A | must | UI | Integration: Menü, Pause, Shop in main.gd | S | done | U-01, U-03, G-05 |
+| [I-02](I-02.md) | A | must | CORE | Integration: Spielerfigur, Werkzeug und Shop-Werte in player.gd | S | open | I-01, A-08, A-09 |
+| [I-03](I-03.md) | A | must | ART | Integration: Sternlook, Insel-Props und Staub-Effekt in world.gd/star.gd | S | open | I-01, A-11, A-12, A-05 |

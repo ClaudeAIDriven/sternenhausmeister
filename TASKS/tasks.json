@@ -1004,5 +1004,47 @@
   "skills": "GDScript",
   "owner": "A",
   "prio": "must"
+ },
+ {
+  "id": "I-02",
+  "area": "CORE",
+  "title": "Integration: Spielerfigur, Werkzeug und Shop-Werte in player.gd",
+  "deps": [
+   "I-01",
+   "A-08",
+   "A-09"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "player.gd nutzt PlayerLook (Farbe/Symbol je Spieler) und ToolModels statt der Platzhalter-Kapsel, liest Tempo, Reichweite (Shop) und Maus-Empfindlichkeit (Settings).",
+  "files": [
+   "player.gd"
+  ],
+  "accept": "Test: Spieler hat PlayerLook-Teile und Werkzeug, Tempo/Reichweite/Maus folgen Shop und Settings; Screenshot.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
+ },
+ {
+  "id": "I-03",
+  "area": "ART",
+  "title": "Integration: Sternlook, Insel-Props und Staub-Effekt in world.gd/star.gd",
+  "deps": [
+   "I-01",
+   "A-11",
+   "A-12",
+   "A-05"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Sterne nutzen StarLook (Look wächst mit Putzfortschritt), die Insel IslandProps (Bodentextur, Laternen, Werkstatt, Ballon), Wisch-Effekte kommen aus Effects.",
+  "files": [
+   "star.gd",
+   "world.gd"
+  ],
+  "accept": "Selbsttest und Netz-Tests grün; Screenshot zeigt neue Optik.",
+  "skills": "GDScript, Godot-Shader",
+  "owner": "A",
+  "prio": "must"
  }
 ]
