@@ -1096,7 +1096,7 @@
    "G-10"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "World hängt den Ballon (G-10) auf die Insel, damit hohe Sterne erreichbar sind; Test, dass er mit Mitfahrer steigt.",
   "files": [
    "world.gd"
