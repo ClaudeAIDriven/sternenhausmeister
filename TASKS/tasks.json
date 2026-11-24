@@ -955,7 +955,7 @@
    "A-06"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "`UiTheme` (abgerundete Panels, Dunkelblau/Violett, Gold, Elfenbein, Textgrößen laut Styleguide) und `UiIcons` (Zeit, Phasen, Sternenstaub, Stern, vier Werkzeuge) prozedural, 64-128 px.",
   "files": [
    "ui_theme.gd",

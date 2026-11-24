@@ -53,5 +53,5 @@
 | [A-12](A-12.md) | C | nice | ART | Insel-Assets: Gras, Felsen, Büsche, Laternen, Schild | M | done | A-06, A-03 |
 | [A-13](A-13.md) | C | nice | ART | Sternbild-Linien: handgezeichnet, golden, pulsierend | S | done | A-06 |
 | [A-14](A-14.md) | C | nice | ART | Himmelseffekte: weiche Wolken und Sternschnuppe | S | done | A-07 |
-| [A-15](A-15.md) | C | nice | ART | UI-Theme und Icons (Notizbuch-Look) | M | open | A-06 |
+| [A-15](A-15.md) | C | nice | ART | UI-Theme und Icons (Notizbuch-Look) | M | done | A-06 |
 | [A-16](A-16.md) | C | nice | ART | Logo als SVG und Hauptmenü-Hintergrund | S | open | A-15 |
