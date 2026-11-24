@@ -34,7 +34,7 @@ jobs:
       - name: Artefakt hochladen
         uses: actions/upload-artifact@v4
         with:
-          name: Sternenhausmeister-windows
+          name: StarScrubber-windows
           path: |
-            build/Sternenhausmeister.exe
-            build/Sternenhausmeister.pck
+            build/StarScrubber.exe
+            build/StarScrubber.pck

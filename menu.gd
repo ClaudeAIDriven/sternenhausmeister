@@ -59,7 +59,7 @@ func _build_ui() -> void:
 		tr.custom_minimum_size = Vector2(0, 110)
 		col.add_child(tr)
 	else:
-		col.add_child(_label("Sternenhausmeister", UiTheme.FONT_MENU))
+		col.add_child(_label("StarScrubber", UiTheme.FONT_MENU))
 
 	main_box = VBoxContainer.new()
 	main_box.add_theme_constant_override("separation", 10)
