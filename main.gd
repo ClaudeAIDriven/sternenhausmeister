@@ -47,6 +47,7 @@ func _ready() -> void:
 	add_child(hud)
 	shop = Shop.new()   # G-05: Upgrades (Wischradius wirkt hier, Tempo/Reichweite folgen mit player.gd)
 	add_child(shop)
+	add_child(HostInfo.new())   # I-07: eigene Adresse beim Hosten
 	pause = Pause.new()   # U-03: Esc
 	add_child(pause)
 	NetworkManager.disconnected.connect(func(): get_tree().change_scene_to_file("res://menu.tscn"))
