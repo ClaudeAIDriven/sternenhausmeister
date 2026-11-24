@@ -7,10 +7,11 @@ signal changed
 const SLOTS := 6
 
 var items: Array[String] = []
+var extra_slots := 0   # M-01: Fähigkeit "bag_slots"
 
 
 func is_full() -> bool:
-	return items.size() >= SLOTS
+	return items.size() >= SLOTS + extra_slots
 
 
 func add(kind: String) -> bool:

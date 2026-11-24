@@ -127,6 +127,9 @@ func refresh() -> void:
 		var secs := int(ceil(_night.time_left()))
 		lines += "Zeit: %02d:%02d  ·  %s\n" % [secs / 60, secs % 60, PHASE_NAMES[GameState.night_state]]
 	lines += "Staub: %d  ·  Sterne geputzt: %d / %d\n" % [GameState.dust, _cleaned, _total]
+	var lp := _local_player()
+	if lp != null:
+		lines += "Stufe %d · XP %d%s\n" % [lp.xp.level, lp.xp.xp, (" · %d Punkt(e) – K drücken" % lp.xp.points) if lp.xp.points > 0 else ""]
 	if _puzzle != "":
 		lines += _puzzle + "\n"
 	if _puzzle_msg != "":
@@ -141,3 +144,13 @@ func refresh() -> void:
 	if _extra != "":
 		lines += "\n\n" + _extra
 	_label.text = lines
+
+
+func _local_player() -> Player:
+	if get_tree() == null:
+		return null
+	for n in get_tree().get_nodes_in_group("players"):
+		var p := n as Player
+		if p != null and p.is_multiplayer_authority():
+			return p
+	return null

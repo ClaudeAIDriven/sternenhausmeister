@@ -1676,7 +1676,7 @@
   "title": "Verdrahtung I: Wetter, Utensilien, XP, Fähigkeiten, Küche, Schrein im Spiel",
   "deps": [],
   "size": "L",
-  "status": "open",
+  "status": "done",
   "goal": "main.gd/player.gd binden alles Gebaute ein: world.attach_weather, Player.tool_kind() an wipe_at, XP-Vergabe (Fleck/Stern/Gegner/Revive/Kochen), Fähigkeiten (K) und Küchen-/Schrein-Buffs wirken im Player, Shop/Küche/Fähigkeiten-UIs öffnen im Spiel, enemy_removed gibt XP.",
   "files": [
    "main.gd",
