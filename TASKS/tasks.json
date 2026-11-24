@@ -510,7 +510,7 @@
    "P-002"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Funkel-Burst beim Stern-Abschluss, hübscherer Staub.",
   "files": [
    "effects.gd"
