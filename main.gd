@@ -1,17 +1,21 @@
 extends Node3D
 ## Einstieg: verbindet Himmel, Welt, Spieler, Ton und Anzeige. Die Details stecken in sky.gd, world.gd, hud.gd.
 
+const DUST_PER_SPOT := 1
 const PENTATONIC := [261.6, 293.7, 329.6, 392.0, 440.0, 523.3, 587.3, 659.3]
 
 var sky: NightSky
 var world: World
 var player: Player
+var players_root: Node3D
+var spawner: PlayerSpawner
 var hud: Hud
 var sfx: Sfx
 var dust: CPUParticles3D
 var notes: Array[AudioStreamWAV] = []
 var scrub_sound: AudioStreamWAV
 var chime: Array[AudioStreamWAV] = []
+var night: Night
 var note_idx := 0
 var scrub_cooldown := 0.0
 
@@ -29,7 +33,10 @@ func _ready() -> void:
 	world.star_scrubbed.connect(_on_star_scrubbed)
 	world.star_cleaned.connect(_on_star_cleaned)
 	_refresh_hud()
-	GameState.start_night()
+	night = Night.new()
+	add_child(night)
+	night.start()   # G-01: Nacht mit sanftem Zeitlimit (Standard 10 Minuten)
+	hud.bind_night(night)
 	if "--selftest" in OS.get_cmdline_user_args():
 		call_deferred("_selftest")
 
@@ -67,10 +74,20 @@ func _build_sound() -> void:
 
 
 func _build_player() -> void:
-	player = Player.new()
-	player.position = Vector3(0, 0.1, 6)
-	add_child(player)
-	player.wipe_requested.connect(_on_wipe_requested)
+	players_root = Node3D.new()
+	players_root.name = "Players"
+	add_child(players_root)
+	spawner = PlayerSpawner.new()
+	add_child(spawner)
+	spawner.setup(players_root)
+	# Testbetrieb per Kommandozeile: -- --host   oder   -- --join <IP>
+	var args := OS.get_cmdline_user_args()
+	if "--host" in args:
+		NetworkManager.host(NetworkManager.DEFAULT_PORT, str(Settings.get_value("player_name")))
+	elif "--join" in args and args.find("--join") + 1 < args.size():
+		NetworkManager.join(args[args.find("--join") + 1], NetworkManager.DEFAULT_PORT, str(Settings.get_value("player_name")))
+	else:
+		spawner.spawn_offline()
 
 	dust = CPUParticles3D.new()
 	dust.amount = 28
@@ -103,7 +120,11 @@ func _input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	scrub_cooldown = maxf(0.0, scrub_cooldown - delta)
-	dust.emitting = player.cleaning and player.aim_valid
+	if player == null:   # eigenen Spieler suchen (online erscheint er erst nach der Replikation)
+		player = spawner.local_player()
+		if player != null:
+			player.wipe_requested.connect(_on_wipe_requested)
+	dust.emitting = player != null and player.cleaning and player.aim_valid
 	if dust.emitting:
 		dust.global_position = player.aim_point
 
@@ -119,7 +140,8 @@ func _on_wipe_requested(point: Vector3) -> void:
 		scrub_cooldown = 0.11
 
 
-func _on_star_scrubbed(_star: Star, _removed: int) -> void:
+func _on_star_scrubbed(_star: Star, removed: int) -> void:
+	GameState.add_dust(removed * DUST_PER_SPOT)   # G-04: Sternenstaub fällt beim Putzen an
 	sfx.play(notes[note_idx % notes.size()], 1.0, -4.0)
 	note_idx += 1
 
@@ -155,6 +177,10 @@ func _selftest() -> void:
 			guard += 1
 		ok = ok and s.is_clean and is_equal_approx(s.progress, 1.0)
 	ok = ok and world.cleaned_count() == world.stars.size()
+	var total_spots := 0
+	for st in world.stars:
+		total_spots += st.total
+	ok = ok and GameState.dust == 6 + total_spots * DUST_PER_SPOT   # 6 = Rest aus dem GameState-Test oben
 	ok = ok and GameState.stars_cleaned == world.stars.size() and fired["cleaned"] == world.stars.size()
 	print("SELFTEST cleaned=%d/%d progress_ok=%s" % [world.cleaned_count(), world.stars.size(), str(ok)])
 	print("SELFTEST OK" if ok else "SELFTEST FAIL")

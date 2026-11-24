@@ -98,7 +98,7 @@
    "C-01"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Lautstärke, Mausempfindlichkeit, FOV, UI-Skalierung in user://settings.cfg speichern/laden.",
   "files": [
    "settings.gd",
@@ -136,7 +136,7 @@
    "C-02"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Autoload mit host(port), join(ip,port), leave(), Signale player_joined/left, max 4 (konfigurierbar bis 8).",
   "files": [
    "network_manager.gd"
@@ -155,7 +155,7 @@
    "P-001"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "MultiplayerSpawner + MultiplayerSynchronizer für Position/Rotation/Wisch-Status jedes Spielers; Autorität beim jeweiligen Peer.",
   "files": [
    "world.gd",
@@ -194,7 +194,7 @@
    "N-01"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "tools/test_net4.sh startet Host + 3 Clients headless, prüft Verbindung und Stern-Sync per Log.",
   "files": [
    "tools/test_net4.sh"
@@ -250,7 +250,7 @@
    "C-02"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Nachtablauf als State-Machine, sanftes Zeitlimit (kein Game Over), Signale an GameState.",
   "files": [
    "night.gd"
@@ -268,7 +268,7 @@
    "P-002"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "JSON/Resource-Format (Sterne, Reihenfolge, Name); data/constellations/*.json mit 3 Beispielen.",
   "files": [
    "data/constellations/",
@@ -305,7 +305,7 @@
    "C-02"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Beim Putzen fällt Staub an, GameState.dust steigt, Anzeige im HUD.",
   "files": [
    "game_state.gd",
@@ -605,7 +605,7 @@
    "C-02"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Moderne Anzeige statt Debug-Label.",
   "files": [
    "hud.gd"
