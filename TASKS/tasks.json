@@ -901,7 +901,7 @@
    "A-03"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "`IslandProps` mit wiederverwendbaren Low-Poly-Dekos (Gras-Büschel, Steine, Büsche, Laterne mit warmem Licht, Werkstatt-Schild) und Boden-Textur (256 px, seamless).",
   "files": [
    "island_props.gd"
