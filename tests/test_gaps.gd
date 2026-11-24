@@ -38,12 +38,14 @@ func _process(_d: float) -> bool:
 	q.set_multiplayer_authority(1)
 	q.downed = true
 	var xp_before: int = p.xp.xp
+	var helped := [0]
+	p.helped_up.connect(func(_t): helped[0] += 1)
 	var done := false
 	for i in 400:
 		if p.update_revive(0.02, true):
 			done = true
 			break
-	ok = ok and done and p.xp.xp - xp_before == 40
+	ok = ok and done and p.xp.xp - xp_before == 40 and helped[0] == 1
 	# Stern zählt pro Nacht nur einmal
 	gs.start_night()
 	var star := Node.new()

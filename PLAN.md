@@ -118,3 +118,4 @@ G-30 (bot-A): Orte (poi.gd, Gruppe pois): Brunnen (heilt 2/s in 4 m), Obstgarten
 M-11 Lücken geschlossen: climb/ladder_time-Fähigkeiten, Wiederbeleben-XP, Sternzähler einmal pro Stern
 M-12 Ballon host-autoritativ: Host rechnet, Clients lenken per RPC (tools/test_netballoon.sh)
 M-13 Hut repliziert, Erfolge/Tagebuch im Pausenmenü
+M-14 Erfolg Retter angebunden, Prüftest für alle Erfolge
