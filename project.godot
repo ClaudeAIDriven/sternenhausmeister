@@ -7,6 +7,10 @@ config/name="Sternenhausmeister"
 run/main_scene="res://main.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 
+[autoload]
+
+GameState="*res://game_state.gd"
+
 [display]
 
 window/size/viewport_width=1280

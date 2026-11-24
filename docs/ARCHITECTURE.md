@@ -13,6 +13,8 @@ Damit mehrere Leute/Modelle parallel arbeiten können, gelten feste Verträge. W
 | NetworkManager | network_manager.gd | Netzwerk | `host(port)`, `join(ip,port)`, `leave()`; Signale `player_joined(id)`, `player_left(id)`; `is_host()` |
 
 ## Klassen (bereits vorhanden)
+- `NightSky` (sky.gd): Umgebung, Mondlicht, Hintergrundsterne. `World` (world.gd): Insel + Sterne, `wipe_at(point,radius)`, `cleaned_count()`, Signale `star_scrubbed`, `star_cleaned`. `Hud` (hud.gd): `show_status(cleaned,total,extra)`.
+- `GameState` (Autoload, game_state.gd) ist umgesetzt: `start_night()`, `end_night()`, `set_phase()`, `add_dust()`, `spend_dust()`, `report_star_cleaned()`; Signale `night_started`, `night_ended`, `phase_changed`, `star_cleaned`, `dust_changed`, `player_count_changed`.
 - `Player` (player.gd): Signal `wipe_requested(point)`, Eigenschaften `cleaning`, `aim_point`, `aim_valid`.
 - `Star` (star.gd): `wipe(world_point, radius) -> int`, Signale `scrubbed(n)`, `cleaned`, Eigenschaften `progress`, `is_clean`, `spots`.
 - `Sfx` (sfx.gd): `make_tone(freq,dur,vol,noise)`, `play(stream,pitch,db)`.

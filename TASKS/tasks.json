@@ -57,7 +57,7 @@
    "P-002"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "main.gd in world.gd (Insel/Sterne), sky.gd (Hintergrund), hud.gd (Anzeige) zerlegen, Verhalten unverändert.",
   "files": [
    "main.gd",
@@ -79,7 +79,7 @@
    "C-01"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Zentrale Zustandsklasse: player_count, night_state, dust, Signale (night_started, night_ended, star_cleaned). Siehe docs/ARCHITECTURE.md.",
   "files": [
    "game_state.gd",

@@ -1,30 +1,35 @@
 extends Node3D
-## Block 1: Putz-Prototyp (solo). Baut die ganze Szene per Code auf.
+## Einstieg: verbindet Himmel, Welt, Spieler, Ton und Anzeige. Die Details stecken in sky.gd, world.gd, hud.gd.
 
 const PENTATONIC := [261.6, 293.7, 329.6, 392.0, 440.0, 523.3, 587.3, 659.3]
 
+var sky: NightSky
+var world: World
 var player: Player
-var stars: Array[Star] = []
+var hud: Hud
 var sfx: Sfx
+var dust: CPUParticles3D
 var notes: Array[AudioStreamWAV] = []
 var scrub_sound: AudioStreamWAV
 var chime: Array[AudioStreamWAV] = []
-var hud: Label
-var dust: CPUParticles3D
 var note_idx := 0
 var scrub_cooldown := 0.0
-var cleaned_count := 0
 
 
 func _ready() -> void:
 	_setup_input()
-	_build_environment()
-	_build_island()
-	_build_sky_stars()
+	sky = NightSky.new()
+	add_child(sky)
+	world = World.new()
+	add_child(world)
 	_build_sound()
 	_build_player()
-	_build_stars()
-	_build_hud()
+	hud = Hud.new()
+	add_child(hud)
+	world.star_scrubbed.connect(_on_star_scrubbed)
+	world.star_cleaned.connect(_on_star_cleaned)
+	_refresh_hud()
+	GameState.start_night()
 	if "--selftest" in OS.get_cmdline_user_args():
 		call_deferred("_selftest")
 
@@ -49,96 +54,6 @@ func _setup_input() -> void:
 		var k := InputEventKey.new()
 		k.physical_keycode = KEY_E
 		InputMap.action_add_event("clean", k)
-
-
-func _build_environment() -> void:
-	var env := Environment.new()
-	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color(0.02, 0.03, 0.1)
-	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color(0.35, 0.4, 0.7)
-	env.ambient_light_energy = 0.4
-	env.glow_enabled = true
-	env.glow_intensity = 0.9
-	env.glow_bloom = 0.15
-	env.glow_hdr_threshold = 0.9
-	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
-	var we := WorldEnvironment.new()
-	we.environment = env
-	add_child(we)
-
-	var moon := DirectionalLight3D.new()
-	moon.light_color = Color(0.7, 0.8, 1.0)
-	moon.light_energy = 0.55
-	moon.rotation_degrees = Vector3(-50, 30, 0)
-	add_child(moon)
-
-
-func _build_island() -> void:
-	var body := StaticBody3D.new()
-	body.collision_layer = 1
-	var mesh := CylinderMesh.new()
-	mesh.top_radius = 14.0
-	mesh.bottom_radius = 9.0
-	mesh.height = 2.0
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0.5, 0.58, 0.85)
-	mat.emission_enabled = true
-	mat.emission = Color(0.4, 0.5, 0.9)
-	mat.emission_energy_multiplier = 0.15
-	mat.roughness = 0.9
-	var mi := MeshInstance3D.new()
-	mi.mesh = mesh
-	mi.material_override = mat
-	body.add_child(mi)
-	var cs := CollisionShape3D.new()
-	var shape := CylinderShape3D.new()
-	shape.radius = 14.0
-	shape.height = 2.0
-	cs.shape = shape
-	body.add_child(cs)
-	body.position.y = -1.0
-	add_child(body)
-
-	# Wolkenbäusche am Rand
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 7
-	var puff := SphereMesh.new()
-	puff.radius = 1.6
-	puff.height = 3.2
-	for i in 18:
-		var a := TAU * i / 18.0
-		var p := MeshInstance3D.new()
-		p.mesh = puff
-		p.material_override = mat
-		p.position = Vector3(cos(a) * 13.5, -0.4 + rng.randf() * 0.6, sin(a) * 13.5)
-		p.scale = Vector3.ONE * rng.randf_range(0.8, 1.4)
-		add_child(p)
-
-
-func _build_sky_stars() -> void:
-	var mm := MultiMesh.new()
-	mm.transform_format = MultiMesh.TRANSFORM_3D
-	var m := SphereMesh.new()
-	m.radius = 0.35
-	m.height = 0.7
-	m.radial_segments = 6
-	m.rings = 3
-	var mat := StandardMaterial3D.new()
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.albedo_color = Color(1.4, 1.3, 1.0)
-	m.material = mat
-	mm.mesh = m
-	mm.instance_count = 350
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 42
-	for i in mm.instance_count:
-		var dir := Vector3(rng.randf_range(-1, 1), rng.randf_range(-0.2, 1), rng.randf_range(-1, 1)).normalized()
-		var t := Transform3D(Basis.from_scale(Vector3.ONE * rng.randf_range(0.4, 1.5)), dir * 140.0)
-		mm.set_instance_transform(i, t)
-	var mmi := MultiMeshInstance3D.new()
-	mmi.multimesh = mm
-	add_child(mmi)
 
 
 func _build_sound() -> void:
@@ -179,42 +94,6 @@ func _build_player() -> void:
 	add_child(dust)
 
 
-func _build_stars() -> void:
-	var positions := [Vector3(0, 5.0, -7), Vector3(-9, 6.0, 1), Vector3(8, 5.5, 3)]
-	for p in positions:
-		var s := Star.new()
-		s.position = p
-		add_child(s)
-		s.scrubbed.connect(_on_scrubbed)
-		s.cleaned.connect(_on_star_cleaned.bind(s))
-		stars.append(s)
-
-
-func _build_hud() -> void:
-	var layer := CanvasLayer.new()
-	add_child(layer)
-	hud = Label.new()
-	hud.position = Vector2(20, 16)
-	hud.add_theme_font_size_override("font_size", 22)
-	layer.add_child(hud)
-	var cross := Label.new()
-	cross.text = "+"
-	cross.add_theme_font_size_override("font_size", 28)
-	cross.set_anchors_preset(Control.PRESET_CENTER)
-	cross.position = Vector2(-8, -18)
-	layer.add_child(cross)
-	_update_hud()
-
-
-func _update_hud(extra := "") -> void:
-	var lines := "Sterne geputzt: %d / %d\n" % [cleaned_count, stars.size()]
-	lines += "WASD laufen · Leertaste springen · Maus zielen\n"
-	lines += "Linke Maustaste / E: putzen · Klick: Maus einfangen · Esc: loslassen"
-	if extra != "":
-		lines += "\n\n" + extra
-	hud.text = lines
-
-
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -229,41 +108,54 @@ func _process(delta: float) -> void:
 		dust.global_position = player.aim_point
 
 
+func _refresh_hud(extra := "") -> void:
+	hud.show_status(world.cleaned_count(), world.stars.size(), extra)
+
+
 func _on_wipe_requested(point: Vector3) -> void:
-	var removed := 0
-	for s in stars:
-		removed += s.wipe(point, 0.9)
+	world.wipe_at(point, 0.9)
 	if scrub_cooldown <= 0.0:
 		sfx.play(scrub_sound, randf_range(0.9, 1.15), -6.0)
 		scrub_cooldown = 0.11
 
 
-func _on_scrubbed(_removed: int) -> void:
+func _on_star_scrubbed(_star: Star, _removed: int) -> void:
 	sfx.play(notes[note_idx % notes.size()], 1.0, -4.0)
 	note_idx += 1
 
 
-func _on_star_cleaned(_s: Star) -> void:
-	cleaned_count += 1
+func _on_star_cleaned(star: Star) -> void:
+	GameState.report_star_cleaned(star)
 	for i in chime.size():
 		sfx.play(chime[i], 1.0, -8.0)
-	if cleaned_count >= stars.size():
-		_update_hud("Nacht geschafft! Der Himmel glänzt. ⭐")
+	if world.cleaned_count() >= world.stars.size():
+		_refresh_hud("Nacht geschafft! Der Himmel glänzt. ⭐")
 	else:
-		_update_hud("Stern geputzt!")
+		_refresh_hud("Stern geputzt!")
 
 
 func _selftest() -> void:
-	print("SELFTEST start: %d Sterne" % stars.size())
+	print("SELFTEST start: %d Sterne" % world.stars.size())
 	var ok := true
-	for s in stars:
+	# GameState-Test (C-02): Signale und Zähler
+	var fired := {"dust": 0, "cleaned": 0, "players": 0, "phase": 0}
+	GameState.dust_changed.connect(func(_a): fired["dust"] += 1)
+	GameState.star_cleaned.connect(func(_s): fired["cleaned"] += 1)
+	GameState.player_count_changed.connect(func(_n): fired["players"] += 1)
+	GameState.phase_changed.connect(func(_p): fired["phase"] += 1)
+	GameState.add_dust(10)
+	ok = ok and GameState.dust == 10 and GameState.spend_dust(4) and GameState.dust == 6 and not GameState.spend_dust(99)
+	GameState.player_count = 4
+	GameState.set_phase(GameState.Phase.MITTERNACHT)
+	ok = ok and GameState.player_count == 4 and fired["players"] == 1 and fired["phase"] == 1 and fired["dust"] == 2
+	for s in world.stars:
 		var guard := 0
 		while not s.is_clean and guard < 5000:
-			var spot := s.spots[0]
-			s.wipe(s.to_global(spot.position), 0.9)
+			s.wipe(s.to_global(s.spots[0].position), 0.9)
 			guard += 1
 		ok = ok and s.is_clean and is_equal_approx(s.progress, 1.0)
-	ok = ok and cleaned_count == stars.size()
-	print("SELFTEST cleaned=%d/%d progress_ok=%s" % [cleaned_count, stars.size(), str(ok)])
+	ok = ok and world.cleaned_count() == world.stars.size()
+	ok = ok and GameState.stars_cleaned == world.stars.size() and fired["cleaned"] == world.stars.size()
+	print("SELFTEST cleaned=%d/%d progress_ok=%s" % [world.cleaned_count(), world.stars.size(), str(ok)])
 	print("SELFTEST OK" if ok else "SELFTEST FAIL")
 	get_tree().quit(0 if ok else 1)
