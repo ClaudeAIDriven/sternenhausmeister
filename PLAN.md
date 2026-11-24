@@ -88,3 +88,4 @@ I-11 Spielwelt: Lauf-Animation, Ballon ebenerdig und lenkbar, Kollision Haus/Lat
 I-12 Gesundheit: Lebensleiste, Regeneration nach 6 s, Fallschaden ab 5 m, Schubsen (rechte Maustaste), Lava, Kaktus, Respawn
 I-13 Rollen: Allrounder, Hüpfer, Gründlicher Putzer (Spinnenangst), Flitzer
 I-14 Minimap mit Werkstatt, Ballon, Sternen, Gefahren, Spielern, Fortschritt und Zeit
+Autopilot eingebunden (bot-A): tasks.py aus dem Skill (board, batch, atomarer claim, release, ideas, Besitzer-Filter bleibt), cli_scout.py + docs/CLI_TOOLS.md, auto_continue.py, tools/autopilot.json, AGENT_PROMPT.md ergänzt (eindeutiger TASK_WHO, 3 Stimmen, Limit). 🟢 status/next/mine/board/batch/ideas gegen origin getestet, run_tests grün. 🔴 claim/release mit Schloss hier nicht ausgeführt (würde echte Branches anlegen). ❌ cli-hub-Suche: Host hkuds.github.io im Netz gesperrt. ❌ Wächter-Trigger nicht angelegt (abgelehnt, wartet auf Freigabe).

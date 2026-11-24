@@ -37,3 +37,10 @@ Begründungen und Recherche: `docs/IMPROVEMENT_BRAINSTORMING.md` (Abschnitt „R
 - `sync_to_physics` am Ballon ist absichtlich aus (sonst friert die Position beim Lenken ein).
 - Windows-Exe und Spiel über das Internet sind ungetestet (kein Windows hier).
 - Weitere bekannte Grenzen: `docs/KNOWN_ISSUES.md`.
+
+## Autopilot (Skill projekt-autopilot, eingebunden 2026-11-24)
+- `tools/tasks.py` ist die Skill-Version: zusätzlich `board` (wer baut was), `batch` (mehrere Karten ohne Dateiüberschneidung), atomarer `claim` (Schloss `lock/<ID>`), `release`, `ideas`/`idea`, `issues`. Alte Befehle (`next A|B|C`, `mine`, `index`, `status`) bleiben. Pfade in `tools/autopilot.json` (Ideen weiter in `docs/IMPROVEMENT_BRAINSTORMING.md`).
+- `tools/cli_scout.py` + Register `docs/CLI_TOOLS.md` (CLI-Anything). Braucht Netzzugriff auf hkuds.github.io; in der Cloud-Umgebung aktuell gesperrt.
+- `tools/auto_continue.py`: im Terminal nach Token-Limit automatisch weiter.
+- `TASK_WHO` pro Sitzung eindeutig wählen (`bot-A1`, `bot-A2`, …), sonst bauen parallele Sitzungen dieselbe Karte.
+- ❌ Wächter (geplante Aufgabe alle 30 min, `TASK_WHO=bot-waechter`) ist noch nicht eingerichtet: das Anlegen wurde in der Sitzung abgelehnt und muss vom Menschen freigegeben werden.
