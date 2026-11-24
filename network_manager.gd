@@ -15,6 +15,7 @@ const DEFAULT_PORT := 24680
 var max_players := 4
 var players: Dictionary = {}   # peer_id -> {"name": String}
 var _pending_name := "Spieler"
+var drones_enabled := true   # Tests können die Drohnen abschalten
 var drones := {}        # Drohnen-ID (= Peer-ID des Gegangenen) -> Drone
 var drone_names := {}   # Drohnen-ID -> Spielername (Host: für Rejoin)
 
@@ -106,7 +107,8 @@ func _on_peer_disconnected(id: int) -> void:
 	var pos := _player_position(id)
 	var pname: String = str(players.get(id, {}).get("name", ""))
 	players.erase(id)
-	_rpc_spawn_drone.rpc(id, pos, pname)   # Drohne übernimmt (Host entscheidet, alle sehen sie)
+	if drones_enabled:
+		_rpc_spawn_drone.rpc(id, pos, pname)   # Drohne übernimmt (Host entscheidet, alle sehen sie)
 	_sync_players.rpc(players)
 	player_left.emit(id)
 	players_changed.emit()
