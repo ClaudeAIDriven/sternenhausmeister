@@ -32,7 +32,7 @@
 | [A-05](A-05.md) | C | nice | ART | Partikel: Staub und Funkeln beim Sauberwerden | S | done | P-002 |
 | [S-01](S-01.md) | C | nice | AUDIO | Lo-Fi-Musikschleife | S | done | P-003 |
 | [S-02](S-02.md) | C | nice | AUDIO | Sternakkorde und Sternbild-Melodien | M | open | P-003, G-02 |
-| [S-03](S-03.md) | C | nice | AUDIO | UI- und Ambient-Sounds | S | open | U-01 |
+| [S-03](S-03.md) | C | nice | AUDIO | UI- und Ambient-Sounds | S | done | U-01 |
 | [U-01](U-01.md) | A | must | UI | Hauptmenü (Start, Host, Join, Einstellungen, Beenden) | M | done | C-03 |
 | [U-02](U-02.md) | A | must | UI | HUD: Staub, Timer, Spielerliste | S | done | C-02 |
 | [U-03](U-03.md) | A | must | UI | Pause- und Einstellungsmenü | S | done | C-03, U-01 |
