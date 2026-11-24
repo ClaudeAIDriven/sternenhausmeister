@@ -5,7 +5,14 @@ extends Node3D
 signal star_scrubbed(star: Star, removed: int)
 signal star_cleaned(star: Star)
 
-const STAR_POSITIONS := [Vector3(0, 5.0, -7), Vector3(-9, 6.0, 1), Vector3(8, 5.5, 3)]
+const STAR_POSITIONS := [Vector3(0, 5.0, -7), Vector3(-9, 6.0, 1), Vector3(8, 5.5, 3),
+	Vector3(4.5, 6.2, -11.0), Vector3(-12.0, 5.5, -6.0), Vector3(-3.0, 6.0, 9.5),
+	Vector3(11.0, 6.0, 8.0), Vector3(-6.5, 6.5, -10.5)]
+const MIN_STARS := 3
+## Ein Spieler bekommt 3 Sterne, jeder weitere Spieler einen mehr (bis 8). Zeitlimit bleibt gleich, also mehr Arbeit für mehr Hände.
+const STARS_PER_EXTRA_PLAYER := 1
+
+signal layout_changed(star_count: int)
 
 var stars: Array[Star] = []
 
@@ -16,7 +23,9 @@ func _init() -> void:
 
 func _ready() -> void:
 	_build_island()
-	_build_stars()
+	_build_stars(star_count_for(_player_count()))
+	GameState.player_count_changed.connect(func(_n): _rescale())
+	NetworkManager.players_changed.connect(_rescale)
 	NetworkManager.player_joined.connect(_on_player_joined)
 	NetworkManager.connected_to_host.connect(_request_state)
 	if NetworkManager.is_online() and not multiplayer.is_server() and multiplayer.multiplayer_peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED:
@@ -75,6 +84,7 @@ func _on_player_joined(id: int) -> void:
 
 
 func _send_state(peer: int) -> void:
+	_rpc_layout.rpc_id(peer, stars.size())   # zuerst das Layout, dann die entfernten Flecken
 	for i in stars.size():
 		if not stars[i].removed_ids.is_empty():
 			_rpc_removed.rpc_id(peer, i, stars[i].removed_ids)
@@ -129,11 +139,62 @@ func _build_island() -> void:
 		add_child(p)
 
 
-func _build_stars() -> void:
-	for p in STAR_POSITIONS:
+## Sternzahl für eine Spielerzahl (1–4+): 1 -> 3, 2 -> 4, 3 -> 5, 4 -> 6 … höchstens 8.
+static func star_count_for(players: int) -> int:
+	return clampi(MIN_STARS + (maxi(1, players) - 1) * STARS_PER_EXTRA_PLAYER, MIN_STARS, STAR_POSITIONS.size())
+
+
+## Ereignisdichte (Wetter, Sternschnuppen): Faktor 1.0 bei einem Spieler, wächst mit der Spielerzahl, höchstens 2.5.
+static func event_density_for(players: int) -> float:
+	return minf(1.0 + (maxi(1, players) - 1) * 0.35, 2.5)
+
+
+func event_density() -> float:
+	return event_density_for(_player_count())
+
+
+func _player_count() -> int:
+	var n: int = GameState.player_count
+	if NetworkManager.is_online():
+		n = maxi(n, NetworkManager.players.size())
+	return n
+
+
+## Host/Solo: passt die Sternzahl an, solange noch nichts geputzt wurde (sonst ginge Fortschritt verloren).
+func _rescale() -> void:
+	if NetworkManager.is_online() and not multiplayer.is_server():
+		return   # Clients bekommen das Layout vom Host
+	var want := star_count_for(_player_count())
+	if want == stars.size() or _touched():
+		return
+	_build_stars(want)
+	if NetworkManager.is_online():
+		_rpc_layout.rpc(want)
+
+
+func _touched() -> bool:
+	for s in stars:
+		if s.progress > 0.0 or s.is_clean:
+			return true
+	return false
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_layout(count: int) -> void:
+	if count != stars.size():
+		_build_stars(count)
+
+
+func _build_stars(count: int) -> void:
+	for old in stars:
+		old.queue_free()
+	stars.clear()
+	for i in count:
+		var p: Vector3 = STAR_POSITIONS[i]
 		var s := Star.new()
 		s.position = p
 		add_child(s)
 		s.scrubbed.connect(func(n: int): star_scrubbed.emit(s, n))
 		s.cleaned.connect(func(): star_cleaned.emit(s))
 		stars.append(s)
+	layout_changed.emit(count)
