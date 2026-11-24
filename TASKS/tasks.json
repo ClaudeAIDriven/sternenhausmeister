@@ -807,7 +807,7 @@
    "A-04"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "NightSky bekommt `set_phase(name)` mit weichem Farbübergang, weniger Hintergrundsterne, Mond.",
   "files": [
    "sky.gd"
