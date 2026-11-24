@@ -9,10 +9,10 @@
 | [C-02](C-02.md) | A | must | CORE | Autoload GameState | S | done | C-01 |
 | [C-03](C-03.md) | A | must | CORE | Autoload Settings mit Speichern | S | done | C-01 |
 | [C-04](C-04.md) | B | nice | CORE | Tasten umbelegen und Gamepad | S | open | C-03 |
-| [N-01](N-01.md) | A | must | NET | NetworkManager: Host/Join per ENet (bis 4+) | M | open | C-02 |
+| [N-01](N-01.md) | A | must | NET | NetworkManager: Host/Join per ENet (bis 4+) | M | done | C-02 |
 | [N-02](N-02.md) | A | must | NET | Spieler-Spawner und Positions-Sync | M | open | N-01, P-001 |
 | [N-03](N-03.md) | A | must | NET | Stern-Zustand serverautoritativ synchronisieren | M | open | N-01 |
-| [N-04](N-04.md) | A | must | NET | Lokales 4-Instanzen-Testskript | S | open | N-01 |
+| [N-04](N-04.md) | A | must | NET | Lokales 4-Instanzen-Testskript | S | done | N-01 |
 | [N-05](N-05.md) | A | must | NET | Disconnect/Rejoin und Drohnen-Ersatz | M | open | N-02 |
 | [N-06](N-06.md) | A | must | NET | Internet-Anleitung und optional UPnP | S | open | N-01 |
 | [G-01](G-01.md) | A | must | GAME | Nacht-Timer mit Dämmerung/Mitternacht/Morgenrot | S | open | C-02 |

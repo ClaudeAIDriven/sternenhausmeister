@@ -136,7 +136,7 @@
    "C-02"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Autoload mit host(port), join(ip,port), leave(), Signale player_joined/left, max 4 (konfigurierbar bis 8).",
   "files": [
    "network_manager.gd"
@@ -194,7 +194,7 @@
    "N-01"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "tools/test_net4.sh startet Host + 3 Clients headless, prüft Verbindung und Stern-Sync per Log.",
   "files": [
    "tools/test_net4.sh"
