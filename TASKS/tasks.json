@@ -861,7 +861,7 @@
    "A-06"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Prozedurale Overlay-Texturen (256 px) für drei Schmutztypen: Ruß = runde ausgefranste Flecken, Flecken = Ringe/Tropfen, Patina = kantige verzweigte Risse, plus Schmutzmaske.",
   "files": [
    "dirt_textures.gd"
