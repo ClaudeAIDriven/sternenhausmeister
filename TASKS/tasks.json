@@ -1057,7 +1057,7 @@
    "A-13"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "World wählt ein Sternbild passend zur Sternzahl; die Sterne müssen in der Reihenfolge geputzt werden (Constellation). Richtig: Linie wächst; falsch: alle bisherigen Sterne werden wieder schmutzig, der nächste richtige Stern leuchtet als Hinweis; gelöst: Bonus-Staub und Linien-Burst. Host entscheidet, alle sehen es.",
   "files": [
    "star.gd",

@@ -4,6 +4,7 @@ extends Node3D
 
 signal scrubbed(removed: int)
 signal cleaned
+signal reset_done
 
 @export var radius := 2.0
 @export var spot_count := 140
@@ -19,10 +20,15 @@ var _by_id := {}
 
 var _look: MeshInstance3D
 var _light: OmniLight3D
+var _hint := false
 
 
 func _ready() -> void:
 	_look = StarLook.build(radius)   # A-11: Sternform, Schmutz-Overlays, Putzübergang per Shader
+	# Gold etwas gedämpft, sonst überstrahlt der Umgebungs-Glow (sky.gd) den sauberen Stern zu einer gelben Fläche
+	var lm := _look.material_override as ShaderMaterial
+	lm.set_shader_parameter("gold_color", Palette.STAR_GOLD.darkened(0.35))
+	lm.set_shader_parameter("rim_color", Palette.STAR_GOLD.darkened(0.25))
 	add_child(_look)
 
 	var body := StaticBody3D.new()
@@ -41,6 +47,11 @@ func _ready() -> void:
 	_light.light_energy = 0.0
 	add_child(_light)
 
+	_build_spots()
+
+
+## Baut alle Schmutzflecken (neu) auf. Fleck-IDs sind bei allen Spielern gleich (Reihenfolge der Fibonacci-Kugel).
+func _build_spots() -> void:
 	var spot_mesh := SphereMesh.new()
 	spot_mesh.radius = 0.3
 	spot_mesh.height = 0.6
@@ -135,4 +146,24 @@ func _finish_removal(removed: int) -> void:
 
 func _apply_glow() -> void:
 	StarLook.set_clean(_look, progress)
-	_light.light_energy = lerpf(0.0, 4.0, progress)
+	_light.light_energy = maxf(lerpf(0.0, 1.2, progress), 1.6 if _hint else 0.0)
+
+
+## Stern wieder komplett verschmutzen (falsche Sternbild-Reihenfolge). Wird bei allen Spielern ausgeführt.
+func reset() -> void:
+	for sp in spots:
+		sp.queue_free()
+	spots.clear()
+	_by_id.clear()
+	removed_ids.clear()
+	last_removed = []
+	is_clean = false
+	progress = 0.0
+	_build_spots()
+	reset_done.emit()
+
+
+## Hinweis: Der Stern leuchtet sanft, solange er der nächste richtige ist.
+func set_hint(on: bool) -> void:
+	_hint = on
+	_apply_glow()

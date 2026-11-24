@@ -209,7 +209,8 @@ func _selftest() -> void:
 	var total_spots := 0
 	for st in world.stars:
 		total_spots += st.total
-	ok = ok and GameState.dust == 6 + total_spots * DUST_PER_SPOT   # 6 = Rest aus dem GameState-Test oben
+	var bonus: int = world.puzzle.bonus() if world.puzzle != null and world.puzzle.is_solved else 0   # I-04: Sternbild gelöst = Bonus-Staub
+	ok = ok and GameState.dust == 6 + total_spots * DUST_PER_SPOT + bonus   # 6 = Rest aus dem GameState-Test oben
 	ok = ok and GameState.stars_cleaned == world.stars.size() and fired["cleaned"] == world.stars.size()
 	print("SELFTEST cleaned=%d/%d progress_ok=%s" % [world.cleaned_count(), world.stars.size(), str(ok)])
 	print("SELFTEST OK" if ok else "SELFTEST FAIL")
