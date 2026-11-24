@@ -83,6 +83,8 @@ func _ready() -> void:
 	add_to_group("players")
 	if is_multiplayer_authority():
 		role = str(Settings.get_value("role"))
+		if Roles.can(role, "climb"):
+			floor_max_angle = deg_to_rad(70.0)   # G-24: steile Flächen hinauflaufen
 		brawl = bool(Menu.launch.get("brawl", false))
 	_last_pos = global_position
 	var cs := CollisionShape3D.new()
@@ -132,6 +134,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if aim_valid:
 			send_ping(aim_point)   # G-33: Mittlere Maustaste = Ping
 		return
+	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_G and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		place_ladder()   # G-24: Kletterer stellt eine Leiter auf
+		return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		var sens := float(Settings.get_value("mouse_sens"))
 		yaw -= event.relative.x * sens
@@ -168,6 +173,7 @@ func _physics_process(delta: float) -> void:
 		velocity.y = JUMP_VELOCITY * Roles.factor(role, "jump")
 		food.on_jump()
 		_jump_cd = Roles.factor(role, "jump_cd")
+	_apply_climb(Input.get_vector("move_left", "move_right", "move_forward", "move_back"))
 	move_and_slide()
 	_track_floor()
 	_track_fall(delta)
@@ -175,7 +181,7 @@ func _physics_process(delta: float) -> void:
 		_airborne = false
 		global_position = SPAWN_POINT
 		velocity = Vector3.ZERO
-	food.tick(delta, Vector2(velocity.x, velocity.z).length() > 0.5, cleaning)
+	food.tick(delta * Roles.factor(role, "hunger"), Vector2(velocity.x, velocity.z).length() > 0.5, cleaning)
 	_tick_health(delta)
 	if InputMap.has_action("attack") and Input.is_action_just_pressed("attack") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		try_attack()
@@ -554,3 +560,48 @@ func rpc_ping(point: Vector3) -> void:
 		return
 	var sender := multiplayer.get_remote_sender_id()
 	ping_received.emit(sender if sender != 0 else str(name).to_int(), point)
+
+
+# ---------------------------------------------------------------- Kletterer (G-24)
+
+const CLIMB_SPEED := 3.5
+const LADDER_COOLDOWN := 20.0
+var _ladder_cd := 0.0
+
+
+## Leiter hoch (alle Rollen, vorwärts laufen) und Wände hoch (nur Kletterer). Wird vor move_and_slide aufgerufen.
+func _apply_climb(input: Vector2) -> void:
+	if input.y >= -0.1:
+		return
+	if Ladder.find_for(get_tree(), global_position) != null:
+		velocity.y = Ladder.CLIMB_SPEED
+		_airborne = false
+		_peak_y = global_position.y   # an der Leiter kein Fallschaden
+		return
+	if Roles.can(role, "climb") and is_on_wall():
+		velocity.y = maxf(velocity.y, CLIMB_SPEED * Roles.factor(role, "climb"))
+		_peak_y = global_position.y
+
+
+## Kletterer: Leiter vor sich aufstellen (8 s, Abklingzeit 20 s). false = keine Rolle/zu früh.
+func place_ladder() -> bool:
+	var now := Time.get_ticks_msec() / 1000.0
+	if not Roles.can(role, "ladder") or now < _ladder_cd or downed:
+		return false
+	_ladder_cd = now + LADDER_COOLDOWN
+	var fwd := -global_transform.basis.z
+	fwd.y = 0.0
+	var pos := global_position + fwd.normalized() * 1.2
+	rpc_place_ladder.rpc(pos, rotation.y)
+	return true
+
+
+@rpc("any_peer", "call_local", "reliable")
+func rpc_place_ladder(pos: Vector3, yaw: float) -> void:
+	if not pos.is_finite() or pos.length() > 200.0:
+		return
+	var l := Ladder.new()
+	l.position = pos
+	l.rotation.y = yaw
+	var scene := get_tree().current_scene
+	(scene if scene != null else get_tree().root).add_child(l)
