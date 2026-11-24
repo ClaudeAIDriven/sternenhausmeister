@@ -175,7 +175,7 @@
    "N-01"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Clients senden Wisch-Anfragen per RPC, Host entfernt Flecken und repliziert (Fleck-IDs). Late-Join erhält vollständigen Zustand.",
   "files": [
    "star.gd",

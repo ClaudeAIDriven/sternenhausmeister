@@ -10,17 +10,74 @@ const STAR_POSITIONS := [Vector3(0, 5.0, -7), Vector3(-9, 6.0, 1), Vector3(8, 5.
 var stars: Array[Star] = []
 
 
+func _init() -> void:
+	name = "World"   # fester Name: RPC-Pfade müssen bei allen Spielern gleich sein
+
+
 func _ready() -> void:
 	_build_island()
 	_build_stars()
+	NetworkManager.player_joined.connect(_on_player_joined)
+	NetworkManager.connected_to_host.connect(_request_state)
+	if NetworkManager.is_online() and not multiplayer.is_server() and multiplayer.multiplayer_peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED:
+		_request_state()
 
 
 ## Wischt an einem Weltpunkt über alle Sterne. Gibt die Zahl entfernter Flecken zurück.
-func wipe_at(point: Vector3, radius: float) -> int:
+## Online: Clients schicken nur eine Anfrage an den Host (Rückgabe 0); der Host wischt und repliziert die Fleck-IDs.
+func wipe_at(point: Vector3, radius: float, tool: int = CleanTool.Kind.ANY) -> int:
+	if NetworkManager.is_online() and not multiplayer.is_server():
+		_rpc_wipe.rpc_id(1, point, radius, tool)
+		return 0
+	return _wipe_authoritative(point, radius, tool)
+
+
+func _wipe_authoritative(point: Vector3, radius: float, tool: int) -> int:
 	var removed := 0
-	for s in stars:
-		removed += s.wipe(point, radius)
+	for i in stars.size():
+		removed += stars[i].wipe(point, radius, tool)
+		if NetworkManager.is_online() and not stars[i].last_removed.is_empty():
+			_rpc_removed.rpc(i, stars[i].last_removed)
 	return removed
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_wipe(point: Vector3, radius: float, tool: int) -> void:
+	if not multiplayer.is_server():
+		return
+	# Host prüft die Anfrage: sinnvolle Größen, Punkt in Reichweite der Insel
+	if not is_finite(radius) or radius <= 0.0 or radius > 100.0 or point.length() > 60.0:
+		return
+	if tool < 0 or tool >= CleanTool.Kind.size():
+		return
+	_wipe_authoritative(point, radius, tool)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_removed(star_idx: int, ids: Array) -> void:
+	if star_idx >= 0 and star_idx < stars.size():
+		stars[star_idx].apply_removed(ids)
+
+
+func _request_state() -> void:
+	_rpc_request_state.rpc_id(1)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_request_state() -> void:
+	if multiplayer.is_server():
+		_send_state(multiplayer.get_remote_sender_id())
+
+
+func _on_player_joined(id: int) -> void:
+	if multiplayer.is_server() and id != 1:
+		_send_state(id)
+
+
+func _send_state(peer: int) -> void:
+	for i in stars.size():
+		if not stars[i].removed_ids.is_empty():
+			_rpc_removed.rpc_id(peer, i, stars[i].removed_ids)
 
 
 func cleaned_count() -> int:

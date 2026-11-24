@@ -12,6 +12,10 @@ var spots: Array[MeshInstance3D] = []
 var total := 0
 var progress := 0.0
 var is_clean := false
+var last_removed: Array[int] = []   # Fleck-IDs, die der letzte wipe() entfernt hat (für Netzwerk-Replikation)
+var removed_ids: Array[int] = []    # alle entfernten Fleck-IDs (Zustand für Nachzügler)
+
+var _by_id := {}
 
 var _mat: StandardMaterial3D
 var _light: OmniLight3D
@@ -73,6 +77,8 @@ func _ready() -> void:
 		s.material_override = spot_mats[dirt]
 		s.set_meta("dirt", dirt)
 		s.set_meta("hp", 1.0)
+		s.set_meta("id", i)
+		_by_id[i] = s
 		s.basis = Basis.looking_at(dir, up) * Basis.from_scale(Vector3(1, 1, 0.35))
 		s.position = dir * radius * 0.99
 		add_child(s)
@@ -87,7 +93,9 @@ func _process(delta: float) -> void:
 
 ## Wischt alle Flecken im Radius um einen Weltpunkt weg. Gibt die Anzahl entfernter Flecken zurück.
 ## tool: CleanTool.Kind; ANY (Standard) wirkt auf alles voll. Falsches Werkzeug entfernt Flecken nur nach mehreren Zügen.
+## Die entfernten Fleck-IDs stehen danach in `last_removed` (für die Replikation durch World).
 func wipe(world_point: Vector3, wipe_radius: float, tool: int = CleanTool.Kind.ANY) -> int:
+	last_removed = []
 	if is_clean:
 		return 0
 	var local_p := to_local(world_point)
@@ -98,22 +106,44 @@ func wipe(world_point: Vector3, wipe_radius: float, tool: int = CleanTool.Kind.A
 			s.set_meta("hp", hp)
 			if hp > 0.001:
 				continue
-			spots.erase(s)
+			last_removed.append(s.get_meta("id"))
+			_remove_spot(s)
 			removed += 1
-			if s.is_inside_tree() and is_inside_tree():
-				var tw := create_tween()
-				tw.tween_property(s, "scale", Vector3.ZERO, 0.15)
-				tw.tween_callback(s.queue_free)
-			else:
-				s.queue_free()
+	_finish_removal(removed)
+	return removed
+
+
+## Entfernt Flecken anhand ihrer IDs (Client-Seite: der Host hat entschieden). Unbekannte/bereits entfernte IDs werden ignoriert.
+func apply_removed(ids: Array) -> int:
+	var removed := 0
+	for id in ids:
+		var s: MeshInstance3D = _by_id.get(int(id))
+		if s != null and spots.has(s):
+			_remove_spot(s)
+			removed += 1
+	_finish_removal(removed)
+	return removed
+
+
+func _remove_spot(s: MeshInstance3D) -> void:
+	spots.erase(s)
+	removed_ids.append(s.get_meta("id"))
+	if s.is_inside_tree() and is_inside_tree():
+		var tw := create_tween()
+		tw.tween_property(s, "scale", Vector3.ZERO, 0.15)
+		tw.tween_callback(s.queue_free)
+	else:
+		s.queue_free()
+
+
+func _finish_removal(removed: int) -> void:
 	if removed > 0:
 		progress = 1.0 - float(spots.size()) / float(total)
 		_apply_glow()
 		scrubbed.emit(removed)
-		if spots.is_empty():
+		if spots.is_empty() and not is_clean:
 			is_clean = true
 			cleaned.emit()
-	return removed
 
 
 func _apply_glow() -> void:
