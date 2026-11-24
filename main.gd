@@ -321,6 +321,7 @@ func _bind_player(p: Player) -> void:
 		var bonus_food: float = (p.mod("recipe_food") * Roles.factor(p.role, "recipe_food") - 1.0) * 30.0
 		if bonus_food > 0.0:
 			p.food.feed(bonus_food))
+	p.helped_up.connect(func(_t): achievements.count("revive"))   # M-14: Erfolg "Retter"
 	p.xp.leveled_up.connect(func(l: int): hud.show_puzzle_message("Stufe %d! Mit K Fähigkeiten lernen." % l, 5.0))
 
 

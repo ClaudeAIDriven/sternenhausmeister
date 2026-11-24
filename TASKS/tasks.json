@@ -1933,5 +1933,26 @@
   "skills": "GDScript",
   "owner": "A",
   "prio": "nice"
+ },
+ {
+  "id": "M-14",
+  "area": "GAME",
+  "title": "Erfolg „Retter“ anbinden, Prüftest für alle Erfolge",
+  "deps": [
+   "M-13"
+  ],
+  "size": "S",
+  "status": "done",
+  "goal": "Wiederbeleben zählt für den Erfolg Retter; ein Test stellt sicher, dass jeder Erfolg eine Quelle im Spiel hat.",
+  "files": [
+   "player.gd",
+   "main.gd",
+   "tests/test_gaps.gd",
+   "tests/test_achievement_wiring.gd"
+  ],
+  "accept": "Tests grün; Test schlägt ohne die Anbindung fehl.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "nice"
  }
 ]

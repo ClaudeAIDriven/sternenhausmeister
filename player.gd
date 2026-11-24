@@ -7,6 +7,7 @@ signal health_changed(value: float)
 signal died
 signal ping_received(sender: int, point: Vector3)   # G-33
 signal revived(by_teammate: bool)   # G-20
+signal helped_up(target: Player)    # M-14: ich habe jemanden wiederbelebt
 signal hit_landed(target: Player)
 
 const SPEED := 6.0
@@ -442,6 +443,7 @@ func update_revive(delta: float, held: bool) -> bool:
 		revive_progress = 0.0
 		revive_target = null
 		xp.add_event("revive")   # M-11: XP fürs Wiederbeleben
+		helped_up.emit(target)
 		if target.is_multiplayer_authority():
 			target.get_up(true)
 		else:
