@@ -24,3 +24,4 @@ Godot-Binary lokal: /home/claude/tools/Godot_v4.3-stable_linux.x86_64
 - C-01, C-02 erledigt: main.gd aufgeteilt (NightSky, World, Hud), GameState-Autoload mit Selbsttest. Als Nächstes für A: C-03, N-01.
 - C-03 erledigt: Settings-Autoload (speichern/laden, Test tests/test_settings.gd). PR offen.
 - N-01, N-04 erledigt: NetworkManager (ENet, bis 4 Spieler, Spielerliste vom Host) + Test mit 4 lokalen Instanzen (tools/test_net4.sh) grün. Gestapelt auf C-03. Als Nächstes für A: N-02 (Spieler-Spawner), N-03, G-01..G-04, U-02.
+- G-02 erledigt: Sternbild-Format (JSON) + Loader/Validierung, 3 Beispiele, Test grün. Gestapelt auf N-01.

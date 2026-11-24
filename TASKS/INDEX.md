@@ -16,7 +16,7 @@
 | [N-05](N-05.md) | A | must | NET | Disconnect/Rejoin und Drohnen-Ersatz | M | open | N-02 |
 | [N-06](N-06.md) | A | must | NET | Internet-Anleitung und optional UPnP | S | open | N-01 |
 | [G-01](G-01.md) | A | must | GAME | Nacht-Timer mit Dämmerung/Mitternacht/Morgenrot | S | open | C-02 |
-| [G-02](G-02.md) | A | must | GAME | Sternbild-Datenformat und 3 Beispiele | S | open | P-002 |
+| [G-02](G-02.md) | A | must | GAME | Sternbild-Datenformat und 3 Beispiele | S | done | P-002 |
 | [G-03](G-03.md) | A | must | GAME | Sternbild-Rätsel-Logik | M | open | G-02 |
 | [G-04](G-04.md) | A | must | GAME | Sternenstaub-Währung | S | open | C-02 |
 | [G-05](G-05.md) | A | must | GAME | Shop und Upgrades | M | open | G-04, U-02 |

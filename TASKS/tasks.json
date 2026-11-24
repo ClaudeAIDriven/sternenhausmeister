@@ -268,7 +268,7 @@
    "P-002"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "JSON/Resource-Format (Sterne, Reihenfolge, Name); data/constellations/*.json mit 3 Beispielen.",
   "files": [
    "data/constellations/",
