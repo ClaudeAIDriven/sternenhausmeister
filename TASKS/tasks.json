@@ -1105,5 +1105,26 @@
   "skills": "GDScript",
   "owner": "A",
   "prio": "must"
+ },
+ {
+  "id": "I-07",
+  "area": "NET",
+  "title": "Host-Info: eigene IP und Port anzeigen",
+  "deps": [
+   "N-06",
+   "I-02"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Beim Hosten zeigt eine kleine Anzeige im Spiel LAN-IP(s), nach UPnP die öffentliche IP, den Port und die UPnP-Meldung; Knopf kopiert \"IP:Port\" in die Zwischenablage.",
+  "files": [
+   "host_info.gd",
+   "main.gd",
+   "tests/test_host_info.gd"
+  ],
+  "accept": "Test: Anzeige erscheint nur beim Hosten, zeigt Port, wertet upnp_result aus; run_tests grün; Screenshot.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  }
 ]
