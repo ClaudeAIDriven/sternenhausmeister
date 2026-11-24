@@ -98,6 +98,7 @@ func _buy_authoritative(id: String) -> bool:
 	levels_changed.emit()
 	if NetworkManager.is_online():
 		_rpc_levels.rpc(levels)
+		_rpc_spent.rpc(c)   # I-10: auch die anderen buchen den Preis ab (Staub wird bei allen gleich mitgezählt)
 	return true
 
 
@@ -105,6 +106,12 @@ func _buy_authoritative(id: String) -> bool:
 func _rpc_buy(id: String) -> void:
 	if multiplayer.is_server():
 		_buy_authoritative(id)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_spent(amount: int) -> void:
+	if amount > 0 and amount <= 100000:
+		GameState.spend_dust(amount)
 
 
 @rpc("authority", "call_remote", "reliable")

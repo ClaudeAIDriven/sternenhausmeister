@@ -83,3 +83,4 @@ U-04 (C): `Accessibility` (accessibility.gd, CanvasLayer): Untertitel/visuelle K
 I-08 Presets (Spielart im Menü, Zeitlimit, Hinweise) und Barrierefreiheit-Panel in der Pause eingebaut (Wetter aus G-07 weiter nicht eingebaut)
 I-09 Werkstatt-Oberfläche: Taste B, Upgrades kaufen (Shop hatte keine UI); Online-Kauf über Host ungetestet im echten Netz
 U-06 Anfängerhilfe: Hinweise in 3 Schritten beim ersten Spiel, erster Sternbild-Stern pulsiert (Texte/Timing ungetestet von Menschen)
+I-10 Shop-Kauf im Netz: Preis wird bei allen abgebucht (Staub ist je Spieler gespiegelt, kleine Abweichungen durch Kombo möglich)
