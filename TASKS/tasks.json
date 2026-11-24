@@ -984,5 +984,25 @@
   "skills": "SVG, Godot",
   "owner": "C",
   "prio": "nice"
+ },
+ {
+  "id": "I-01",
+  "area": "UI",
+  "title": "Integration: Menü, Pause, Shop in main.gd",
+  "deps": [
+   "U-01",
+   "U-03",
+   "G-05"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "main.gd startet ohne Startoption im Hauptmenü, wertet Menu.launch aus (Solo/Host/Join), hängt Pause und Shop ein und nutzt die Shop-Werte für den Wischradius.",
+  "files": [
+   "main.gd"
+  ],
+  "accept": "Test: Start ohne Argumente führt ins Menü, Menu.launch startet Host/Solo; Pause und Shop-Knoten vorhanden; Selbsttest weiter grün.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  }
 ]
