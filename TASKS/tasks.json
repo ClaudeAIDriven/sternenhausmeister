@@ -1293,5 +1293,26 @@
   "skills": "GDScript",
   "owner": "A",
   "prio": "must"
+ },
+ {
+  "id": "I-10",
+  "area": "NET",
+  "title": "Shop-Kauf im Netz: Staub bei allen abbuchen",
+  "deps": [
+   "G-05",
+   "I-09"
+  ],
+  "size": "S",
+  "status": "done",
+  "goal": "Kauft jemand ein Upgrade, ziehen alle Spieler den Preis vom Staub ab (bisher nur der Host).",
+  "files": [
+   "shop.gd",
+   "tests/net_shop.gd",
+   "tools/test_netshop.sh"
+  ],
+  "accept": "Netztest: Client kauft, beide haben Stufe 1 und denselben Staubabzug; run_tests grün.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  }
 ]

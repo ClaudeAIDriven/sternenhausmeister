@@ -70,3 +70,4 @@
 | [G-15](G-15.md) | A | nice | GAME | Sternschnuppen verschmutzen Sterne neu | M | open | G-07 |
 | [I-08](I-08.md) | A | must | GAME | Presets und Barrierefreiheit ins Spiel einbauen | M | done | G-09, U-04, U-01, U-03 |
 | [I-09](I-09.md) | A | must | UI | Werkstatt-Oberfläche (Shop-UI) | S | done | G-05, U-03 |
+| [I-10](I-10.md) | A | must | NET | Shop-Kauf im Netz: Staub bei allen abbuchen | S | done | G-05, I-09 |
