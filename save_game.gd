@@ -32,7 +32,7 @@ static func player_data(xp, skills) -> Dictionary:
 
 
 ## Stellt den Spielstand aus den Teilen zusammen. `players`: Spielername -> {"xp": Xp, "skills": Skills} (beide optional).
-static func capture(world, game_state, shop, players: Dictionary, night: int, seed_value: int = 7) -> Dictionary:
+static func capture(world, game_state, shop, players: Dictionary, night: int, seed_value: int = 0) -> Dictionary:
 	var stars_state: Array = []
 	for s in world.stars:
 		stars_state.append((s.removed_ids as Array).duplicate())

@@ -40,7 +40,7 @@ func _process(_d: float) -> bool:
 	var sk2 = load("res://skills.gd").new(xp2)
 	sk2.load_data()
 	var loaded: Dictionary = SG.load_game("Test Slot!")
-	ok = ok and int(loaded["night"]) == 3 and int(loaded["seed"]) == 7
+	ok = ok and int(loaded["night"]) == 3 and int(loaded["seed"]) == 0
 	var pl: Dictionary = SG.apply(loaded, w, gs, shop)
 	ok = ok and gs.dust == 321 and shop.levels.get("u_besen") == 1 and shop.equipped == "besen"
 	ok = ok and star.removed_ids.size() == 2 and star.removed_ids.has(ids[0]) and star.removed_ids.has(ids[1])
