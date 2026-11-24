@@ -67,7 +67,7 @@
 | [G-14](G-14.md) | C | nice | GAME | Fünf weitere Sternbilder (JSON) | S | open | G-02 |
 | [U-05](U-05.md) | A | nice | UI | Nacht-Zusammenfassung | M | done | G-01, U-02 |
 | [U-06](U-06.md) | C | nice | UI | Anfängerhilfe in Nacht 1 | S | done | U-02 |
-| [G-15](G-15.md) | A | nice | GAME | Sternschnuppen verschmutzen Sterne neu | M | open | G-07 |
+| [G-15](G-15.md) | A | nice | GAME | Sternschnuppen verschmutzen Sterne neu | M | done | G-07 |
 | [I-08](I-08.md) | A | must | GAME | Presets und Barrierefreiheit ins Spiel einbauen | M | done | G-09, U-04, U-01, U-03 |
 | [I-09](I-09.md) | A | must | UI | Werkstatt-Oberfläche (Shop-UI) | S | done | G-05, U-03 |
 | [I-10](I-10.md) | A | must | NET | Shop-Kauf im Netz: Staub bei allen abbuchen | S | done | G-05, I-09 |
@@ -75,8 +75,8 @@
 | [I-12](I-12.md) | A | must | GAME | Gesundheit: Lebensleiste, Fall, Schubsen, Lava, Kaktus | M | done | – |
 | [I-13](I-13.md) | A | must | GAME | Rollen: Allrounder, Hüpfer, Putzer, Flitzer | M | done | – |
 | [I-14](I-14.md) | A | must | UI | Minimap mit Fortschritt und Zeit | M | done | – |
-| [G-20](G-20.md) | A | must | GAME | Tod: 60-s-Respawn, 10 % Staubverlust, Wiederbeleben | M | open | I-12 |
-| [G-21](G-21.md) | A | must | GAME | Essen: Food-Leiste mit Bonus statt Zwang | M | done | I-12 |
+| [G-20](G-20.md) | A | must | GAME | Tod: 60-s-Respawn, 10 % Staubverlust, Wiederbeleben | M | done | I-12 |
+| [G-21](G-21.md) | A | must | GAME | Essen: Food-Leiste mit Bonus statt Zwang | M | open | I-12 |
 | [G-22](G-22.md) | A | must | GAME | Früchte finden und Inventar | M | open | G-21 |
 | [G-23](G-23.md) | A | must | GAME | Küche mit Rezepten | M | open | G-22 |
 | [G-24](G-24.md) | A | must | GAME | Rollen II: Koch und Kletterer | M | open | I-13, G-23 |
