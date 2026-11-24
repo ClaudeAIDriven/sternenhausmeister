@@ -1036,7 +1036,7 @@
    "A-05"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Sterne nutzen StarLook (Look wächst mit Putzfortschritt), die Insel IslandProps (Bodentextur, Laternen, Werkstatt, Ballon), Wisch-Effekte kommen aus Effects.",
   "files": [
    "star.gd",

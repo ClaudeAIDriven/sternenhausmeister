@@ -106,14 +106,14 @@ func _build_island() -> void:
 	mesh.bottom_radius = 9.0
 	mesh.height = 2.0
 	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0.5, 0.58, 0.85)
+	mat.albedo_color = Palette.UI_IVORY.darkened(0.1)   # Wolkenränder
 	mat.emission_enabled = true
-	mat.emission = Color(0.4, 0.5, 0.9)
-	mat.emission_energy_multiplier = 0.15
+	mat.emission = Palette.ISLAND
+	mat.emission_energy_multiplier = 0.2
 	mat.roughness = 0.9
 	var mi := MeshInstance3D.new()
 	mi.mesh = mesh
-	mi.material_override = mat
+	mi.material_override = IslandProps.ground_material(5.0)   # A-12: handgemalt wirkender Boden
 	body.add_child(mi)
 	var cs := CollisionShape3D.new()
 	var shape := CylinderShape3D.new()
@@ -124,6 +124,7 @@ func _build_island() -> void:
 	body.position.y = -1.0
 	add_child(body)
 
+	_decorate_island()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 7
 	var puff := SphereMesh.new()
@@ -185,6 +186,24 @@ func _rpc_layout(count: int) -> void:
 		_build_stars(count)
 
 
+## Gras, Steine, Büsche, Laternen, Werkstatt und Schild (A-12, A-03). Rein optisch, ohne Kollision.
+func _decorate_island() -> void:
+	var deco := IslandProps.decorate(13.0, 42)
+	deco.name = "Deko"
+	add_child(deco)
+	for p in [Vector3(4, 0, 6), Vector3(-5, 0, 7), Vector3(7, 0, -5)]:
+		var lamp := IslandProps.lantern()
+		lamp.position = p
+		add_child(lamp)
+	var shop_house := Props.workshop()
+	shop_house.position = Vector3(-8, 0, -6)
+	shop_house.rotation.y = 0.6
+	add_child(shop_house)
+	var sign := IslandProps.sign_post("Werkstatt")
+	sign.position = Vector3(-5, 0, -3.5)
+	add_child(sign)
+
+
 func _build_stars(count: int) -> void:
 	for old in stars:
 		old.queue_free()
@@ -195,6 +214,8 @@ func _build_stars(count: int) -> void:
 		s.position = p
 		add_child(s)
 		s.scrubbed.connect(func(n: int): star_scrubbed.emit(s, n))
-		s.cleaned.connect(func(): star_cleaned.emit(s))
+		s.cleaned.connect(func():
+			Effects.sparkle_burst(self, s.position, s.radius)   # A-05: Funkel-Burst beim Abschluss
+			star_cleaned.emit(s))
 		stars.append(s)
 	layout_changed.emit(count)

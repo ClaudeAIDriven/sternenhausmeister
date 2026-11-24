@@ -17,33 +17,20 @@ var removed_ids: Array[int] = []    # alle entfernten Fleck-IDs (Zustand für Na
 
 var _by_id := {}
 
-var _mat: StandardMaterial3D
+var _look: MeshInstance3D
 var _light: OmniLight3D
 
 
 func _ready() -> void:
-	var mesh := SphereMesh.new()
-	mesh.radius = radius
-	mesh.height = radius * 2.0
-	mesh.radial_segments = 32
-	mesh.rings = 16
-	_mat = StandardMaterial3D.new()
-	_mat.albedo_color = Color(0.42, 0.4, 0.4)
-	_mat.emission_enabled = true
-	_mat.emission = Color(1.0, 0.85, 0.35)
-	_mat.emission_energy_multiplier = 0.15
-	_mat.roughness = 0.6
-	var mi := MeshInstance3D.new()
-	mi.mesh = mesh
-	mi.material_override = _mat
-	add_child(mi)
+	_look = StarLook.build(radius)   # A-11: Sternform, Schmutz-Overlays, Putzübergang per Shader
+	add_child(_look)
 
 	var body := StaticBody3D.new()
 	body.collision_layer = 2
 	body.collision_mask = 0
 	var cs := CollisionShape3D.new()
 	var sh := SphereShape3D.new()
-	sh.radius = radius
+	sh.radius = radius * 1.1
 	cs.shape = sh
 	body.add_child(cs)
 	add_child(body)
@@ -80,7 +67,7 @@ func _ready() -> void:
 		s.set_meta("id", i)
 		_by_id[i] = s
 		s.basis = Basis.looking_at(dir, up) * Basis.from_scale(Vector3(1, 1, 0.35))
-		s.position = dir * radius * 0.99
+		s.position = dir * radius * StarLook.radius_factor(dir) * 0.99   # sitzt auf der Sternoberfläche (mit Spitzen)
 		add_child(s)
 		spots.append(s)
 	total = spots.size()
@@ -147,6 +134,5 @@ func _finish_removal(removed: int) -> void:
 
 
 func _apply_glow() -> void:
-	_mat.albedo_color = Color(0.42, 0.4, 0.4).lerp(Color(1.0, 0.92, 0.6), progress)
-	_mat.emission_energy_multiplier = lerpf(0.15, 3.0, progress)
+	StarLook.set_clean(_look, progress)
 	_light.light_energy = lerpf(0.0, 4.0, progress)
