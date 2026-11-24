@@ -586,7 +586,7 @@
    "C-03"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Menüszene mit IP-Feld, Hostname/Name des Spielers, Navigation.",
   "files": [
    "menu.tscn",
