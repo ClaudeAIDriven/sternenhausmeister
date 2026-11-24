@@ -1,0 +1,682 @@
+[
+ {
+  "id": "P-001",
+  "area": "CORE",
+  "title": "Spieler: Bewegung, Kamera, Staubwedel",
+  "deps": [],
+  "size": "M",
+  "status": "done",
+  "goal": "Dritte-Person-Spieler mit WASD, Maus, Sprung, Wedel-Animation.",
+  "files": [
+   "player.gd"
+  ],
+  "accept": "Selftest läuft; Screenshot zeigt Spieler auf Insel.",
+  "skills": "GDScript"
+ },
+ {
+  "id": "P-002",
+  "area": "CORE",
+  "title": "Stern mit Schmutzflecken und Wisch-Logik",
+  "deps": [],
+  "size": "M",
+  "status": "done",
+  "goal": "Star-Klasse mit 140 Flecken, wipe(), Glow-Fortschritt, Signale.",
+  "files": [
+   "star.gd"
+  ],
+  "accept": "`-- --selftest` meldet SELFTEST OK.",
+  "skills": "GDScript"
+ },
+ {
+  "id": "P-003",
+  "area": "AUDIO",
+  "title": "Ton-Generator (Sfx) und Pentatonik beim Putzen",
+  "deps": [],
+  "size": "S",
+  "status": "done",
+  "goal": "Töne per Code, Pool aus 10 Playern.",
+  "files": [
+   "sfx.gd",
+   "main.gd"
+  ],
+  "accept": "Beim Wischen erklingen Noten.",
+  "skills": "GDScript"
+ },
+ {
+  "id": "C-01",
+  "area": "CORE",
+  "title": "main.gd in Module aufteilen",
+  "deps": [
+   "P-001",
+   "P-002"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "main.gd in world.gd (Insel/Sterne), sky.gd (Hintergrund), hud.gd (Anzeige) zerlegen, Verhalten unverändert.",
+  "files": [
+   "main.gd",
+   "world.gd",
+   "sky.gd",
+   "hud.gd",
+   "main.tscn"
+  ],
+  "accept": "Selftest grün, Screenshot identisch zum Stand vorher.",
+  "skills": "GDScript"
+ },
+ {
+  "id": "C-02",
+  "area": "CORE",
+  "title": "Autoload GameState",
+  "deps": [
+   "C-01"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Zentrale Zustandsklasse: player_count, night_state, dust, Signale (night_started, night_ended, star_cleaned). Siehe docs/ARCHITECTURE.md.",
+  "files": [
+   "game_state.gd",
+   "project.godot"
+  ],
+  "accept": "Unit-Test-Szene setzt Werte und prüft Signale.",
+  "skills": "GDScript"
+ },
+ {
+  "id": "C-03",
+  "area": "CORE",
+  "title": "Autoload Settings mit Speichern",
+  "deps": [
+   "C-01"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Lautstärke, Mausempfindlichkeit, FOV, UI-Skalierung in user://settings.cfg speichern/laden.",
+  "files": [
+   "settings.gd",
+   "project.godot"
+  ],
+  "accept": "Werte überleben Neustart (Test mit zwei Läufen).",
+  "skills": "GDScript"
+ },
+ {
+  "id": "C-04",
+  "area": "CORE",
+  "title": "Tasten umbelegen und Gamepad",
+  "deps": [
+   "C-03"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "InputMap aus Settings laden, Gamepad (Stick, A, RT) ergänzen, Umbelegen-Dialog-Logik.",
+  "files": [
+   "input_setup.gd",
+   "settings.gd"
+  ],
+  "accept": "Aktion 'clean' lässt sich neu belegen und bleibt gespeichert.",
+  "skills": "GDScript"
+ },
+ {
+  "id": "N-01",
+  "area": "NET",
+  "title": "NetworkManager: Host/Join per ENet (bis 4+)",
+  "deps": [
+   "C-02"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Autoload mit host(port), join(ip,port), leave(), Signale player_joined/left, max 4 (konfigurierbar bis 8).",
+  "files": [
+   "network_manager.gd"
+  ],
+  "accept": "Test: 1 Host + 3 Clients (4 Instanzen) verbinden sich, Peer-Liste stimmt.",
+  "skills": "GDScript, Godot High-Level-Multiplayer"
+ },
+ {
+  "id": "N-02",
+  "area": "NET",
+  "title": "Spieler-Spawner und Positions-Sync",
+  "deps": [
+   "N-01",
+   "P-001"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "MultiplayerSpawner + MultiplayerSynchronizer für Position/Rotation/Wisch-Status jedes Spielers; Autorität beim jeweiligen Peer.",
+  "files": [
+   "world.gd",
+   "player.gd",
+   "player.tscn"
+  ],
+  "accept": "4 Instanzen sehen sich gegenseitig laufen (Screenshot-Test).",
+  "skills": "GDScript"
+ },
+ {
+  "id": "N-03",
+  "area": "NET",
+  "title": "Stern-Zustand serverautoritativ synchronisieren",
+  "deps": [
+   "N-01"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Clients senden Wisch-Anfragen per RPC, Host entfernt Flecken und repliziert (Fleck-IDs). Late-Join erhält vollständigen Zustand.",
+  "files": [
+   "star.gd",
+   "world.gd"
+  ],
+  "accept": "Wisch eines Clients ist bei allen sichtbar; Fortschritt identisch.",
+  "skills": "GDScript"
+ },
+ {
+  "id": "N-04",
+  "area": "NET",
+  "title": "Lokales 4-Instanzen-Testskript",
+  "deps": [
+   "N-01"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "tools/test_net4.sh startet Host + 3 Clients headless, prüft Verbindung und Stern-Sync per Log.",
+  "files": [
+   "tools/test_net4.sh"
+  ],
+  "accept": "Skript endet mit NET4 OK.",
+  "skills": "Bash, Godot CLI"
+ },
+ {
+  "id": "N-05",
+  "area": "NET",
+  "title": "Disconnect/Rejoin und Drohnen-Ersatz",
+  "deps": [
+   "N-02"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Verlässt ein Spieler die Runde, übernimmt eine einfache Drohne (läuft zum nächsten Schmutz). Rejoin möglich.",
+  "files": [
+   "network_manager.gd",
+   "drone.gd"
+  ],
+  "accept": "Test: Client trennt, Spiel läuft weiter, Drohne erscheint.",
+  "skills": "GDScript"
+ },
+ {
+  "id": "N-06",
+  "area": "NET",
+  "title": "Internet-Anleitung und optional UPnP",
+  "deps": [
+   "N-01"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "docs/INTERNET.md: Port-Weiterleitung, Tailscale/Radmin-Tipp; optional UPnP-Versuch beim Hosten.",
+  "files": [
+   "docs/INTERNET.md",
+   "network_manager.gd"
+  ],
+  "accept": "Anleitung vorhanden; UPnP-Fehler brechen das Hosten nicht ab.",
+  "skills": "Doku, Netzwerk"
+ },
+ {
+  "id": "G-01",
+  "area": "GAME",
+  "title": "Nacht-Timer mit Dämmerung/Mitternacht/Morgenrot",
+  "deps": [
+   "C-02"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Nachtablauf als State-Machine, sanftes Zeitlimit (kein Game Over), Signale an GameState.",
+  "files": [
+   "night.gd"
+  ],
+  "accept": "Test: Zeit läuft durch alle drei Phasen, Signale feuern.",
+  "skills": "GDScript"
+ },
+ {
+  "id": "G-02",
+  "area": "GAME",
+  "title": "Sternbild-Datenformat und 3 Beispiele",
+  "deps": [
+   "P-002"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "JSON/Resource-Format (Sterne, Reihenfolge, Name); data/constellations/*.json mit 3 Beispielen.",
+  "files": [
+   "data/constellations/",
+   "constellation_loader.gd"
+  ],
+  "accept": "Loader liest alle Dateien und validiert die Reihenfolge.",
+  "skills": "GDScript, JSON"
+ },
+ {
+  "id": "G-03",
+  "area": "GAME",
+  "title": "Sternbild-Rätsel-Logik",
+  "deps": [
+   "G-02"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Sterne müssen in richtiger Reihenfolge geputzt werden, sonst wieder verschmutzt/Hinweis; Bonus-Staub bei Erfolg.",
+  "files": [
+   "constellation.gd"
+  ],
+  "accept": "Selftest: richtige Reihenfolge löst, falsche nicht.",
+  "skills": "GDScript"
+ },
+ {
+  "id": "G-04",
+  "area": "GAME",
+  "title": "Sternenstaub-Währung",
+  "deps": [
+   "C-02"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Beim Putzen fällt Staub an, GameState.dust steigt, Anzeige im HUD.",
+  "files": [
+   "game_state.gd",
+   "star.gd"
+  ],
+  "accept": "Test: nach komplettem Stern dust > 0.",
+  "skills": "GDScript"
+ },
+ {
+  "id": "G-05",
+  "area": "GAME",
+  "title": "Shop und Upgrades",
+  "deps": [
+   "G-04",
+   "U-02"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Werkstatt-Shop: Wedelgröße, Lauftempo, Reichweite; Preise als Daten.",
+  "files": [
+   "shop.gd",
+   "data/upgrades.json"
+  ],
+  "accept": "Kauf senkt Staub und wirkt spürbar (Test der Werte).",
+  "skills": "GDScript"
+ },
+ {
+  "id": "G-06",
+  "area": "GAME",
+  "title": "Schmutztypen mit passendem Werkzeug",
+  "deps": [
+   "P-002"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Ruß/Flecken/Patina; Werkzeuge Sauger/Tuch/Polierpad; falsches Werkzeug wirkt schwächer.",
+  "files": [
+   "star.gd",
+   "tools.gd"
+  ],
+  "accept": "Selftest: richtiges Werkzeug entfernt schneller.",
+  "skills": "GDScript"
+ },
+ {
+  "id": "G-07",
+  "area": "GAME",
+  "title": "Wetter-Events: Wolken und Sternschnuppen",
+  "deps": [
+   "G-01"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Wolken verdecken Sterne, Sternschnuppe verschmutzt neu; Vorwarnung per HUD; nie zerstörend.",
+  "files": [
+   "weather.gd"
+  ],
+  "accept": "Event startet und endet planmäßig, Zen schaltet es auf kosmetisch.",
+  "skills": "GDScript"
+ },
+ {
+  "id": "G-08",
+  "area": "GAME",
+  "title": "Skalierung nach Spielerzahl",
+  "deps": [
+   "C-02",
+   "N-02"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Himmelsgröße und Ereignisdichte aus player_count (1–4+); Zeitlimit bleibt gleich.",
+  "files": [
+   "world.gd"
+  ],
+  "accept": "Test: 1 vs. 4 Spieler ergeben erwartete Sternzahl.",
+  "skills": "GDScript"
+ },
+ {
+  "id": "G-09",
+  "area": "GAME",
+  "title": "Regel-Presets (Zen, Kinder, Standard)",
+  "deps": [
+   "G-01"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Presets als Daten (Zeitlimit, Wetter, Rätselhilfe), Slider überschreiben sie.",
+  "files": [
+   "data/presets/",
+   "presets.gd"
+  ],
+  "accept": "Preset laden verändert nachweislich die Regeln.",
+  "skills": "GDScript, JSON"
+ },
+ {
+  "id": "G-10",
+  "area": "GAME",
+  "title": "Ballon/Leiter zum Erreichen hoher Sterne",
+  "deps": [
+   "P-001"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Fortbewegung nach oben, auch im Koop nutzbar.",
+  "files": [
+   "balloon.gd"
+  ],
+  "accept": "Spieler erreicht Stern in 12 m Höhe.",
+  "skills": "GDScript"
+ },
+ {
+  "id": "A-01",
+  "area": "ART",
+  "title": "Toon-Shader mit Rim-Light",
+  "deps": [
+   "P-001"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Godot-Shader für Cel-Look (2–3 Stufen, Kantenlicht) für Spieler/Insel/Sterne.",
+  "files": [
+   "shaders/toon.gdshader"
+  ],
+  "accept": "Screenshot zeigt Toon-Look, läuft im Compatibility-Renderer.",
+  "skills": "Shader (GLSL-artig)"
+ },
+ {
+  "id": "A-02",
+  "area": "ART",
+  "title": "4 Spielerfarben und Namensschilder",
+  "deps": [
+   "N-02"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Jeder Spieler eigene Farbe, Name über dem Kopf.",
+  "files": [
+   "player.gd"
+  ],
+  "accept": "4 Spieler unterscheidbar im Screenshot.",
+  "skills": "GDScript"
+ },
+ {
+  "id": "A-03",
+  "area": "ART",
+  "title": "Low-Poly-Props: Ballon, Leiter, Werkstatt",
+  "deps": [
+   "P-001"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "CC0-Assets (z. B. Kenney/Quaternius) oder Blender; Lizenz in docs/CREDITS.md.",
+  "files": [
+   "assets/props/",
+   "docs/CREDITS.md"
+  ],
+  "accept": "Props laden in Szene, Lizenz dokumentiert.",
+  "skills": "Blender/3D, Lizenzprüfung"
+ },
+ {
+  "id": "A-04",
+  "area": "ART",
+  "title": "Himmel: Verlauf, Nebel, Wolkeninsel",
+  "deps": [
+   "P-001"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Schöneres Nachtbild, kein Banding, günstig für schwache GPUs.",
+  "files": [
+   "sky.gd"
+  ],
+  "accept": "Screenshot vorher/nachher.",
+  "skills": "Visual, Godot"
+ },
+ {
+  "id": "A-05",
+  "area": "ART",
+  "title": "Partikel: Staub und Funkeln beim Sauberwerden",
+  "deps": [
+   "P-002"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Funkel-Burst beim Stern-Abschluss, hübscherer Staub.",
+  "files": [
+   "effects.gd"
+  ],
+  "accept": "Burst sichtbar im Screenshot-Test.",
+  "skills": "Godot-Partikel"
+ },
+ {
+  "id": "S-01",
+  "area": "AUDIO",
+  "title": "Lo-Fi-Musikschleife",
+  "deps": [
+   "P-003"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "CC0-Musik oder generierte Schleife, nahtlos, Lautstärke in Settings.",
+  "files": [
+   "assets/audio/music/",
+   "music.gd"
+  ],
+  "accept": "Schleife läuft ohne Knacken; Lizenz dokumentiert.",
+  "skills": "Audio"
+ },
+ {
+  "id": "S-02",
+  "area": "AUDIO",
+  "title": "Sternakkorde und Sternbild-Melodien",
+  "deps": [
+   "P-003",
+   "G-02"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Jeder Stern eigene Tonhöhe; geputztes Sternbild spielt kurze Melodie.",
+  "files": [
+   "sfx.gd",
+   "constellation.gd"
+  ],
+  "accept": "Test: Tonfolge nach Sternbild korrekt.",
+  "skills": "Audio, GDScript"
+ },
+ {
+  "id": "S-03",
+  "area": "AUDIO",
+  "title": "UI- und Ambient-Sounds",
+  "deps": [
+   "U-01"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Klickgeräusche, Wind/Nacht-Ambiente.",
+  "files": [
+   "assets/audio/",
+   "sfx.gd"
+  ],
+  "accept": "Sounds hörbar, getrennte Lautstärke-Bus.",
+  "skills": "Audio"
+ },
+ {
+  "id": "U-01",
+  "area": "UI",
+  "title": "Hauptmenü (Start, Host, Join, Einstellungen, Beenden)",
+  "deps": [
+   "C-03"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Menüszene mit IP-Feld, Hostname/Name des Spielers, Navigation.",
+  "files": [
+   "menu.tscn",
+   "menu.gd"
+  ],
+  "accept": "Menü startet Solo, Host, Join; Screenshot.",
+  "skills": "Godot-UI"
+ },
+ {
+  "id": "U-02",
+  "area": "UI",
+  "title": "HUD: Staub, Timer, Spielerliste",
+  "deps": [
+   "C-02"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Moderne Anzeige statt Debug-Label.",
+  "files": [
+   "hud.gd"
+  ],
+  "accept": "Werte aktualisieren live.",
+  "skills": "Godot-UI"
+ },
+ {
+  "id": "U-03",
+  "area": "UI",
+  "title": "Pause- und Einstellungsmenü",
+  "deps": [
+   "C-03",
+   "U-01"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Esc öffnet Pause; Lautstärke, Sensitivität, FOV, Tasten.",
+  "files": [
+   "pause.gd"
+  ],
+  "accept": "Einstellungen wirken sofort und werden gespeichert.",
+  "skills": "Godot-UI"
+ },
+ {
+  "id": "U-04",
+  "area": "UI",
+  "title": "Barrierefreiheit: Untertitel, Farbenblind, UI-Skalierung",
+  "deps": [
+   "U-03"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Visuelle Klanganzeige, Farbenblind-Modi, Skalierung bis 200%.",
+  "files": [
+   "accessibility.gd"
+  ],
+  "accept": "Optionen im Menü, Screenshot je Modus.",
+  "skills": "Godot-UI, Barrierefreiheit"
+ },
+ {
+  "id": "B-01",
+  "area": "BUILD",
+  "title": "Windows-Export-Preset und Skript",
+  "deps": [
+   "P-001"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "export_presets.cfg + tools/build_windows.sh (headless Export in build/).",
+  "files": [
+   "export_presets.cfg",
+   "tools/build_windows.sh"
+  ],
+  "accept": "Skript erzeugt Sternenhausmeister.exe + .pck.",
+  "skills": "Godot CLI"
+ },
+ {
+  "id": "B-02",
+  "area": "BUILD",
+  "title": "NSIS-Installer-Skript",
+  "deps": [
+   "B-01"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "installer.nsi: Installationsordner, Startmenü, Deinstallation, Firewall-Hinweis.",
+  "files": [
+   "installer.nsi",
+   "tools/build_installer.sh"
+  ],
+  "accept": "Skript erzeugt Setup.exe (Test ohne Windows: Build läuft durch).",
+  "skills": "NSIS"
+ },
+ {
+  "id": "B-03",
+  "area": "BUILD",
+  "title": "CI-Workflow (Tests und Export)",
+  "deps": [
+   "B-01"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "GitHub-Actions: Godot headless Selftests, Export als Artefakt.",
+  "files": [
+   ".github/workflows/ci.yml"
+  ],
+  "accept": "Workflow-Datei valide; Tests laufen lokal grün.",
+  "skills": "GitHub Actions"
+ },
+ {
+  "id": "B-04",
+  "area": "BUILD",
+  "title": "Test-Runner für alle Selbsttests",
+  "deps": [
+   "P-002"
+  ],
+  "size": "S",
+  "status": "done",
+  "goal": "tools/run_tests.sh startet alle --selftest-Szenen und liefert Exitcode.",
+  "files": [
+   "tools/run_tests.sh"
+  ],
+  "accept": "Skript ist grün im Ist-Stand.",
+  "skills": "Bash"
+ },
+ {
+  "id": "D-01",
+  "area": "DOC",
+  "title": "README, CONTRIBUTING, Stilregeln",
+  "deps": [],
+  "size": "S",
+  "status": "done",
+  "goal": "Kurz erklären, wie man startet, testet und beiträgt.",
+  "files": [
+   "README.md",
+   "CONTRIBUTING.md"
+  ],
+  "accept": "Neuling kann Projekt in 5 Minuten starten.",
+  "skills": "Doku"
+ },
+ {
+  "id": "D-02",
+  "area": "DOC",
+  "title": "Playtest-Checkliste",
+  "deps": [
+   "P-002"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Konkrete Punkte für Putz-Feel, Koop, Performance.",
+  "files": [
+   "docs/PLAYTEST.md"
+  ],
+  "accept": "Checkliste vorhanden und nutzbar.",
+  "skills": "Doku, Game-Design"
+ }
+]
