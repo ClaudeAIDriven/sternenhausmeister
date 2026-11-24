@@ -73,6 +73,16 @@ func report_cleaned(star_id: int) -> String:
 	return "wrong"
 
 
+## Tonfolge des Sternbilds (S-02): Tonhöhen der Sterne in Lösungsreihenfolge, siehe Sfx.star_freq.
+func melody_freqs() -> Array[float]:
+	return Sfx.melody_freqs(order)
+
+
+## Kurze Melodie zum Abspielen, wenn das Sternbild gelöst ist (z. B. bei `solved`).
+func melody_stream() -> AudioStreamWAV:
+	return Sfx.make_melody(melody_freqs())
+
+
 func reset() -> void:
 	done = 0
 	is_solved = false

@@ -117,7 +117,7 @@
    "C-03"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "InputMap aus Settings laden, Gamepad (Stick, A, RT) ergänzen, Umbelegen-Dialog-Logik.",
   "files": [
    "input_setup.gd",
@@ -363,7 +363,7 @@
    "G-01"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Wolken verdecken Sterne, Sternschnuppe verschmutzt neu; Vorwarnung per HUD; nie zerstörend.",
   "files": [
    "weather.gd"
@@ -455,7 +455,7 @@
    "N-02"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Jeder Spieler eigene Farbe, Name über dem Kopf.",
   "files": [
    "player.gd"
@@ -548,7 +548,7 @@
    "G-02"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Jeder Stern eigene Tonhöhe; geputztes Sternbild spielt kurze Melodie.",
   "files": [
    "sfx.gd",
@@ -567,7 +567,7 @@
    "U-01"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Klickgeräusche, Wind/Nacht-Ambiente.",
   "files": [
    "assets/audio/",

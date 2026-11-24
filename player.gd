@@ -20,6 +20,7 @@ var aim_point := Vector3.ZERO
 var aim_valid := false
 var look: Node3D
 var look_index := -1
+var nameplate: Label3D
 var _shop: Node
 
 
@@ -146,8 +147,36 @@ func slot_index() -> int:
 	return clampi(i, 0, 3) if i >= 0 else 0
 
 
+## Name aus der Spielerliste; offline bzw. unbekannt: Spielername aus den Einstellungen.
+func display_name() -> String:
+	var info: Dictionary = NetworkManager.players.get(str(name).to_int(), {})
+	var n := str(info.get("name", ""))
+	return n if n != "" else str(Settings.get_value("player_name"))
+
+
+## Namensschild (A-02): immer sichtbar über dem Kopf, in der Farbe des Platzes, mit dunklem Rand für Lesbarkeit.
+func _refresh_nameplate(idx: int) -> void:
+	if nameplate == null:
+		nameplate = Label3D.new()
+		nameplate.name = "Nameplate"
+		nameplate.position = Vector3(0, 2.5, 0)
+		nameplate.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		nameplate.no_depth_test = true
+		nameplate.fixed_size = false
+		nameplate.pixel_size = 0.008
+		nameplate.font_size = 48
+		nameplate.outline_size = 14
+		nameplate.outline_modulate = Color(0.04, 0.05, 0.12)
+		add_child(nameplate)
+	nameplate.text = display_name()
+	nameplate.modulate = Palette.player_color(idx).lightened(0.35)
+	# Eigene Figur: Schild verbergen (sonst steht es im Bild der eigenen Kamera)
+	nameplate.visible = not (is_multiplayer_authority() and NetworkManager.is_online())
+
+
 func _refresh_look() -> void:
 	var idx := slot_index()
+	_refresh_nameplate(idx)
 	if idx == look_index and look != null:
 		return
 	look_index = idx
