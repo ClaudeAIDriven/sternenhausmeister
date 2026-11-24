@@ -86,7 +86,7 @@ func _physics_process(_d: float) -> bool:
 		cac.free()
 		# Rollen
 		var R = load("res://roles.gd")
-		_check(R.ids().size() == 4 and R.factor("springer", "jump") > 1.2 and R.factor("springer", "jump_cd") > 1.0, "Hüpfer")
+		_check(R.ids().size() == 6 and R.factor("springer", "jump") > 1.2 and R.factor("springer", "jump_cd") > 1.0, "Hüpfer")
 		_check(R.factor("putzer", "wipe") > 1.2 and R.fears_spiders("putzer") and not R.fears_spiders("flitzer"), "Putzer")
 		_check(R.factor("flitzer", "speed") > 1.3 and R.factor("flitzer", "wipe") < 0.8, "Flitzer")
 		p.role = "putzer"

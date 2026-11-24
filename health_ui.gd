@@ -115,6 +115,7 @@ func _process(delta: float) -> void:
 			msg.text = ""
 	if _player != null and is_instance_valid(_player):
 		bar.value = _player.health
+		food_bar.max_value = _player.food.capacity
 		food_bar.value = _player.food.value
 	_update_down_texts()
 

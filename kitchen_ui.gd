@@ -89,7 +89,7 @@ func bind(k: Kitchen, inv: Inventory, p: Player) -> void:
 func cook(id: String) -> bool:
 	if _kitchen == null:
 		return false
-	return _kitchen.cook(id, _inv, _player.food if _player != null else null)
+	return _kitchen.cook(id, _inv, _player.food if _player != null else null, _player.role if _player != null else "")
 
 
 func refresh() -> void:

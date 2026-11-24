@@ -63,7 +63,7 @@ func can_cook(id: String, inv: Inventory) -> bool:
 
 
 ## Kocht: verbraucht die Zutaten, füllt die Sättigung, setzt den Buff. false, wenn Zutaten fehlen.
-func cook(id: String, inv: Inventory, food: Food) -> bool:
+func cook(id: String, inv: Inventory, food: Food, role: String = "") -> bool:
 	if not can_cook(id, inv):
 		return false
 	var r := recipe(id)
@@ -72,14 +72,14 @@ func cook(id: String, inv: Inventory, food: Food) -> bool:
 			inv.items.erase(kind)
 	inv.changed.emit()
 	if food != null:
-		food.feed(float(r["food"]))
+		food.feed(float(r["food"]) * Roles.factor(role, "recipe_food"))
 	var b: Dictionary = r["buff"]
 	var stat := str(b["stat"])
 	var cur: Dictionary = buffs.get(stat, {})
 	if cur.is_empty() or float(b["mult"]) >= float(cur["mult"]):   # stärkerer Buff ersetzt, gleich starker erneuert die Zeit
-		buffs[stat] = {"mult": float(b["mult"]), "left": float(b["seconds"]), "label": str(b.get("label", stat))}
+		buffs[stat] = {"mult": float(b["mult"]), "left": float(b["seconds"]) * Roles.factor(role, "buff_time"), "label": str(b.get("label", stat))}
 	else:
-		cur["left"] = maxf(float(cur["left"]), float(b["seconds"]))
+		cur["left"] = maxf(float(cur["left"]), float(b["seconds"]) * Roles.factor(role, "buff_time"))
 	buffs_changed.emit()
 	cooked.emit(id)
 	return true

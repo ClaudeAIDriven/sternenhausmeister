@@ -59,6 +59,8 @@ var last_dust_lost := 0
 var _revive_held := 0.0
 var role := Roles.DEFAULT_ID      # I-13, wird mit repliziert
 var _jump_cd := 0.0
+var _ladder_cd := 0.0
+const CLIMB_WALL_SPEED := 3.0
 var _impulse := Vector3.ZERO
 var _since_damage := 0.0
 var _invuln := 0.0
@@ -84,6 +86,7 @@ func _ready() -> void:
 	if is_multiplayer_authority():
 		role = str(Settings.get_value("role"))
 		brawl = bool(Menu.launch.get("brawl", false))
+		food.apply_role(role)   # G-24: Leistengröße/Verbrauch der Rolle
 	_last_pos = global_position
 	var cs := CollisionShape3D.new()
 	var cap := CapsuleShape3D.new()
@@ -151,6 +154,9 @@ func _physics_process(delta: float) -> void:
 	var dir := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	var speed := stat("speed", SPEED) * Roles.factor(role, "speed") * food.speed_factor()
 	_jump_cd = maxf(_jump_cd - delta, 0.0)
+	_ladder_cd = maxf(_ladder_cd - delta, 0.0)
+	if Roles.can_ladder(role) and Input.is_physical_key_pressed(KEY_G) and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		place_ladder()
 	if _on_balloon != null and is_instance_valid(_on_balloon) and _on_balloon.is_aloft():
 		# Ballon lenken (I-11): Auf der Plattform in der Luft steuert WASD den Ballon statt den Spieler.
 		_on_balloon.steer = dir
@@ -162,7 +168,10 @@ func _physics_process(delta: float) -> void:
 	velocity.x += _impulse.x
 	velocity.z += _impulse.z
 	_impulse = Vector3(_impulse.x, 0, _impulse.z).lerp(Vector3.ZERO, clampf(delta * 6.0, 0.0, 1.0))
-	if not is_on_floor():
+	var climbing := _try_climb(input_dir)
+	if climbing:
+		pass
+	elif not is_on_floor():
 		velocity.y -= GRAVITY * delta
 	elif Input.is_action_just_pressed("jump") and _jump_cd <= 0.0:
 		velocity.y = JUMP_VELOCITY * Roles.factor(role, "jump")
@@ -184,6 +193,32 @@ func _physics_process(delta: float) -> void:
 	cleaning = Input.is_action_pressed("clean") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED
 	if cleaning and aim_valid:
 		wipe_requested.emit(aim_point)
+
+
+## G-24: Klettern. An einer Leiter (alle) oder an einer steilen Wand (nur Kletterer) steigt man bei Vorwärts-Taste hoch.
+## Gibt true zurück, wenn gerade geklettert wird (dann gilt keine Schwerkraft).
+func _try_climb(input_dir: Vector2) -> bool:
+	if input_dir.y >= -0.1:
+		return false
+	var ladder := Ladder.find_usable(get_tree(), global_position)
+	if ladder != null:
+		velocity.y = Ladder.CLIMB_SPEED
+		return true
+	if Roles.can_climb(role) and is_on_wall():
+		velocity.y = CLIMB_WALL_SPEED * Roles.factor(role, "climb")
+		return true
+	return false
+
+
+## G-24: Kletterer stellt eine Leiter vor sich auf (nur eine gleichzeitig, danach Abklingzeit).
+func place_ladder() -> Ladder:
+	if not Roles.can_ladder(role) or _ladder_cd > 0.0:
+		return null
+	_ladder_cd = Ladder.LIFETIME + 4.0
+	var l := Ladder.new()
+	get_parent().add_child(l)
+	l.global_position = global_position - global_transform.basis.z * 1.0
+	return l
 
 
 func _update_aim() -> void:

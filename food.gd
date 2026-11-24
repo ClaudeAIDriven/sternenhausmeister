@@ -15,11 +15,22 @@ const REGEN_SATED := 2.0
 const CLEAN_SATED := 1.1
 const SPEED_EMPTY := 0.8
 
+var capacity := MAX        # G-24: Koch hat mehr (Rolle), Maximum der Leiste
+var drain_mult := 1.0      # G-24: Kletterer verbraucht mehr
 var value := MAX
 
 
+## G-24: Rolle anwenden (Leistengröße, Verbrauch). Hält den Füllstand-Anteil.
+func apply_role(role_id: String) -> void:
+	var frac := fraction()
+	capacity = MAX * Roles.factor(role_id, "food_max")
+	drain_mult = Roles.factor(role_id, "food_drain")
+	value = clampf(frac * capacity, 0.0, capacity)
+	changed.emit(value)
+
+
 func fraction() -> float:
-	return value / MAX
+	return value / capacity
 
 
 func is_sated() -> bool:
@@ -37,11 +48,11 @@ func tick(delta: float, moving: bool, cleaning: bool) -> void:
 		d += DRAIN_MOVE
 	if cleaning:
 		d += DRAIN_CLEAN
-	_apply(value - d * delta)
+	_apply(value - d * drain_mult * delta)
 
 
 func on_jump() -> void:
-	_apply(value - DRAIN_JUMP)
+	_apply(value - DRAIN_JUMP * drain_mult)
 
 
 ## Essen (G-22): füllt die Leiste auf.
@@ -64,7 +75,7 @@ func speed_factor() -> float:
 
 
 func _apply(v: float) -> void:
-	var nv := clampf(v, 0.0, MAX)
+	var nv := clampf(v, 0.0, capacity)
 	if not is_equal_approx(nv, value):
 		value = nv
 		changed.emit(value)
