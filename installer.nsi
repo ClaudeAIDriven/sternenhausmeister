@@ -18,7 +18,7 @@ SetCompressor /SOLID lzma
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 !define MUI_FINISHPAGE_TITLE "Fast fertig"
-!define MUI_FINISHPAGE_TEXT "Mehrspieler: Wer ein Spiel hostet, muss in der Windows-Firewall beim ersten Start den Zugriff erlauben (privates Netzwerk) und UDP-Port 7777 ggf. im Router freigeben. Wer nur beitritt, braucht nichts."
+!define MUI_FINISHPAGE_TEXT "Mehrspieler: Wer ein Spiel hostet, muss in der Windows-Firewall beim ersten Start den Zugriff erlauben (privates Netzwerk) und UDP-Port 24680 ggf. im Router freigeben. Wer nur beitritt, braucht nichts."
 !define MUI_FINISHPAGE_RUN "$INSTDIR\${APP}.exe"
 !insertmacro MUI_PAGE_FINISH
 !insertmacro MUI_UNPAGE_CONFIRM
