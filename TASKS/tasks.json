@@ -1697,7 +1697,7 @@
    "M-01"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Pause-Speichern, Menü-Laden (launch[load]), Autosave am Nachtende, Seed im Pausenmenü sichtbar und im Speicherstand; Karte + Seed werden mitgeladen.",
   "files": [
    "main.gd",
