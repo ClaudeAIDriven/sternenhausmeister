@@ -10,6 +10,8 @@ Einzige Quelle der Wahrheit für den Ablauf. Du bist A, B oder C (Besitzer-Buchs
 2. `tools/run_tests.sh` auf main. Rot? Dann nur die rote Stelle reparieren (neue Aufgabe `fix-…`), nichts Neues beginnen.
 3. Offene Pull Requests ansehen: `gh api repos/ClaudeAIDriven/sternenhausmeister/pulls --jq '.[]|[.number,.title,.head.ref]|@tsv'`. Überschneidet sich dein Vorhaben mit Dateien eines offenen PR, melde das, statt doppelt zu bauen.
 
+4. **Pflicht: Ideen prüfen.** `python3 tools/ideas.py` (oder die Zeile IDEEN in `tasks.py status`). Jede Idee mit Status `neu` in `docs/IMPROVEMENT_BRAINSTORMING.md` entscheidest du jetzt: `umsetzen` (Karte anlegen), `später` oder `abgelehnt`, jeweils mit kurzem Grund. Eigene Ideen trägst du dort ein, statt sie auf Verdacht zu bauen. Das geht per kleinem PR nur an dieser Datei (und ggf. neuen Karten) und zählt nicht als Feature-Arbeit.
+
 ## 2. Was ist dran?
 1. `python3 tools/tasks.py mine`: Hast du eine begonnene Aufgabe, mach **zuerst die** weiter (`git fetch`, Branch `task/<ID>/<WER>` auschecken, vorhandenen Code und Commits lesen, nichts neu anfangen).
 2. Sonst `python3 tools/tasks.py next <A|B|C>` (eigene Aufgaben zuerst; fällt jemand aus, kommen unbeanspruchte der anderen danach). Ergebnis NONE: **sofort beenden** mit einer Zeile ("nichts Startbares: wartet auf …"). Keine eigenen Aufgaben erfinden, keine Features außerhalb der Karten.
