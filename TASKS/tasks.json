@@ -1444,7 +1444,7 @@
    "G-22"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Küche (Lagerfeuer mit Topf) als Ort auf der Insel. Rezepte in data/recipes.json (z. B. Mondapfel-Kompott, Sternbeeren-Suppe, Pilzpfanne). Gerichte füllen mehr und geben Zeit-Buffs (Wischradius, Tempo, Sprung). Rezeptbuch-Oberfläche mit F an der Küche.",
   "files": [
    "kitchen.gd",

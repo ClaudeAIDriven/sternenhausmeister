@@ -1,0 +1,8 @@
+{
+ "recipes": [
+  {"id": "mondapfel_kompott", "name": "Mondapfel-Kompott", "desc": "Süß und klar: der Wedel greift weiter aus.", "ingredients": {"mondapfel": 2}, "food": 40, "buff": {"stat": "wipe", "label": "Wischradius", "mult": 1.15, "seconds": 120}},
+  {"id": "sternbeeren_suppe", "name": "Sternbeeren-Suppe", "desc": "Warm und leicht: flinke Füße.", "ingredients": {"sternbeere": 3}, "food": 35, "buff": {"stat": "speed", "label": "Tempo", "mult": 1.15, "seconds": 120}},
+  {"id": "pilzpfanne", "name": "Pilzpfanne", "desc": "Deftig und federnd: höhere Sprünge.", "ingredients": {"wolkenpilz": 1, "sternbeere": 1}, "food": 50, "buff": {"stat": "jump", "label": "Sprung", "mult": 1.2, "seconds": 120}},
+  {"id": "sternenmus", "name": "Sternenmus", "desc": "Das große Festmahl: macht richtig satt und putzt besser.", "ingredients": {"sternbeere": 2, "mondapfel": 1, "wolkenpilz": 1}, "food": 80, "buff": {"stat": "wipe", "label": "Wischradius", "mult": 1.25, "seconds": 180}}
+ ]
+}
