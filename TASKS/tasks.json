@@ -528,7 +528,7 @@
    "P-003"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "CC0-Musik oder generierte Schleife, nahtlos, Lautstärke in Settings.",
   "files": [
    "assets/audio/music/",
