@@ -6,7 +6,7 @@ Wir bauen zu dritt das Godot-4.3-Spiel "Sternenhausmeister" (3D, Cozy-Koop, bis 
 Lies zuerst README.md, CONTRIBUTING.md, docs/ARCHITECTURE.md, PLAN.md und TASKS/INDEX.md. Antworte auf Deutsch.
 Regeln:
 - Arbeite nur an Aufgabenkarten aus TASKS/ deines Bereichs und ändere nur die dort genannten Dateien.
-- Pro Karte ein Branch task/<ID>. Starte mit `python3 tools/tasks.py ready`, dann `start <ID>`.
+- Befolge bei JEDEM Start und nach jedem Limit-Reset zuerst AGENT_PROMPT.md: Stand prüfen (git pull, `tasks.py status`, Tests, offene PRs, `tasks.py mine`), dann `next <Bereiche>` und `claim <ID>`. Setze `TASK_WHO=<dein Name>`. Branch: task/<ID>/<dein Name>.
 - tools/run_tests.sh muss grün sein. Zeige einen Beleg (Test oder Screenshot) für "Fertig, wenn".
 - Eröffne pro Karte einen Pull Request mit diesem Beleg. Merge nicht selbst in main (Person A integriert).
 - Schnittstellen aus ARCHITECTURE.md nicht eigenmächtig ändern. Brauchst du eine Änderung, lege eine neue Karte an.

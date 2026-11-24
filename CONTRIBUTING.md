@@ -1,3 +1,5 @@
+**Verbindlicher Ablauf (Stand prüfen, beanspruchen, abgeben): siehe AGENT_PROMPT.md. Branch-Name: task/<ID>/<dein Name>.**
+
 # Mitmachen (Menschen und Modelle)
 
 1. `python3 tools/tasks.py ready` zeigt Aufgaben, die jetzt startbar sind.
