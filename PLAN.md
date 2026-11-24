@@ -22,4 +22,5 @@ Godot-Binary lokal: /home/claude/tools/Godot_v4.3-stable_linux.x86_64
 - Konfliktstellen: main.gd/world.gd, player.gd, star.gd, project.godot (Autoloads). Erst C-01 und C-02 mergen, dann branchen die anderen davon ab.
 - Automatik-Bot (geplante Aufgabe) nur auf EINER Maschine/Konto laufen lassen, sonst doppelte Arbeit.
 - C-01, C-02 erledigt: main.gd aufgeteilt (NightSky, World, Hud), GameState-Autoload mit Selbsttest. Als Nächstes für A: C-03, N-01.
+- G-06 (bot-A): Schmutztypen Ruß/Flecken/Patina (star.gd) + Werkzeuge Sauger/Tuch/Polierpad (tools.gd, `CleanTool`); falsches Werkzeug wirkt zu 34 %. 🟢 Test: richtiges Werkzeug 1 Zug, falsches 3 Züge (`CleanTool.selftest`, per `godot --headless --path . -s <Runner>` mit `await`, noch nicht in run_tests.sh eingehängt, da main.gd/run_tests.sh nicht zur Karte gehören). ❌ Werkzeugwechsel im Spiel (Eingabe/HUD) fehlt noch; `wipe()` ohne Werkzeug verhält sich wie vorher.
 - B-01 (bot-A): Windows-Export-Preset + `tools/build_windows.sh` -> build/Sternenhausmeister.exe + .pck. 🟢 Export läuft headless durch (exe 84 MB, pck 41 KB). ❌ Start unter Windows ungetestet (Mensch: exe + pck zusammen auf Windows starten).

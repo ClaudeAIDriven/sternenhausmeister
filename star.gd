@@ -55,9 +55,12 @@ func _ready() -> void:
 	spot_mesh.height = 0.6
 	spot_mesh.radial_segments = 8
 	spot_mesh.rings = 4
-	var spot_mat := StandardMaterial3D.new()
-	spot_mat.albedo_color = Color(0.16, 0.1, 0.07)
-	spot_mat.roughness = 1.0
+	var spot_mats := {}
+	for d in CleanTool.DIRT_COLORS:
+		var m := StandardMaterial3D.new()
+		m.albedo_color = CleanTool.DIRT_COLORS[d]
+		m.roughness = 1.0
+		spot_mats[d] = m
 	for i in spot_count:
 		var y := 1.0 - (float(i) / (spot_count - 1)) * 2.0
 		var r := sqrt(maxf(0.0, 1.0 - y * y))
@@ -66,7 +69,10 @@ func _ready() -> void:
 		var up := Vector3.UP if absf(dir.y) < 0.99 else Vector3.RIGHT
 		var s := MeshInstance3D.new()
 		s.mesh = spot_mesh
-		s.material_override = spot_mat
+		var dirt: int = i % 3
+		s.material_override = spot_mats[dirt]
+		s.set_meta("dirt", dirt)
+		s.set_meta("hp", 1.0)
 		s.basis = Basis.looking_at(dir, up) * Basis.from_scale(Vector3(1, 1, 0.35))
 		s.position = dir * radius * 0.99
 		add_child(s)
@@ -80,13 +86,18 @@ func _process(delta: float) -> void:
 
 
 ## Wischt alle Flecken im Radius um einen Weltpunkt weg. Gibt die Anzahl entfernter Flecken zurück.
-func wipe(world_point: Vector3, wipe_radius: float) -> int:
+## tool: CleanTool.Kind; ANY (Standard) wirkt auf alles voll. Falsches Werkzeug entfernt Flecken nur nach mehreren Zügen.
+func wipe(world_point: Vector3, wipe_radius: float, tool: int = CleanTool.Kind.ANY) -> int:
 	if is_clean:
 		return 0
 	var local_p := to_local(world_point)
 	var removed := 0
 	for s in spots.duplicate():
 		if s.position.distance_to(local_p) < wipe_radius:
+			var hp: float = s.get_meta("hp") - CleanTool.efficiency(tool, s.get_meta("dirt"))
+			s.set_meta("hp", hp)
+			if hp > 0.001:
+				continue
 			spots.erase(s)
 			removed += 1
 			if s.is_inside_tree() and is_inside_tree():
