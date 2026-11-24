@@ -21,7 +21,7 @@
 - **Rußwolke** (Boss): nur mit **zwei Spielern gleichzeitig** wischen, allein nur wenn das Schild kurz fällt (alle 25 s für 6 s). Gibt 200 Staub.
 - **Essen:** **F** Früchte aufheben, **Q** essen; in der **Küche** (Feuerstelle) kochen für Buffs. Orte: Brunnen (heilt), Obstgarten, Turm (Gegner auf der Minimap), Schrein (**F**: Wischradius +25 %).
 - **XP und Fähigkeiten:** **K** öffnet den Fähigkeitenbaum. Rollen: Allrounder, Hüpfer, Putzer, Koch, Kletterer (**G** Leiter), Flitzer. Rollen tragen Hüte.
-- **Spaß:** Trampolinwolken (hoher Sprung), Wunsch-Sternschnuppen (fangen = Buff), Glühwürmchen zeigen zum nächsten schmutzigen Stern, mittlere Maustaste = Ping, **H** Hut wechseln (20 Erfolge schalten Hüte frei).
+- **Spaß:** Trampolinwolken (hoher Sprung), Wunsch-Sternschnuppen (fangen = Buff), Glühwürmchen zeigen zum nächsten schmutzigen Stern, mittlere Maustaste = Ping, **H** Hut wechseln (20 Erfolge schalten Hüte frei, Mitspieler sehen deinen Hut). Erfolge und Tagebuch: Esc → „Erfolge und Tagebuch“.
 - **Speichern:** Pause (Esc) → *Spiel speichern* (nur Host/Solo); am Nachtende automatisch („autosave"). Im Hauptmenü *Laden:* wählen.
 - Wenn du am Boden liegst: Mitspieler halten **F** (3 s) zum Wiederbeleben; sonst Neustart nach 60 s mit Staubverlust. Rauflust (Schubsen macht Schaden) ist im Menü optional.
 

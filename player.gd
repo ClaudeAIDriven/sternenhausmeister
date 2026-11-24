@@ -56,7 +56,8 @@ var skills: Skills             # M-01: Fähigkeiten (aus data/skills.json), nur 
 var kitchen: Kitchen           # M-01: Küchen-Buffs (main setzt es aus der Welt)
 var _air_jumps_left := 0
 var _hat_role := ""
-var hat_override := ""   # M-09: selbst gewählter Hut (nur lokal sichtbar)
+var hat_override := ""   # M-09: selbst gewählter Hut; M-13: wird repliziert, alle sehen ihn
+var _hat_shown := "-"
 var downed := false            # G-20: am Boden, wird mit repliziert
 var respawn_left := 0.0
 var revive_target: Player      # wen ich gerade wiederbelebe (für die Anzeige)
@@ -126,6 +127,8 @@ func _ready() -> void:
 	for prop in [^":position", ^":rotation", ^":health", ^":role", ^":downed"]:
 		cfg.add_property(prop)
 		cfg.property_set_replication_mode(prop, SceneReplicationConfig.REPLICATION_MODE_ALWAYS)
+	cfg.add_property(^":hat_override")   # M-13
+	cfg.property_set_replication_mode(^":hat_override", SceneReplicationConfig.REPLICATION_MODE_ON_CHANGE)
 	cfg.add_property(^":brawl")   # G-32
 	cfg.property_set_replication_mode(^":brawl", SceneReplicationConfig.REPLICATION_MODE_ALWAYS)
 	var sync := MultiplayerSynchronizer.new()
@@ -233,8 +236,11 @@ func _process(delta: float) -> void:
 	if look != null:   # G-20: Gefallene liegen auf der Seite
 		look.rotation.z = lerpf(look.rotation.z, PI * 0.5 if downed else 0.0, clampf(delta * 8.0, 0.0, 1.0))
 	_refresh_tool()
-	if look != null and role != _hat_role:   # M-06: Hut folgt der (replizierten) Rolle
+	if look != null and (role != _hat_role or hat_override != _hat_shown):   # M-06/M-13: Hut folgt Rolle und gewähltem Hut (beides repliziert)
 		_hat_role = role
+		if hat_override.length() > 24:
+			hat_override = ""   # Schutz gegen unsinnige Werte aus dem Netz
+		_hat_shown = hat_override
 		PlayerLook.update_hat(look, hat_override if hat_override != "" else role)
 	# Wedel schwingt beim Putzen
 	var t := Time.get_ticks_msec() / 1000.0

@@ -77,6 +77,7 @@ func _ready() -> void:
 	add_child(accessibility)
 	pause = Pause.new()   # U-03: Esc
 	pause.accessibility = accessibility
+	pause.achievements = achievements   # M-13
 	add_child(pause)
 	shop_ui = ShopUI.new()   # I-09: Werkstatt-Oberfläche (F an der Werkstatt, nach der Pause angelegt: Esc kommt zuerst hier an)
 	add_child(shop_ui)
@@ -449,7 +450,7 @@ func _build_achievements() -> void:
 		_night_spots = 0)
 
 
-## H: nächsten freigeschalteten Hut aufsetzen (nur lokal sichtbar, "" = Rollenhut).
+## H: nächsten freigeschalteten Hut aufsetzen ("" = Rollenhut). M-13: über den Spieler repliziert, alle sehen ihn.
 func cycle_hat() -> String:
 	var opts: Array = [""] + achievements.hats
 	_hat_index = (_hat_index + 1) % opts.size()

@@ -1911,5 +1911,27 @@
   "skills": "GDScript",
   "owner": "A",
   "prio": "must"
+ },
+ {
+  "id": "M-13",
+  "area": "UI",
+  "title": "Hut für alle sichtbar, Erfolge und Tagebuch im Pausenmenü",
+  "deps": [
+   "M-12"
+  ],
+  "size": "S",
+  "status": "done",
+  "goal": "Gewählter Hut wird repliziert; Pausenmenü zeigt Erfolge (mit Fortschritt und Hut-Belohnung) und Tagebuch.",
+  "files": [
+   "player.gd",
+   "pause.gd",
+   "achievements.gd",
+   "main.gd",
+   "tests/test_hat_sync.gd"
+  ],
+  "accept": "tests/test_hat_sync.gd und run_tests grün.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "nice"
  }
 ]

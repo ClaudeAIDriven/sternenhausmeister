@@ -17,6 +17,9 @@ const MENU_SCENE := "res://menu.tscn"
 var save_handler: Callable
 var save_label: Label
 var seed_label: Label
+var achievements: Achievements   # M-13: Erfolge und Tagebuch im Pausenmenü
+var journal_label: Label
+var journal_panel: PanelContainer
 var accessibility: Node   # I-08: optional, bringt das Barrierefreiheit-Panel mit
 var is_open := false
 var buttons := {}
@@ -50,12 +53,29 @@ func _build_ui() -> void:
 	var center := CenterContainer.new()
 	center.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_root.add_child(center)
+	# M-13: Menü scrollt, wenn es höher als das Fenster ist (bei 720p war "Weiter" sonst unsichtbar);
+	# Erfolge/Tagebuch stehen in einer eigenen Spalte daneben.
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 16)
+	center.add_child(row)
 	var panel := PanelContainer.new()
 	panel.custom_minimum_size = Vector2(480, 0)
-	center.add_child(panel)
+	row.add_child(panel)
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.custom_minimum_size = Vector2(480, _menu_height())
+	panel.add_child(scroll)
 	var col := VBoxContainer.new()
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	col.add_theme_constant_override("separation", 8)
-	panel.add_child(col)
+	scroll.add_child(col)
+	journal_panel = PanelContainer.new()
+	journal_panel.visible = false
+	row.add_child(journal_panel)
+	var jscroll := ScrollContainer.new()
+	jscroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	jscroll.custom_minimum_size = Vector2(460, _menu_height())
+	journal_panel.add_child(jscroll)
 	var title := Label.new()
 	title.text = "Pause"
 	title.add_theme_font_size_override("font_size", UiTheme.FONT_MENU)
@@ -74,6 +94,13 @@ func _build_ui() -> void:
 	keys.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	keys.add_theme_font_size_override("font_size", UiTheme.FONT_HINT)
 	col.add_child(keys)
+	buttons["journal"] = _button(col, "Erfolge und Tagebuch", func(): toggle_journal())
+	journal_label = Label.new()
+	journal_label.add_theme_font_size_override("font_size", UiTheme.FONT_HINT)
+	journal_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	journal_label.custom_minimum_size = Vector2(440, 0)
+	journal_label.visible = false
+	jscroll.add_child(journal_label)
 	buttons["save"] = _button(col, "Spiel speichern", func(): save_now())
 	buttons["save"].visible = save_handler.is_valid()
 	seed_label = Label.new()   # M-02: Insel-Seed zum Weitergeben
@@ -85,6 +112,14 @@ func _build_ui() -> void:
 	buttons["resume"] = _button(col, "Weiter", func(): close())
 	buttons["menu"] = _button(col, "Zum Hauptmenü", func(): to_menu())
 	buttons["quit"] = _button(col, "Beenden", func(): get_tree().quit())
+
+
+## Höhe des Menüs: 85 % des Fensters (in UI-Einheiten, also durch die UI-Größe geteilt), höchstens 900.
+func _menu_height() -> float:
+	var h := 720.0
+	if is_inside_tree():
+		h = get_viewport().get_visible_rect().size.y
+	return minf(h * 0.85 / maxf(float(Settings.get_value("ui_scale")), 0.5), 900.0)
 
 
 func _button(parent: Node, text: String, cb: Callable) -> Button:
@@ -159,11 +194,24 @@ func save_now() -> bool:
 	return err == OK
 
 
+## M-13: Erfolge/Tagebuch im Pausenmenü ein- oder ausblenden (Text wird beim Öffnen frisch erzeugt).
+func toggle_journal() -> void:
+	if journal_label == null:
+		return
+	journal_label.visible = not journal_label.visible
+	journal_panel.visible = journal_label.visible
+	if journal_label.visible:
+		journal_label.text = achievements.journal_text() if achievements != null else "Keine Erfolge geladen."
+
+
 func close() -> void:
 	if not is_open:
 		return
 	is_open = false
 	_root.visible = false
+	if journal_label != null:
+		journal_label.visible = false
+		journal_panel.visible = false
 	get_tree().paused = false
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	closed.emit()
