@@ -419,7 +419,7 @@
    "P-001"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Fortbewegung nach oben, auch im Koop nutzbar.",
   "files": [
    "balloon.gd"

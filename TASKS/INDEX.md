@@ -24,7 +24,7 @@
 | [G-07](G-07.md) | B | nice | GAME | Wetter-Events: Wolken und Sternschnuppen | M | open | G-01 |
 | [G-08](G-08.md) | A | must | GAME | Skalierung nach Spielerzahl | S | open | C-02, N-02 |
 | [G-09](G-09.md) | B | nice | GAME | Regel-Presets (Zen, Kinder, Standard) | S | open | G-01 |
-| [G-10](G-10.md) | B | nice | GAME | Ballon/Leiter zum Erreichen hoher Sterne | M | open | P-001 |
+| [G-10](G-10.md) | B | nice | GAME | Ballon/Leiter zum Erreichen hoher Sterne | M | done | P-001 |
 | [A-01](A-01.md) | C | nice | ART | Toon-Shader mit Rim-Light | M | open | P-001 |
 | [A-02](A-02.md) | C | nice | ART | 4 Spielerfarben und Namensschilder | S | open | N-02 |
 | [A-03](A-03.md) | C | nice | ART | Low-Poly-Props: Ballon, Leiter, Werkstatt | M | open | P-001 |
