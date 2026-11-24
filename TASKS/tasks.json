@@ -1533,7 +1533,7 @@
    "G-26"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Host speichert im Pausenmenü (user://saves/<Name>.json): Seed, Sternzustand, Staub, Shop/Utensilien, XP/Fähigkeiten je Spielername, Nacht. Menü: Spielstand laden (Solo und Host). Automatisches Speichern am Nachtende.",
   "files": [
    "save_game.gd",
