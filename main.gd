@@ -22,6 +22,7 @@ var rules: Dictionary = {}   # I-08: gewählte Regeln (Presets)
 var accessibility: Accessibility
 var combo := Combo.new()   # G-12
 var shop: Shop
+var shop_ui: ShopUI
 var note_idx := 0
 var scrub_cooldown := 0.0
 
@@ -61,6 +62,9 @@ func _ready() -> void:
 	pause = Pause.new()   # U-03: Esc
 	pause.accessibility = accessibility
 	add_child(pause)
+	shop_ui = ShopUI.new()   # I-09: Werkstatt-Oberfläche (Taste B, nach der Pause angelegt: Esc kommt zuerst hier an)
+	add_child(shop_ui)
+	shop_ui.bind(shop)
 	NetworkManager.disconnected.connect(func(): get_tree().change_scene_to_file("res://menu.tscn"))
 	world.star_scrubbed.connect(_on_star_scrubbed)
 	world.star_cleaned.connect(_on_star_cleaned)
@@ -166,7 +170,7 @@ func _build_player() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED and not pause.is_open and not summary.is_open:
+	if event is InputEventMouseButton and event.pressed and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED and not pause.is_open and not summary.is_open and not shop_ui.is_open:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 

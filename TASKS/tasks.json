@@ -1271,5 +1271,26 @@
   "skills": "GDScript",
   "owner": "A",
   "prio": "must"
+ },
+ {
+  "id": "I-09",
+  "area": "UI",
+  "title": "Werkstatt-Oberfläche (Shop-UI)",
+  "deps": [
+   "G-05",
+   "U-03"
+  ],
+  "size": "S",
+  "status": "done",
+  "goal": "Taste B öffnet die Werkstatt: Upgrades mit Stufe, Preis und Kaufen-Knopf; dauerhafter Tastenhinweis.",
+  "files": [
+   "shop_ui.gd",
+   "main.gd",
+   "tests/test_shop_ui.gd"
+  ],
+  "accept": "Test: B öffnet/schließt, Kauf bucht Staub, Knöpfe sperren ohne Staub; Screenshot.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  }
 ]
