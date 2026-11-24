@@ -30,6 +30,9 @@ var weather: Weather        # M-01
 var kitchen_ui: KitchenUI
 var skills_ui: SkillsUI
 var _rate_acc := 0.0
+var swarm: FunItems.Swarm      # M-08
+var _wish_timer := 60.0
+var _trampolines: Array = []
 var nights_played := 0              # M-02
 var loaded_save := {}               # M-02: geladener Spielstand (Host/Solo)
 var _peer_progress := {}            # Host: Spielername -> {xp, skills} der Mitspieler (für den Spielstand)
@@ -82,6 +85,7 @@ func _ready() -> void:
 	minimap.bind(world, night, players_root)
 	NetworkManager.disconnected.connect(func(): get_tree().change_scene_to_file("res://menu.tscn"))
 	_build_extras()
+	_build_fun()
 	_build_saving()
 	world.star_scrubbed.connect(_on_star_scrubbed)
 	world.star_cleaned.connect(_on_star_cleaned)
@@ -213,6 +217,7 @@ func _process(delta: float) -> void:
 			_bind_player(player)
 	if player != null:
 		world.inventory.extra_slots = int(player.skills.add("bag_slots"))   # Fähigkeit: größerer Beutel
+	_tick_fun(delta)
 	dust.emitting = player != null and player.cleaning and player.aim_valid
 	if dust.emitting:
 		dust.global_position = player.aim_point
@@ -373,6 +378,47 @@ func _rpc_report_progress(pname: String, pdata: Dictionary) -> void:
 func _rpc_restore_progress(pdata: Dictionary) -> void:
 	if player != null:
 		SaveGame.restore_player(pdata, player.xp, player.skills)
+
+
+# ---------------------------------------------------------------- Spaß (M-08)
+
+func _build_fun() -> void:
+	swarm = FunItems.Swarm.new()
+	swarm.name = "Gluehwuermchen"
+	add_child(swarm)
+	_rebuild_trampolines()
+	world.layout_changed.connect(func(_n: int): _rebuild_trampolines())
+
+
+func _rebuild_trampolines() -> void:
+	for t in _trampolines:
+		if is_instance_valid(t):
+			t.queue_free()
+	_trampolines.clear()
+	var pos: Array = []
+	for s in world.stars:
+		pos.append(s.position)
+	for sp in FunItems.trampoline_spots(pos):
+		var t := FunItems.Trampoline.new()
+		t.position = sp
+		world.add_child(t)
+		_trampolines.append(t)
+
+
+func _tick_fun(delta: float) -> void:
+	if player == null:
+		return
+	swarm.update_swarm(player.global_position, world.stars, delta)
+	_wish_timer -= delta
+	if _wish_timer <= 0.0:   # alle 70–120 s eine Wunsch-Sternschnuppe in Reichweite des Spielers
+		_wish_timer = randf_range(70.0, 120.0)
+		var w := FunItems.WishStar.new()
+		var a := randf() * TAU
+		w.position = Vector3(player.global_position.x + cos(a) * 9.0, 2.2, player.global_position.z + sin(a) * 9.0)
+		world.add_child(w)
+		hud.show_puzzle_message("Eine Wunsch-Sternschnuppe! Fang sie!", 5.0)
+		w.caught.connect(func(_p, stat: String):
+			hud.show_puzzle_message("Wunsch erfüllt: %s +20 %% für 60 s" % str(FunItems.WISH_STATS.get(stat, stat)), 5.0))
 
 
 func _selftest() -> void:
