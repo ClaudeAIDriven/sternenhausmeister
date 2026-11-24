@@ -19,11 +19,13 @@ var player_count := 1:
 var night_state: Phase = Phase.ENDE
 var dust := 0
 var stars_cleaned := 0
+var _cleaned_ids := {}   # M-11: jeder Stern zählt pro Nacht nur einmal (Neu-Verschmutzen/Rätsel-Reset zählen nicht doppelt)
 var night_running := false
 
 
 func start_night() -> void:
 	stars_cleaned = 0
+	_cleaned_ids.clear()
 	night_running = true
 	set_phase(Phase.DAEMMERUNG)
 	night_started.emit()
@@ -42,7 +44,11 @@ func set_phase(p: Phase) -> void:
 
 
 func report_star_cleaned(star: Node) -> void:
-	stars_cleaned += 1
+	var key: Variant = star.get_instance_id() if star != null else -1
+	if star == null or not _cleaned_ids.has(key):
+		stars_cleaned += 1
+		if star != null:
+			_cleaned_ids[key] = true
 	star_cleaned.emit(star)
 
 

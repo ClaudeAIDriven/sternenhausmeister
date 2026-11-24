@@ -435,6 +435,7 @@ func update_revive(delta: float, held: bool) -> bool:
 		_revive_held = 0.0
 		revive_progress = 0.0
 		revive_target = null
+		xp.add_event("revive")   # M-11: XP fürs Wiederbeleben
 		if target.is_multiplayer_authority():
 			target.get_up(true)
 		else:
@@ -608,7 +609,7 @@ func _apply_climb(input: Vector2) -> void:
 		_peak_y = global_position.y   # an der Leiter kein Fallschaden
 		return
 	if Roles.can(role, "climb") and is_on_wall():
-		velocity.y = maxf(velocity.y, CLIMB_SPEED * Roles.factor(role, "climb"))
+		velocity.y = maxf(velocity.y, CLIMB_SPEED * Roles.factor(role, "climb") * mod("climb"))   # M-11: Fähigkeit "Fester Griff"
 		_peak_y = global_position.y
 
 
@@ -621,15 +622,21 @@ func place_ladder() -> bool:
 	var fwd := -global_transform.basis.z
 	fwd.y = 0.0
 	var pos := global_position + fwd.normalized() * 1.2
-	rpc_place_ladder.rpc(pos, rotation.y)
+	rpc_place_ladder.rpc(pos, rotation.y, ladder_lifetime())
 	return true
 
 
+## M-11: Standzeit der Leiter mit Fähigkeit "Lange Leiter" (+2 s je Stufe).
+func ladder_lifetime() -> float:
+	return Ladder.LIFETIME + (skills.add("ladder_time") if skills != null else 0.0)
+
+
 @rpc("any_peer", "call_local", "reliable")
-func rpc_place_ladder(pos: Vector3, yaw: float) -> void:
+func rpc_place_ladder(pos: Vector3, yaw: float, life: float = Ladder.LIFETIME) -> void:
 	if not pos.is_finite() or pos.length() > 200.0:
 		return
 	var l := Ladder.new()
+	l.left = clampf(life, 1.0, 60.0)
 	l.position = pos
 	l.rotation.y = yaw
 	var scene := get_tree().current_scene

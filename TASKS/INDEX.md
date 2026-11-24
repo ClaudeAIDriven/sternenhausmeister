@@ -99,3 +99,4 @@
 | [M-08](M-08.md) | A | nice | GAME | Spaß I: Trampolinwolken, Sternschnuppen-Wünsche, Glühwürmchen | M | done | M-03 | – |
 | [M-09](M-09.md) | A | nice | GAME | Spaß II: Erfolge, Hüte, Putz-Tagebuch | M | done | M-01 | – |
 | [M-10](M-10.md) | A | must | GAME | Finale: Balance, Demo-Durchlauf, Anleitung | M | done | M-02, M-04, M-05, M-06, M-08, M-09 | – |
+| [M-11](M-11.md) | A | must | GAME | Lücken: Kletter-/Leiter-Fähigkeiten, XP fürs Wiederbeleben, Sternzähler | S | done | M-10 | – |

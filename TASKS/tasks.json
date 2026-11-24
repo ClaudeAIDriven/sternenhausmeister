@@ -1870,5 +1870,25 @@
   "skills": "GDScript",
   "owner": "A",
   "prio": "must"
+ },
+ {
+  "id": "M-11",
+  "area": "GAME",
+  "title": "Lücken: Kletter-/Leiter-Fähigkeiten, XP fürs Wiederbeleben, Sternzähler",
+  "deps": [
+   "M-10"
+  ],
+  "size": "S",
+  "status": "done",
+  "goal": "Fähigkeiten climb und ladder_time anbinden, Wiederbeleben gibt XP, GameState.stars_cleaned zählt jeden Stern pro Nacht nur einmal (KNOWN_ISSUES Finale).",
+  "files": [
+   "player.gd",
+   "game_state.gd",
+   "tests/test_gaps.gd"
+  ],
+  "accept": "tests/test_gaps.gd grün, run_tests grün.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  }
 ]
