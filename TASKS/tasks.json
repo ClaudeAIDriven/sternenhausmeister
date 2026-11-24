@@ -363,7 +363,7 @@
    "G-01"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Wolken verdecken Sterne, Sternschnuppe verschmutzt neu; Vorwarnung per HUD; nie zerstörend.",
   "files": [
    "weather.gd"
