@@ -66,7 +66,7 @@
 | [G-13](G-13.md) | A | nice | GAME | Co-op-Bonus beim gemeinsamen Putzen | S | done | N-03 |
 | [G-14](G-14.md) | C | nice | GAME | Fünf weitere Sternbilder (JSON) | S | open | G-02 |
 | [U-05](U-05.md) | A | nice | UI | Nacht-Zusammenfassung | M | done | G-01, U-02 |
-| [U-06](U-06.md) | C | nice | UI | Anfängerhilfe in Nacht 1 | S | open | U-02 |
+| [U-06](U-06.md) | C | nice | UI | Anfängerhilfe in Nacht 1 | S | done | U-02 |
 | [G-15](G-15.md) | A | nice | GAME | Sternschnuppen verschmutzen Sterne neu | M | open | G-07 |
 | [I-08](I-08.md) | A | must | GAME | Presets und Barrierefreiheit ins Spiel einbauen | M | done | G-09, U-04, U-01, U-03 |
 | [I-09](I-09.md) | A | must | UI | Werkstatt-Oberfläche (Shop-UI) | S | done | G-05, U-03 |

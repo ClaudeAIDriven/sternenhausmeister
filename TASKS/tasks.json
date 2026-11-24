@@ -1215,11 +1215,12 @@
    "U-02"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Nacht 1: nächster Sternbild-Stern pulsiert (Star.set_hint), kurzer Hinweis \"Wischen = Linksklick\". Danach aus. Siehe IB-12.",
   "files": [
    "tutorial.gd",
    "main.gd",
+   "settings.gd",
    "tests/test_tutorial.gd"
   ],
   "accept": "Test: Hinweis an in Nacht 1, aus danach; run_tests grün.",
