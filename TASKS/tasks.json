@@ -843,7 +843,7 @@
    "A-06"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "`ToolModels.build(kind)` mit vier an der Silhouette unterscheidbaren Werkzeugen und Einsatz-Effekt-Markern.",
   "files": [
    "tool_models.gd"
