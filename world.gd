@@ -16,6 +16,15 @@ signal layout_changed(star_count: int)
 signal puzzle_changed(done: int, total: int)    # Fortschritt im Sternbild
 signal puzzle_wrong(hint_star: int)             # falsche Reihenfolge: Sterne wurden zurückgesetzt, hint_star ist als Nächstes dran
 signal puzzle_solved(bonus: int)                # Sternbild gelöst, Bonus-Staub gutgeschrieben (Host)
+signal coop_bonus(amount: int)                  # G-13: Teamarbeit am selben Stern, Bonus-Staub gutgeschrieben (bei jedem Beteiligten)
+
+## G-13: Putzen mindestens zwei Spieler denselben Stern (je >= COOP_MIN_SPOTS Flecken, innerhalb COOP_WINDOW Sekunden vor dem
+## Abschluss), bekommen alle Beteiligten COOP_BONUS Sternenstaub. Nur der Host zählt mit.
+const COOP_MIN_SPOTS := 4
+const COOP_WINDOW := 90.0
+const COOP_BONUS := 5
+var _pending_coop: Array = []   # Sterne, die im laufenden Wisch fertig wurden
+var _contrib: Dictionary = {}   # Stern-Index -> {Peer-ID: [Flecken, letzte Zeit]}
 
 var puzzle: Constellation
 var lines: ConstellationLines
@@ -45,15 +54,21 @@ func wipe_at(point: Vector3, radius: float, tool: int = CleanTool.Kind.ANY) -> i
 	if NetworkManager.is_online() and not multiplayer.is_server():
 		_rpc_wipe.rpc_id(1, point, radius, tool)
 		return 0
-	return _wipe_authoritative(point, radius, tool)
+	return _wipe_authoritative(point, radius, tool, NetworkManager.my_id())
 
 
-func _wipe_authoritative(point: Vector3, radius: float, tool: int) -> int:
+func _wipe_authoritative(point: Vector3, radius: float, tool: int, who: int = 1) -> int:
 	var removed := 0
 	for i in stars.size():
-		removed += stars[i].wipe(point, radius, tool)
+		var n := stars[i].wipe(point, radius, tool)
+		removed += n
+		if n > 0:
+			note_contribution(i, who, n, Time.get_ticks_msec() / 1000.0)
 		if NetworkManager.is_online() and not stars[i].last_removed.is_empty():
 			_rpc_removed.rpc(i, stars[i].last_removed)
+	for idx in _pending_coop:   # erst jetzt: der letzte Wisch zählt noch für den Abschluss mit
+		_pay_coop(idx)
+	_pending_coop.clear()
 	return removed
 
 
@@ -66,7 +81,7 @@ func _rpc_wipe(point: Vector3, radius: float, tool: int) -> void:
 		return
 	if tool < 0 or tool >= CleanTool.Kind.size():
 		return
-	_wipe_authoritative(point, radius, tool)
+	_wipe_authoritative(point, radius, tool, multiplayer.get_remote_sender_id())
 
 
 @rpc("authority", "call_remote", "reliable")
@@ -270,7 +285,48 @@ func _star_index(s: Star) -> int:
 	return stars.find(s)
 
 
+## Merkt, wie viele Flecken `who` an Stern `idx` entfernt hat.
+func note_contribution(idx: int, who: int, spots: int, now: float) -> void:
+	var d: Dictionary = _contrib.get(idx, {})
+	var e: Array = d.get(who, [0, now])
+	d[who] = [int(e[0]) + spots, now]
+	_contrib[idx] = d
+
+
+## Wer bekommt den Co-op-Bonus? Leer, wenn weniger als zwei Spieler genug beigetragen haben.
+static func coop_recipients(contrib: Dictionary, now: float) -> Array:
+	var out := []
+	for peer in contrib:
+		var e: Array = contrib[peer]
+		if int(e[0]) >= COOP_MIN_SPOTS and now - float(e[1]) <= COOP_WINDOW:
+			out.append(peer)
+	return out if out.size() >= 2 else []
+
+
+func _pay_coop(idx: int) -> void:
+	var who := coop_recipients(_contrib.get(idx, {}), Time.get_ticks_msec() / 1000.0)
+	_contrib.erase(idx)
+	for peer in who:
+		if peer == NetworkManager.my_id():
+			_apply_coop(COOP_BONUS)
+		elif NetworkManager.is_online():
+			_rpc_coop.rpc_id(peer, COOP_BONUS)
+
+
+func _apply_coop(amount: int) -> void:
+	GameState.add_dust(amount)
+	coop_bonus.emit(amount)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_coop(amount: int) -> void:
+	if amount > 0 and amount <= 50:
+		_apply_coop(amount)
+
+
 func _on_star_cleaned(s: Star) -> void:
+	if not (NetworkManager.is_online() and not multiplayer.is_server()):
+		_pending_coop.append(_star_index(s))
 	if puzzle == null or (NetworkManager.is_online() and not multiplayer.is_server()):
 		return   # nur der Host entscheidet
 	var idx := _star_index(s)

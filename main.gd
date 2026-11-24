@@ -54,6 +54,7 @@ func _ready() -> void:
 	NetworkManager.disconnected.connect(func(): get_tree().change_scene_to_file("res://menu.tscn"))
 	world.star_scrubbed.connect(_on_star_scrubbed)
 	world.star_cleaned.connect(_on_star_cleaned)
+	world.coop_bonus.connect(func(a: int): hud.show_puzzle_message("Teamarbeit! +%d Sternenstaub" % a, 4.0))   # G-13
 	world.puzzle_changed.connect(func(done: int, total: int): hud.show_puzzle(world.puzzle.title if world.puzzle != null else "", done, total))
 	world.puzzle_wrong.connect(func(_hint: int):
 		_refresh_hud()   # geputzte Sterne zählen nach dem Zurücksetzen neu
