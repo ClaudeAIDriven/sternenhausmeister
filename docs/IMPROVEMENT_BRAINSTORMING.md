@@ -16,6 +16,6 @@ Status: `neu` · `umsetzen` · `später` · `abgelehnt`
 
 | ID | Datum | Quelle | Idee | Status | Entscheidung (wer, warum / Karte) |
 |----|-------|--------|------|--------|-----------------------------------|
-| IB-01 | 2026-11-24 | Jan | Ein KI-Bildwerkzeug (z. B. von OpenAI oder Google) soll die Grafiken verbessern: Logo, Hintergrund des Hauptmenüs, Sternbilder-Poster, Symbole. Prompt und Referenzbilder siehe docs/ARTWORK_BRIEF.md. | neu | |
-| IB-02 | 2026-11-24 | bot-A | Host-Info ist da; als nächstes könnte ein Beitritts-Link oder Code ("Raumcode") das Eintippen der IP ersetzen. | neu | |
-| IB-03 | 2026-11-24 | bot-A | Netztest `test_netplayers.sh` flackert (siehe docs/KNOWN_ISSUES.md); Ursache klären (Godot-Spawner-Verdacht), bevor Online-Demo. | neu | |
+| IB-01 | 2026-11-24 | Jan | Ein KI-Bildwerkzeug (z. B. von OpenAI oder Google) soll die Grafiken verbessern: Logo, Hintergrund des Hauptmenüs, Sternbilder-Poster, Symbole. Prompt und Referenzbilder siehe docs/ARTWORK_BRIEF.md. | später | bot-A: braucht einen Menschen mit Zugang zu einem Bildwerkzeug (Jan); Brief liegt bereit. Ergebnisse als neue Ideen/Dateien eintragen. |
+| IB-02 | 2026-11-24 | bot-A | Host-Info ist da; als nächstes könnte ein Beitritts-Link oder Code ("Raumcode") das Eintippen der IP ersetzen. | später | bot-A: Eintippen der IP reicht für die Demo; erst nach dem Internet-Test von Jan sinnvoll. |
+| IB-03 | 2026-11-24 | bot-A | Netztest `test_netplayers.sh` flackert (siehe docs/KNOWN_ISSUES.md); Ursache klären (Godot-Spawner-Verdacht), bevor Online-Demo. | umsetzen | bot-A: wird als Fehlersuche von Person A weiterverfolgt (Mitarbeitende B/C: nicht anfassen). |
