@@ -11,7 +11,9 @@
    "player.gd"
   ],
   "accept": "Selftest läuft; Screenshot zeigt Spieler auf Insel.",
-  "skills": "GDScript"
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "done"
  },
  {
   "id": "P-002",
@@ -25,7 +27,9 @@
    "star.gd"
   ],
   "accept": "`-- --selftest` meldet SELFTEST OK.",
-  "skills": "GDScript"
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "done"
  },
  {
   "id": "P-003",
@@ -40,7 +44,9 @@
    "main.gd"
   ],
   "accept": "Beim Wischen erklingen Noten.",
-  "skills": "GDScript"
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "done"
  },
  {
   "id": "C-01",
@@ -61,7 +67,9 @@
    "main.tscn"
   ],
   "accept": "Selftest grün, Screenshot identisch zum Stand vorher.",
-  "skills": "GDScript"
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  },
  {
   "id": "C-02",
@@ -78,7 +86,9 @@
    "project.godot"
   ],
   "accept": "Unit-Test-Szene setzt Werte und prüft Signale.",
-  "skills": "GDScript"
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  },
  {
   "id": "C-03",
@@ -95,7 +105,9 @@
    "project.godot"
   ],
   "accept": "Werte überleben Neustart (Test mit zwei Läufen).",
-  "skills": "GDScript"
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  },
  {
   "id": "C-04",
@@ -112,7 +124,9 @@
    "settings.gd"
   ],
   "accept": "Aktion 'clean' lässt sich neu belegen und bleibt gespeichert.",
-  "skills": "GDScript"
+  "skills": "GDScript",
+  "owner": "B",
+  "prio": "nice"
  },
  {
   "id": "N-01",
@@ -128,7 +142,9 @@
    "network_manager.gd"
   ],
   "accept": "Test: 1 Host + 3 Clients (4 Instanzen) verbinden sich, Peer-Liste stimmt.",
-  "skills": "GDScript, Godot High-Level-Multiplayer"
+  "skills": "GDScript, Godot High-Level-Multiplayer",
+  "owner": "A",
+  "prio": "must"
  },
  {
   "id": "N-02",
@@ -147,7 +163,9 @@
    "player.tscn"
   ],
   "accept": "4 Instanzen sehen sich gegenseitig laufen (Screenshot-Test).",
-  "skills": "GDScript"
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  },
  {
   "id": "N-03",
@@ -164,7 +182,9 @@
    "world.gd"
   ],
   "accept": "Wisch eines Clients ist bei allen sichtbar; Fortschritt identisch.",
-  "skills": "GDScript"
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  },
  {
   "id": "N-04",
@@ -180,7 +200,9 @@
    "tools/test_net4.sh"
   ],
   "accept": "Skript endet mit NET4 OK.",
-  "skills": "Bash, Godot CLI"
+  "skills": "Bash, Godot CLI",
+  "owner": "A",
+  "prio": "must"
  },
  {
   "id": "N-05",
@@ -197,7 +219,9 @@
    "drone.gd"
   ],
   "accept": "Test: Client trennt, Spiel läuft weiter, Drohne erscheint.",
-  "skills": "GDScript"
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  },
  {
   "id": "N-06",
@@ -214,7 +238,9 @@
    "network_manager.gd"
   ],
   "accept": "Anleitung vorhanden; UPnP-Fehler brechen das Hosten nicht ab.",
-  "skills": "Doku, Netzwerk"
+  "skills": "Doku, Netzwerk",
+  "owner": "A",
+  "prio": "must"
  },
  {
   "id": "G-01",
@@ -230,7 +256,9 @@
    "night.gd"
   ],
   "accept": "Test: Zeit läuft durch alle drei Phasen, Signale feuern.",
-  "skills": "GDScript"
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  },
  {
   "id": "G-02",
@@ -247,7 +275,9 @@
    "constellation_loader.gd"
   ],
   "accept": "Loader liest alle Dateien und validiert die Reihenfolge.",
-  "skills": "GDScript, JSON"
+  "skills": "GDScript, JSON",
+  "owner": "A",
+  "prio": "must"
  },
  {
   "id": "G-03",
@@ -263,7 +293,9 @@
    "constellation.gd"
   ],
   "accept": "Selftest: richtige Reihenfolge löst, falsche nicht.",
-  "skills": "GDScript"
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  },
  {
   "id": "G-04",
@@ -280,7 +312,9 @@
    "star.gd"
   ],
   "accept": "Test: nach komplettem Stern dust > 0.",
-  "skills": "GDScript"
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  },
  {
   "id": "G-05",
@@ -298,7 +332,9 @@
    "data/upgrades.json"
   ],
   "accept": "Kauf senkt Staub und wirkt spürbar (Test der Werte).",
-  "skills": "GDScript"
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  },
  {
   "id": "G-06",
@@ -315,7 +351,9 @@
    "tools.gd"
   ],
   "accept": "Selftest: richtiges Werkzeug entfernt schneller.",
-  "skills": "GDScript"
+  "skills": "GDScript",
+  "owner": "B",
+  "prio": "nice"
  },
  {
   "id": "G-07",
@@ -331,7 +369,9 @@
    "weather.gd"
   ],
   "accept": "Event startet und endet planmäßig, Zen schaltet es auf kosmetisch.",
-  "skills": "GDScript"
+  "skills": "GDScript",
+  "owner": "B",
+  "prio": "nice"
  },
  {
   "id": "G-08",
@@ -348,7 +388,9 @@
    "world.gd"
   ],
   "accept": "Test: 1 vs. 4 Spieler ergeben erwartete Sternzahl.",
-  "skills": "GDScript"
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  },
  {
   "id": "G-09",
@@ -365,7 +407,9 @@
    "presets.gd"
   ],
   "accept": "Preset laden verändert nachweislich die Regeln.",
-  "skills": "GDScript, JSON"
+  "skills": "GDScript, JSON",
+  "owner": "B",
+  "prio": "nice"
  },
  {
   "id": "G-10",
@@ -381,7 +425,9 @@
    "balloon.gd"
   ],
   "accept": "Spieler erreicht Stern in 12 m Höhe.",
-  "skills": "GDScript"
+  "skills": "GDScript",
+  "owner": "B",
+  "prio": "nice"
  },
  {
   "id": "A-01",
@@ -397,7 +443,9 @@
    "shaders/toon.gdshader"
   ],
   "accept": "Screenshot zeigt Toon-Look, läuft im Compatibility-Renderer.",
-  "skills": "Shader (GLSL-artig)"
+  "skills": "Shader (GLSL-artig)",
+  "owner": "C",
+  "prio": "nice"
  },
  {
   "id": "A-02",
@@ -413,7 +461,9 @@
    "player.gd"
   ],
   "accept": "4 Spieler unterscheidbar im Screenshot.",
-  "skills": "GDScript"
+  "skills": "GDScript",
+  "owner": "C",
+  "prio": "nice"
  },
  {
   "id": "A-03",
@@ -430,7 +480,9 @@
    "docs/CREDITS.md"
   ],
   "accept": "Props laden in Szene, Lizenz dokumentiert.",
-  "skills": "Blender/3D, Lizenzprüfung"
+  "skills": "Blender/3D, Lizenzprüfung",
+  "owner": "C",
+  "prio": "nice"
  },
  {
   "id": "A-04",
@@ -446,7 +498,9 @@
    "sky.gd"
   ],
   "accept": "Screenshot vorher/nachher.",
-  "skills": "Visual, Godot"
+  "skills": "Visual, Godot",
+  "owner": "C",
+  "prio": "nice"
  },
  {
   "id": "A-05",
@@ -462,7 +516,9 @@
    "effects.gd"
   ],
   "accept": "Burst sichtbar im Screenshot-Test.",
-  "skills": "Godot-Partikel"
+  "skills": "Godot-Partikel",
+  "owner": "C",
+  "prio": "nice"
  },
  {
   "id": "S-01",
@@ -479,7 +535,9 @@
    "music.gd"
   ],
   "accept": "Schleife läuft ohne Knacken; Lizenz dokumentiert.",
-  "skills": "Audio"
+  "skills": "Audio",
+  "owner": "C",
+  "prio": "nice"
  },
  {
   "id": "S-02",
@@ -497,7 +555,9 @@
    "constellation.gd"
   ],
   "accept": "Test: Tonfolge nach Sternbild korrekt.",
-  "skills": "Audio, GDScript"
+  "skills": "Audio, GDScript",
+  "owner": "C",
+  "prio": "nice"
  },
  {
   "id": "S-03",
@@ -514,7 +574,9 @@
    "sfx.gd"
   ],
   "accept": "Sounds hörbar, getrennte Lautstärke-Bus.",
-  "skills": "Audio"
+  "skills": "Audio",
+  "owner": "C",
+  "prio": "nice"
  },
  {
   "id": "U-01",
@@ -531,7 +593,9 @@
    "menu.gd"
   ],
   "accept": "Menü startet Solo, Host, Join; Screenshot.",
-  "skills": "Godot-UI"
+  "skills": "Godot-UI",
+  "owner": "A",
+  "prio": "must"
  },
  {
   "id": "U-02",
@@ -547,7 +611,9 @@
    "hud.gd"
   ],
   "accept": "Werte aktualisieren live.",
-  "skills": "Godot-UI"
+  "skills": "Godot-UI",
+  "owner": "A",
+  "prio": "must"
  },
  {
   "id": "U-03",
@@ -564,7 +630,9 @@
    "pause.gd"
   ],
   "accept": "Einstellungen wirken sofort und werden gespeichert.",
-  "skills": "Godot-UI"
+  "skills": "Godot-UI",
+  "owner": "A",
+  "prio": "must"
  },
  {
   "id": "U-04",
@@ -580,7 +648,9 @@
    "accessibility.gd"
   ],
   "accept": "Optionen im Menü, Screenshot je Modus.",
-  "skills": "Godot-UI, Barrierefreiheit"
+  "skills": "Godot-UI, Barrierefreiheit",
+  "owner": "B",
+  "prio": "nice"
  },
  {
   "id": "B-01",
@@ -597,7 +667,9 @@
    "tools/build_windows.sh"
   ],
   "accept": "Skript erzeugt Sternenhausmeister.exe + .pck.",
-  "skills": "Godot CLI"
+  "skills": "Godot CLI",
+  "owner": "A",
+  "prio": "must"
  },
  {
   "id": "B-02",
@@ -614,7 +686,9 @@
    "tools/build_installer.sh"
   ],
   "accept": "Skript erzeugt Setup.exe (Test ohne Windows: Build läuft durch).",
-  "skills": "NSIS"
+  "skills": "NSIS",
+  "owner": "A",
+  "prio": "must"
  },
  {
   "id": "B-03",
@@ -630,7 +704,9 @@
    ".github/workflows/ci.yml"
   ],
   "accept": "Workflow-Datei valide; Tests laufen lokal grün.",
-  "skills": "GitHub Actions"
+  "skills": "GitHub Actions",
+  "owner": "C",
+  "prio": "nice"
  },
  {
   "id": "B-04",
@@ -646,7 +722,9 @@
    "tools/run_tests.sh"
   ],
   "accept": "Skript ist grün im Ist-Stand.",
-  "skills": "Bash"
+  "skills": "Bash",
+  "owner": "A",
+  "prio": "done"
  },
  {
   "id": "D-01",
@@ -661,7 +739,9 @@
    "CONTRIBUTING.md"
   ],
   "accept": "Neuling kann Projekt in 5 Minuten starten.",
-  "skills": "Doku"
+  "skills": "Doku",
+  "owner": "A",
+  "prio": "done"
  },
  {
   "id": "D-02",
@@ -677,6 +757,8 @@
    "docs/PLAYTEST.md"
   ],
   "accept": "Checkliste vorhanden und nutzbar.",
-  "skills": "Doku, Game-Design"
+  "skills": "Doku, Game-Design",
+  "owner": "C",
+  "prio": "nice"
  }
 ]

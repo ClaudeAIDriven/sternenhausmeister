@@ -1,6 +1,6 @@
 # Verbindliches Vorgehen bei jedem "weiter"/Start/Reset (für Menschen und Modelle)
 
-Einzige Quelle der Wahrheit für den Ablauf. Dein Bereich: A = CORE,NET · B = GAME,UI · C = ART,AUDIO,BUILD,DOC. Setze `export TASK_WHO=<dein Name>` (z. B. jan, bot-A, anna).
+Einzige Quelle der Wahrheit für den Ablauf. Du bist A, B oder C (Besitzer-Buchstabe). A hält alles, was die Demo zwingend braucht (Priorität must: Kern, Netzwerk, Spielschleife, Menü/HUD, Export/Installer). B und C machen Zusätzliches (nice: B = Schmutztypen, Wetter, Presets, Ballon, Barrierefreiheit; C = Optik, Ton, CI, Playtest-Liste). Setze `export TASK_WHO=<dein Name>` (z. B. jan, bot-A, anna).
 
 ## 0. Einmalig pro Umgebung
 `tools/setup_godot.sh` lädt Godot 4.3 automatisch (kein manuelles Installieren nötig). `tools/run_tests.sh` ruft es selbst auf.
@@ -12,7 +12,7 @@ Einzige Quelle der Wahrheit für den Ablauf. Dein Bereich: A = CORE,NET · B = G
 
 ## 2. Was ist dran?
 1. `python3 tools/tasks.py mine`: Hast du eine begonnene Aufgabe, mach **zuerst die** weiter (`git fetch`, Branch `task/<ID>/<WER>` auschecken, vorhandenen Code und Commits lesen, nichts neu anfangen).
-2. Sonst `python3 tools/tasks.py next <DEINE BEREICHE>`. Ergebnis NONE: **sofort beenden** mit einer Zeile ("nichts Startbares: wartet auf …"). Keine eigenen Aufgaben erfinden, keine Features außerhalb der Karten.
+2. Sonst `python3 tools/tasks.py next <A|B|C>` (eigene Aufgaben zuerst; fällt jemand aus, kommen unbeanspruchte der anderen danach). Ergebnis NONE: **sofort beenden** mit einer Zeile ("nichts Startbares: wartet auf …"). Keine eigenen Aufgaben erfinden, keine Features außerhalb der Karten.
 3. `python3 tools/tasks.py claim <ID>` beansprucht die Aufgabe (legt `task/<ID>/<WER>` auf origin an). Meldet es BELEGT, nimm die nächste.
 
 ## 3. Arbeiten und abgeben

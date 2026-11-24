@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Aufgabenverwaltung: list | next [BEREICHE] | ready [BEREICHE] | start ID | done ID | claim ID [WER] | mine | status | index\nTASK_WHO=<Name> setzen (z. B. jan, bot-A). Beanspruchen = Branch task/<ID>/<WER> auf origin.
+"""Aufgabenverwaltung: list | next [A|B|C|BEREICHE] | ready [A|B|C|BEREICHE] | start ID | done ID | claim ID [WER] | mine | status | index\nTASK_WHO=<Name> setzen (z. B. jan, bot-A). Beanspruchen = Branch task/<ID>/<WER> auf origin.
 BEREICHE = kommagetrennt, z. B. GAME,UI
 Nächste Aufgabe = erste mit Status open, deren Abhängigkeiten alle done sind."""
 import json, os, re, subprocess, sys, pathlib
@@ -9,9 +9,9 @@ F = ROOT / "TASKS" / "tasks.json"
 def load(): return json.loads(F.read_text(encoding="utf-8"))
 def save(t):
     F.write_text(json.dumps(t, ensure_ascii=False, indent=1), encoding="utf-8")
-    lines = ["# Aufgabenübersicht (generiert von tools/tasks.py)\n", "| ID | Bereich | Titel | Größe | Status | Abhängig von |", "|---|---|---|---|---|---|"]
+    lines = ["# Aufgabenübersicht (generiert von tools/tasks.py)\n", "| ID | Besitzer | Prio | Bereich | Titel | Größe | Status | Abhängig von |", "|---|---|---|---|---|---|---|---|"]
     for x in t:
-        lines.append(f"| [{x['id']}]({x['id']}.md) | {x['area']} | {x['title']} | {x['size']} | {x['status']} | {', '.join(x['deps']) or '–'} |")
+        lines.append(f"| [{x['id']}]({x['id']}.md) | {x.get('owner','-')} | {x.get('prio','-')} | {x['area']} | {x['title']} | {x['size']} | {x['status']} | {', '.join(x['deps']) or '–'} |")
     (ROOT / "TASKS" / "INDEX.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 def set_status(t, id, status):
@@ -39,13 +39,24 @@ def claims():
         out.setdefault(m.group(1), []).append(m.group(2))
     return out
 
-def ready(t, areas=None):
-    """Startbar = open, Abhängigkeiten done, Bereich passt, von niemand ANDEREM beansprucht."""
+def ready(t, filt=None):
+    """Startbar = open, Abhängigkeiten done, von niemand ANDEREM beansprucht.
+    filt: ['A'|'B'|'C'] = Besitzer (eigene Aufgaben zuerst, danach als Rückfall die unbeanspruchten der anderen,
+    damit die Demo auch entsteht, wenn jemand ausfällt) oder Bereichsnamen wie GAME,UI."""
     done = {x["id"] for x in t if x["status"] == "done"}
     c = claims()
-    return [x for x in t if x["status"] == "open" and all(d in done for d in x["deps"])
-            and (not areas or x["area"] in areas)
+    free = [x for x in t if x["status"] == "open" and all(d in done for d in x["deps"])
             and not [w for w in c.get(x["id"], []) if w != WHO]]
+    prio = {"must": 0, "nice": 1}
+    free.sort(key=lambda x: prio.get(x.get("prio"), 2))
+    if not filt: return free
+    if len(filt) == 1 and filt[0] in ("A", "B", "C"):
+        own = [x for x in free if x.get("owner") == filt[0]]
+        others = [x for x in free if x.get("owner") != filt[0]]
+        if filt[0] != "A":   # B/C nehmen nur Zusätzliches (nice) von anderen, Demo-Pflicht (must) bleibt bei A
+            others = [x for x in others if x.get("prio") == "nice"]
+        return own + others
+    return [x for x in free if x["area"] in filt]
 
 def mine(t):
     """Meine bereits beanspruchten, noch nicht fertigen Aufgaben (nach Reset zuerst weitermachen)."""
