@@ -1,11 +1,25 @@
-# Standing-Prompt für den Weiterarbeits-Bot
+# Verbindliches Vorgehen bei jedem "weiter"/Start/Reset (für Menschen und Modelle)
 
-Du arbeitest am Godot-Projekt "Sternenhausmeister" (Ordner sternenhausmeister/, siehe README.md, PLAN.md, docs/ARCHITECTURE.md).
-1. Lies PLAN.md und `python3 tools/tasks.py list`.
-2. Gibt `python3 tools/tasks.py next` den Wert NONE aus und keine Aufgabe ist in_progress: beende sofort mit einer kurzen Meldung (nichts weiter tun).
-3. Sonst: nimm die Aufgabe (zuerst eine in_progress, sonst `next`), arbeite sie nach CONTRIBUTING.md ab (nur Dateien der Karte, Tests grün, Beleg).
-4. Danach die nächste startbare Aufgabe, solange Limit und Zeit reichen. Pro Aufgabe sofort `done` setzen, damit nach einem Abbruch nichts doppelt gemacht wird.
-5. Godot liegt unter /home/claude/tools; fehlt es: Godot 4.3 von github.com/godotengine/godot/releases laden.
-6. Ehrlich bleiben: Was nicht getestet wurde, als ungetestet notieren (PLAN.md). Keine Spielgefühl-Behauptungen ohne Nutzertest.
+Einzige Quelle der Wahrheit für den Ablauf. Dein Bereich: A = CORE,NET · B = GAME,UI · C = ART,AUDIO,BUILD,DOC. Setze `export TASK_WHO=<dein Name>` (z. B. jan, bot-A, anna).
 
-Hinweis: Mit Bereichsangabe (z. B. `next GAME,UI`) siehst du nur Aufgaben deines Bereichs. Person A: CORE,NET · B: GAME,UI · C: ART,AUDIO,BUILD,DOC.
+## 1. Zuerst den Stand prüfen (immer, vor jeder Arbeit)
+1. `git pull --ff-only origin main` und `python3 tools/tasks.py status`. Meldet es OFFLINE oder einen Fehler: **abbrechen und melden**, nichts auf Verdacht tun.
+2. `tools/run_tests.sh` auf main. Rot? Dann nur die rote Stelle reparieren (neue Aufgabe `fix-…`), nichts Neues beginnen.
+3. Offene Pull Requests ansehen: `gh api repos/ClaudeAIDriven/sternenhausmeister/pulls --jq '.[]|[.number,.title,.head.ref]|@tsv'`. Überschneidet sich dein Vorhaben mit Dateien eines offenen PR, melde das, statt doppelt zu bauen.
+
+## 2. Was ist dran?
+1. `python3 tools/tasks.py mine`: Hast du eine begonnene Aufgabe, mach **zuerst die** weiter (`git fetch`, Branch `task/<ID>/<WER>` auschecken, vorhandenen Code und Commits lesen, nichts neu anfangen).
+2. Sonst `python3 tools/tasks.py next <DEINE BEREICHE>`. Ergebnis NONE: **sofort beenden** mit einer Zeile ("nichts Startbares: wartet auf …"). Keine eigenen Aufgaben erfinden, keine Features außerhalb der Karten.
+3. `python3 tools/tasks.py claim <ID>` beansprucht die Aufgabe (legt `task/<ID>/<WER>` auf origin an). Meldet es BELEGT, nimm die nächste.
+
+## 3. Arbeiten und abgeben
+1. Branch auschecken, nur die Dateien der Karte ändern, Schnittstellen aus docs/ARCHITECTURE.md beachten.
+2. `tools/run_tests.sh` grün, Beleg zu "Fertig, wenn" (Test oder Screenshot).
+3. `python3 tools/tasks.py done <ID>` im Branch, eine Zeile in PLAN.md, committen, pushen, Pull Request mit Beleg eröffnen. Nicht selbst nach main mergen (nur Person A; C-01/C-02 darf der Bot direkt pushen).
+4. Danach wieder bei Schritt 1, solange das Limit reicht. Bricht das Limit ab, ist der Stand durch den Claim-Branch gesichert.
+
+## 4. Ehrlichkeit
+Ungetestetes als ungetestet kennzeichnen (🟢 getestet · 🟡 wahrscheinlich · 🔴 geraten · ❌ unbekannt). Spielgefühl beurteilt nur ein Mensch. Godot 4.3: /home/claude/tools/Godot_v4.3-stable_linux.x86_64, sonst von github.com/godotengine/godot/releases laden. Sichtprüfung ohne GPU: siehe PLAN.md.
+
+## 5. Verwaiste Claims
+Ein Claim ohne Commits oder PR seit mehr als 48 h gilt als verwaist. Person A entscheidet und löscht den Branch (`git push origin --delete task/<ID>/<WER>`).

@@ -6,5 +6,5 @@
 4. `tools/run_tests.sh` muss grün sein, dazu ein Beleg (Test oder Screenshot) für „Fertig, wenn".
 5. `python3 tools/tasks.py done <ID>`, eine Zeile in PLAN.md ergänzen.
 
-Stil: GDScript mit Typangaben, kleine Dateien, Kommentare auf Deutsch, Namen auf Englisch. Pro Aufgabe ein Commit/Branch `task/<ID>`.
+Stil: GDScript mit Typangaben, kleine Dateien, Kommentare auf Deutsch, Namen auf Englisch. Pro Aufgabe ein Commit/Branch `task/<ID>/<wer>`.
 Bereiche: CORE, NET, GAME, ART, AUDIO, UI, BUILD, DOC. Kunst und Audio brauchen kein Programmieren, nur die Dateien der Karte.

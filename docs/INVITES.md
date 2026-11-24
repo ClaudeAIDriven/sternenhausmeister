@@ -15,10 +15,10 @@ Hey! Ich baue mit zwei Leuten ein 3D-Koop-Spiel ("Sternenhausmeister": ihr putzt
 3. Repo klonen: `git clone https://github.com/ClaudeAIDriven/sternenhausmeister` und in Godot öffnen (F5 startet den Prototyp).
 4. Dein Claude mit dem Repo verbinden (Claude Code im Ordner oder claude.ai mit GitHub-Anbindung) und den Prompt aus `docs/PROMPTS.md` einfügen: "Gemeinsamer Teil" + "Person B".
 5. Erste Aufgaben: G-02 (Sternbild-Format), G-06 (Schmutztypen). Alles andere wartet auf Person A (C-01, C-02, C-03).
-6. Pro Aufgabe: Branch `task/<ID>`, Test grün, Pull Request mit Beleg.
+6. Pro Aufgabe: Branch `task/<ID>/<wer>`, Test grün, Pull Request mit Beleg.
 
 ### 3) Automatik-Prompt (als geplante Aufgabe alle ~5 Stunden, oder nach jedem Limit-Reset manuell einfügen)
-Du arbeitest am Godot-Spiel "Sternenhausmeister" weiter. Repo: https://github.com/ClaudeAIDriven/sternenhausmeister. Fehlt der lokale Ordner, klone es (flach), sonst `git pull --ff-only origin main`. Lies AGENT_PROMPT.md, CONTRIBUTING.md und docs/ARCHITECTURE.md. Deine Bereiche: GAME und UI. `python3 tools/tasks.py next GAME,UI` nennt die nächste Aufgabe (NONE = beenden, eine Zeile Meldung). Pro Aufgabe: Branch task/<ID>, nur die Dateien der Karte ändern, `tools/run_tests.sh` grün, `tasks.py done <ID>`, committen, pushen, Pull Request mit Beleg eröffnen, nicht selbst nach main mergen. Mehrere Aufgaben nacheinander, solange das Limit reicht. Ungetestetes ehrlich so kennzeichnen. Am Ende kurz melden: erledigt, als Nächstes, was ein Mensch testen soll.
+Du arbeitest am Godot-Spiel "Sternenhausmeister" weiter. Repo: https://github.com/ClaudeAIDriven/sternenhausmeister. Fehlt der lokale Ordner, klone es (flach), sonst `git pull --ff-only origin main`. Setze TASK_WHO=<dein Name>. Lies AGENT_PROMPT.md (verbindlicher Ablauf), CONTRIBUTING.md und docs/ARCHITECTURE.md. Deine Bereiche: GAME und UI. `python3 tools/tasks.py next GAME,UI` nennt die nächste Aufgabe (NONE = beenden, eine Zeile Meldung). Pro Aufgabe: Beginne IMMER mit der Stand-Prüfung aus AGENT_PROMPT.md (git pull, `tasks.py status`, Tests, offene PRs, `tasks.py mine`), erst dann `next <Bereiche>` und `claim <ID>`; Branch task/<ID>/<dein Name>, Tests grün, Pull Request mit Beleg, nicht selbst mergen. Mehrere Aufgaben nacheinander, solange das Limit reicht. Ungetestetes ehrlich so kennzeichnen. Am Ende kurz melden: erledigt, als Nächstes, was ein Mensch testen soll.
 
 ---
 ## Person C: Optik, Ton, Build, Doku
@@ -32,10 +32,10 @@ Hey! Ich baue mit zwei Leuten ein 3D-Koop-Spiel ("Sternenhausmeister": ihr putzt
 3. Dein Claude mit dem Repo verbinden und den Prompt aus `docs/PROMPTS.md` einfügen: "Gemeinsamer Teil" + "Person C".
 4. Erste Aufgaben (alle sofort startbar): A-01 Toon-Shader, A-04 Himmel, A-05 Partikel, A-03 Props, S-01 Musik, B-01 Windows-Export, D-02 Playtest-Checkliste.
 5. Nur CC0-Assets oder Eigenes, Quelle in `docs/CREDITS.md`.
-6. Pro Aufgabe: Branch `task/<ID>`, Test grün, Pull Request mit Screenshot oder Hörprobe.
+6. Pro Aufgabe: Branch `task/<ID>/<wer>`, Test grün, Pull Request mit Screenshot oder Hörprobe.
 
 ### 3) Automatik-Prompt (geplante Aufgabe alle ~5 Stunden, oder nach jedem Limit-Reset manuell einfügen)
-Du arbeitest am Godot-Spiel "Sternenhausmeister" weiter. Repo: https://github.com/ClaudeAIDriven/sternenhausmeister. Fehlt der lokale Ordner, klone es (flach), sonst `git pull --ff-only origin main`. Lies AGENT_PROMPT.md, CONTRIBUTING.md und docs/ARCHITECTURE.md. Deine Bereiche: ART, AUDIO, BUILD, DOC. `python3 tools/tasks.py next ART,AUDIO,BUILD,DOC` nennt die nächste Aufgabe (NONE = beenden, eine Zeile Meldung). Pro Aufgabe: Branch task/<ID>, nur die Dateien der Karte ändern, `tools/run_tests.sh` grün, `tasks.py done <ID>`, committen, pushen, Pull Request mit Beleg eröffnen, nicht selbst nach main mergen. Nur CC0-Assets, Quellen in docs/CREDITS.md. Mehrere Aufgaben nacheinander, solange das Limit reicht. Ungetestetes ehrlich kennzeichnen. Am Ende kurz melden.
+Du arbeitest am Godot-Spiel "Sternenhausmeister" weiter. Repo: https://github.com/ClaudeAIDriven/sternenhausmeister. Fehlt der lokale Ordner, klone es (flach), sonst `git pull --ff-only origin main`. Setze TASK_WHO=<dein Name>. Lies AGENT_PROMPT.md (verbindlicher Ablauf), CONTRIBUTING.md und docs/ARCHITECTURE.md. Deine Bereiche: ART, AUDIO, BUILD, DOC. `python3 tools/tasks.py next ART,AUDIO,BUILD,DOC` nennt die nächste Aufgabe (NONE = beenden, eine Zeile Meldung). Pro Aufgabe: Beginne IMMER mit der Stand-Prüfung aus AGENT_PROMPT.md (git pull, `tasks.py status`, Tests, offene PRs, `tasks.py mine`), erst dann `next <Bereiche>` und `claim <ID>`; Branch task/<ID>/<dein Name>, Tests grün, Pull Request mit Beleg, nicht selbst mergen. Nur CC0-Assets, Quellen in docs/CREDITS.md. Mehrere Aufgaben nacheinander, solange das Limit reicht. Ungetestetes ehrlich kennzeichnen. Am Ende kurz melden.
 
 ---
 ## Person A (du): Kern, Netzwerk, Integration
