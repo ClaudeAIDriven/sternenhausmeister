@@ -1890,5 +1890,26 @@
   "skills": "GDScript",
   "owner": "A",
   "prio": "must"
+ },
+ {
+  "id": "M-12",
+  "area": "NET",
+  "title": "Ballon host-autoritativ (Lenken im Netz)",
+  "deps": [
+   "M-11"
+  ],
+  "size": "S",
+  "status": "done",
+  "goal": "Online rechnet nur der Host den Ballon; Clients lenken per RPC und übernehmen die Host-Position (KNOWN_ISSUES: Ballon nur lokal).",
+  "files": [
+   "balloon.gd",
+   "player.gd",
+   "tests/net_balloon.gd",
+   "tools/test_netballoon.sh"
+  ],
+  "accept": "tools/test_netballoon.sh grün (3 Läufe), run_tests grün.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  }
 ]

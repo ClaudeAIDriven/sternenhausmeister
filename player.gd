@@ -166,7 +166,7 @@ func _physics_process(delta: float) -> void:
 	_jump_cd = maxf(_jump_cd - delta, 0.0)
 	if _on_balloon != null and is_instance_valid(_on_balloon) and _on_balloon.is_aloft():
 		# Ballon lenken (I-11): Auf der Plattform in der Luft steuert WASD den Ballon statt den Spieler.
-		_on_balloon.steer = dir
+		_on_balloon.request_steer(dir)   # M-12: online geht die Lenkung an den Host
 		velocity.x = 0.0
 		velocity.z = 0.0
 	else:

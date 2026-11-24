@@ -13,7 +13,7 @@ Dann gilt der Ablauf in `AGENT_PROMPT.md` (Stand prüfen, Ideen entscheiden, Kar
 Einstiegs-Prompt für Claude Code: *"Lies AGENT_PROMPT.md und docs/HANDOFF.md, du bist A, arbeite die nächste Karte ab."*
 
 ## Wichtige Befehle
-- Netztests (Host + Clients auf localhost): `tools/test_netstars.sh`, `tools/test_netshop.sh`, `tools/test_netpuzzle.sh`, `tools/test_netdrone.sh` (`test_netplayers.sh` flackert, siehe KNOWN_ISSUES).
+- Netztests (Host + Clients auf localhost): `tools/test_netstars.sh`, `tools/test_netshop.sh`, `tools/test_netpuzzle.sh`, `tools/test_netdrone.sh`, `tools/test_netballoon.sh` (`test_netplayers.sh` flackert, siehe KNOWN_ISSUES).
 - Windows-Build: `tools/build_windows.sh`, Installer: `tools/build_installer.sh` (NSIS). CI veröffentlicht bei jedem Push auf main die Vorabversion `latest`.
 - Screenshot ohne Grafikkarte (Linux):
   `xvfb-run -a -s "-screen 0 1280x720x24" $(tools/setup_godot.sh) --rendering-driver opengl3 --resolution 1280x720 --write-movie /tmp/shot/m.png --fixed-fps 30 --quit-after 120 -s <skript.gd>`
@@ -33,7 +33,6 @@ Begründungen und Recherche: `docs/IMPROVEMENT_BRAINSTORMING.md` (Abschnitt „R
 
 ## Offene Punkte
 - Jan meldete „Spieler lässt sich nach dem Umbenennen nicht mehr bewegen“. In Solo und als Host (Linux, aktueller main) bewegt sich der Spieler; `tests/test_survival.gd` prüft das. Ungeklärt, ob es die Windows-Exe, einen Beitritt als Client oder das Umbenennen im Menü betrifft: mit Jan nachstellen.
-- Ballon ist nicht host-autoritativ: Jeder Rechner bewegt seinen eigenen Ballon (Lenken wirkt online nur lokal). Vor G-31 auf Host-Sync umstellen.
 - `sync_to_physics` am Ballon ist absichtlich aus (sonst friert die Position beim Lenken ein).
 - Windows-Exe und Spiel über das Internet sind ungetestet (kein Windows hier).
 - Weitere bekannte Grenzen: `docs/KNOWN_ISSUES.md`.
