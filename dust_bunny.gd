@@ -42,7 +42,7 @@ func _ready() -> void:
 		add_child(eye)
 
 
-func act(delta: float, world: World) -> void:
+func act(delta: float, world) -> void:
 	_turn_left -= delta
 	if _turn_left <= 0.0:
 		_axis = Vector3(randf() - 0.5, randf() - 0.5, randf() - 0.5)

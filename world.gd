@@ -719,6 +719,10 @@ func _build_enemies() -> void:
 		s.id = enemies.size()
 		s.attach(stars[(j * 2 + 1) % n], Vector3(0.3, -1.0, 0.2))   # Nest an der Unterseite
 		enemies.append(s)
+	var cloud := SootCloud.new()   # G-29: eine Rußwolke je Insel, ganz am Ende der Liste
+	cloud.id = enemies.size()
+	cloud.attach(stars[n / 2], Vector3(0.0, 1.0, 0.0))
+	enemies.append(cloud)
 
 
 ## Wollmaus zieht zu einem anderen Stern mit Putzspuren (sonst zu einem beliebigen).
@@ -755,9 +759,9 @@ func enemy_redirty(s: Star) -> void:
 ## Host: Gegner im Wischbereich entfernen (je nach Werkzeug).
 func _wipe_enemies(point: Vector3, radius: float, tool: int, who: int) -> void:
 	for e in enemies:
-		if e.alive and e.global_position.distance_to(point) <= radius + 0.8 and e.can_remove(tool):
-			e.remove()
-			enemy_removed.emit(e.kind, who)
+		if e.alive and e.global_position.distance_to(point) <= radius + e.hit_radius():
+			if e.on_wipe(self, who, tool):
+				enemy_removed.emit(e.kind, who)
 
 
 ## Host: Biss. Der Schaden wird beim Besitzer des Spielers angewendet.
@@ -793,3 +797,10 @@ func _rpc_enemies(data: Array) -> void:
 		e.target_dir = d[2]
 		if bool(d[0]) != e.alive:
 			e.set_alive(bool(d[0]))
+
+
+## Host: Belohnung für die besiegte Rußwolke (Staub; XP vergibt, wer auf enemy_removed("russwolke") hört).
+func reward_boss(_cloud: Enemy, dust: int) -> void:
+	var gs := get_node_or_null("/root/GameState")
+	if gs != null:
+		gs.add_dust(dust)

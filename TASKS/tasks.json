@@ -1576,7 +1576,7 @@
    "G-28"
   ],
   "size": "L",
-  "status": "open",
+  "status": "done",
   "goal": "Große Rußwolke zieht über die Insel und verdunkelt Sterne. Nur besiegbar, wenn mindestens 2 Spieler gleichzeitig wischen (solo: Schild fällt in Wellen). Gibt viel XP und Staub.",
   "files": [
    "soot_cloud.gd",

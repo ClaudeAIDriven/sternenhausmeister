@@ -45,6 +45,19 @@ func can_remove(_tool: int) -> bool:
 	return true
 
 
+## Host: ein Wisch trifft den Gegner (who = Spieler-ID). Gibt true zurück, wenn er dadurch entfernt wurde.
+func on_wipe(_world, _who: int, tool: int) -> bool:
+	if can_remove(tool):
+		remove()
+		return true
+	return false
+
+
+## Trefferradius um den Gegnerpunkt (zusätzlich zum Wischradius).
+func hit_radius() -> float:
+	return 0.8
+
+
 ## Host: weggeputzt, kommt nach RESPAWN zurück.
 func remove() -> void:
 	set_alive(false)
@@ -56,7 +69,7 @@ func world_point() -> Vector3:
 
 
 ## Host-Schritt: Wiederkehr, sonst Verhalten der Unterklasse.
-func sim(delta: float, world: World) -> void:
+func sim(delta: float, world) -> void:
 	if not alive:
 		respawn_left -= delta
 		if respawn_left <= 0.0:
@@ -66,7 +79,7 @@ func sim(delta: float, world: World) -> void:
 	_update_pos()
 
 
-func act(_delta: float, _world: World) -> void:
+func act(_delta: float, _world) -> void:
 	pass
 
 
@@ -83,5 +96,5 @@ func rotate_dir(axis: Vector3, angle: float) -> void:
 
 
 ## Index des Sterns, auf dem der Gegner sitzt (-1 unbekannt).
-func star_index(world: World) -> int:
+func star_index(world) -> int:
 	return world.stars.find(star)
