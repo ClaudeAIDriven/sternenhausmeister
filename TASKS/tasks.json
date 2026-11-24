@@ -624,7 +624,7 @@
    "U-01"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Esc öffnet Pause; Lautstärke, Sensitivität, FOV, Tasten.",
   "files": [
    "pause.gd"
