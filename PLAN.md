@@ -88,3 +88,4 @@ I-11 Spielwelt: Lauf-Animation, Ballon ebenerdig und lenkbar, Kollision Haus/Lat
 I-12 Gesundheit: Lebensleiste, Regeneration nach 6 s, Fallschaden ab 5 m, Schubsen (rechte Maustaste), Lava, Kaktus, Respawn
 I-13 Rollen: Allrounder, Hüpfer, Gründlicher Putzer (Spinnenangst), Flitzer
 I-14 Minimap mit Werkstatt, Ballon, Sternen, Gefahren, Spielern, Fortschritt und Zeit
+G-21 (bot-A): Food (food.gd): Sättigung 0–100, sinkt mit Laufen (0,10/s), Putzen (0,10/s), Springen (0,5) und Grundverbrauch (0,03/s); >60 % = Regeneration x2 und Putzradius +10 %; leer = keine Regeneration, Tempo -20 %, kein Tod; Food.feed() für G-22. Player.food (nur lokal, nicht repliziert), orange Leiste über der Lebensleiste (HealthUI.food_bar). Entscheidung: Start bei 100 %. 🟢 tests/test_food.gd OK, run_tests grün. ❌ kein Screenshot (kein GPU). 🔴 Verbrauchsraten (ca. 11 Min bis leer bei Dauerlauf+Putzen) und Leistenoptik ungetestet, Balance nur ein Mensch.
