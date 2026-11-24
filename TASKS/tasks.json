@@ -408,7 +408,7 @@
   ],
   "accept": "Preset laden verändert nachweislich die Regeln.",
   "skills": "GDScript, JSON",
-  "owner": "B",
+  "owner": "A",
   "prio": "nice"
  },
  {
@@ -649,7 +649,7 @@
   ],
   "accept": "Optionen im Menü, Screenshot je Modus.",
   "skills": "Godot-UI, Barrierefreiheit",
-  "owner": "B",
+  "owner": "C",
   "prio": "nice"
  },
  {
@@ -1126,5 +1126,124 @@
   "skills": "GDScript",
   "owner": "A",
   "prio": "must"
+ },
+ {
+  "id": "G-12",
+  "area": "GAME",
+  "title": "Kombo beim Putzen",
+  "deps": [
+   "G-04"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Wer ohne Pause wischt, baut eine Serie auf: Tonhöhe steigt, Staub +10 % je Stufe bis +50 %; Pause > 1,5 s setzt zurück. Siehe IB-05.",
+  "files": [
+   "combo.gd",
+   "main.gd",
+   "tests/test_combo.gd"
+  ],
+  "accept": "Test: Serienstufe steigt/fällt, Bonus gedeckelt; run_tests grün.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "nice"
+ },
+ {
+  "id": "G-13",
+  "area": "GAME",
+  "title": "Co-op-Bonus beim gemeinsamen Putzen",
+  "deps": [
+   "N-03"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Putzen zwei oder mehr Spieler denselben Stern in kurzer Zeit, bekommen alle Beteiligten Bonusstaub. Siehe IB-06.",
+  "files": [
+   "world.gd",
+   "tests/test_coop_bonus.gd"
+  ],
+  "accept": "Test: Bonus nur bei >= 2 Beteiligten, einmal pro Stern; run_tests und Netztests grün.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "nice"
+ },
+ {
+  "id": "G-14",
+  "area": "GAME",
+  "title": "Fünf weitere Sternbilder (JSON)",
+  "deps": [
+   "G-02"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Fünf neue Sternbild-Dateien nach dem Format von G-02 (3 bis 7 Sterne, Reihenfolge, Titel). Siehe IB-07.",
+  "files": [
+   "data/constellations/*.json",
+   "tests/test_constellations_more.gd"
+  ],
+  "accept": "Test: alle laden und sind gültig; run_tests grün.",
+  "skills": "GDScript",
+  "owner": "C",
+  "prio": "nice"
+ },
+ {
+  "id": "U-05",
+  "area": "UI",
+  "title": "Nacht-Zusammenfassung",
+  "deps": [
+   "G-01",
+   "U-02"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Am Nachtende Übersicht mit 1 bis 3 Sternchen, geputzte Sterne, gelöstes Sternbild, Beitrag je Spieler. Siehe IB-08.",
+  "files": [
+   "night_summary.gd",
+   "main.gd",
+   "tests/test_night_summary.gd"
+  ],
+  "accept": "Test: Sternchen-Berechnung, Anzeige erscheint bei night_ended; Screenshot.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "nice"
+ },
+ {
+  "id": "U-06",
+  "area": "UI",
+  "title": "Anfängerhilfe in Nacht 1",
+  "deps": [
+   "U-02"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Nacht 1: nächster Sternbild-Stern pulsiert (Star.set_hint), kurzer Hinweis \"Wischen = Linksklick\". Danach aus. Siehe IB-12.",
+  "files": [
+   "tutorial.gd",
+   "main.gd",
+   "tests/test_tutorial.gd"
+  ],
+  "accept": "Test: Hinweis an in Nacht 1, aus danach; run_tests grün.",
+  "skills": "GDScript",
+  "owner": "C",
+  "prio": "nice"
+ },
+ {
+  "id": "G-15",
+  "area": "GAME",
+  "title": "Sternschnuppen verschmutzen Sterne neu",
+  "deps": [
+   "G-07"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Meteor-Treffer bringt wenige neue Flecken auf einen geputzten Stern (nur Host, synchronisiert); Zen schaltet aus. Siehe IB-10.",
+  "files": [
+   "star.gd",
+   "world.gd",
+   "tests/test_redirty.gd"
+  ],
+  "accept": "Test: Stern wird teilweise wieder schmutzig, Zen = nichts; Netztest grün.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "nice"
  }
 ]
