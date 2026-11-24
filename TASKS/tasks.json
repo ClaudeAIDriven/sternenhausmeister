@@ -698,7 +698,7 @@
    "B-01"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "GitHub-Actions: Godot headless Selftests, Export als Artefakt.",
   "files": [
    ".github/workflows/ci.yml"

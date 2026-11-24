@@ -39,7 +39,7 @@
 | [U-04](U-04.md) | B | nice | UI | Barrierefreiheit: Untertitel, Farbenblind, UI-Skalierung | M | open | U-03 |
 | [B-01](B-01.md) | A | must | BUILD | Windows-Export-Preset und Skript | S | done | P-001 |
 | [B-02](B-02.md) | A | must | BUILD | NSIS-Installer-Skript | M | done | B-01 |
-| [B-03](B-03.md) | C | nice | BUILD | CI-Workflow (Tests und Export) | M | open | B-01 |
+| [B-03](B-03.md) | C | nice | BUILD | CI-Workflow (Tests und Export) | M | done | B-01 |
 | [B-04](B-04.md) | A | done | BUILD | Test-Runner für alle Selbsttests | S | done | P-002 |
 | [D-01](D-01.md) | A | done | DOC | README, CONTRIBUTING, Stilregeln | S | done | – |
 | [D-02](D-02.md) | C | nice | DOC | Playtest-Checkliste | S | open | P-002 |
