@@ -212,7 +212,7 @@
    "N-02"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Verlässt ein Spieler die Runde, übernimmt eine einfache Drohne (läuft zum nächsten Schmutz). Rejoin möglich.",
   "files": [
    "network_manager.gd",
