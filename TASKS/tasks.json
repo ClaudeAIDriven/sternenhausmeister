@@ -1175,7 +1175,7 @@
    "G-02"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Fünf neue Sternbild-Dateien nach dem Format von G-02 (3 bis 7 Sterne, Reihenfolge, Titel). Siehe IB-07.",
   "files": [
    "data/constellations/*.json",

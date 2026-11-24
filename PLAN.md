@@ -88,3 +88,4 @@ I-11 Spielwelt: Lauf-Animation, Ballon ebenerdig und lenkbar, Kollision Haus/Lat
 I-12 Gesundheit: Lebensleiste, Regeneration nach 6 s, Fallschaden ab 5 m, Schubsen (rechte Maustaste), Lava, Kaktus, Respawn
 I-13 Rollen: Allrounder, Hüpfer, Gründlicher Putzer (Spinnenangst), Flitzer
 I-14 Minimap mit Werkstatt, Ballon, Sternen, Gefahren, Spielern, Fortschritt und Zeit
+G-14 (bot-A): Fünf neue Sternbilder (data/constellations): Pfeil (3), Kreuz des Südens (4), Leier (5), Schwan (6), Orion (7); Dateinamen so gewählt, dass bei gleicher Sternzahl weiter Dreieck/Kassiopeia/Kleiner Wagen gewählt werden (World nimmt das alphabetisch erste); neue Sternbilder greifen bei 4 und 6 Sternen (Kreuz, Schwan). Neue Auswahl pro Nacht (Zufall) wäre eine eigene Karte. 🟢 tests/test_constellations_more.gd OK, Zähler in test_constellations/test_constellation_logic auf 8 angehoben, run_tests grün. 🔴 Lage der Sterne/Linien im Raum nur gerechnet, nicht angesehen.
