@@ -5,8 +5,8 @@ alle Spieler-Knoten lokal (n=0), obwohl der Host nichts despawnt hat. Tritt auch
 ist also kein reines Gleichzeitig-Beitreten. Ursache offen (Verdacht: Godot-4.3-Spawner-Race oder Frame-Stalls durch
 Fehlerflut der Headless-Meshes). Nicht Teil von `run_tests.sh`. Für Demo: bei fehlenden Spielern Spiel neu beitreten.
 
-## Ballon nur lokal (I-11)
-Steigen, Sinken und Lenken rechnet jeder Rechner selbst. Online können Ballonpositionen auseinanderlaufen, wenn mehrere lenken. Lösung: Host-Autorität mit MultiplayerSynchronizer (vor G-31).
+## Ballon im Netz (I-11, behoben in M-12)
+Der Host rechnet Steigen, Sinken und Lenken; Clients schicken ihre Lenkung per RPC und übernehmen die Host-Position (30/s, geglättet). Test: `tools/test_netballoon.sh`. Nicht von Menschen über das Internet getestet.
 
 ## Bewegung nach dem Umbenennen (Meldung Jan, 2026-11-24)
 Nicht nachstellbar in Solo/Host unter Linux; siehe docs/HANDOFF.md.

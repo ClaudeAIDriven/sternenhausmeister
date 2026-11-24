@@ -24,6 +24,14 @@ var at_top := false
 var steer := Vector3.ZERO       # vom mitfahrenden Spieler gesetzt (Weltrichtung, Länge 0..1)
 var home := Vector3.ZERO
 var _area: Area3D
+## M-12: Online rechnet nur der Host (Steigen, Sinken, Lenken). Clients schicken ihre Lenkung an den Host und
+## übernehmen die Position, die der Host ~30-mal pro Sekunde sendet.
+const SEND_INTERVAL := 1.0 / 30.0
+const STEER_TIMEOUT := 0.25      # Lenk-Eingaben von Clients gelten so lange
+var _remote_steer := {}          # Host: Peer-ID -> [Richtung, Zeit]
+var _target := Vector3.ZERO
+var _has_target := false
+var _send_acc := 0.0
 
 
 func _ready() -> void:
@@ -71,7 +79,54 @@ func _ready() -> void:
 	_area.body_exited.connect(func(b: Node3D) -> void: if b is Player: riders = maxi(riders - 1, 0))
 
 
+func _online() -> bool:
+	return multiplayer.multiplayer_peer != null and not multiplayer.multiplayer_peer is OfflineMultiplayerPeer \
+		and multiplayer.multiplayer_peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED
+
+
+## Rechnet dieser Rechner den Ballon? Solo immer, online nur der Host.
+func is_simulating() -> bool:
+	return not _online() or multiplayer.is_server()
+
+
+## Mitfahrender Spieler lenkt (Weltrichtung). Host/Solo direkt, Client per RPC an den Host.
+func request_steer(dir: Vector3) -> void:
+	if is_simulating():
+		steer = dir
+	else:
+		_rpc_steer.rpc_id(1, dir)
+
+
+@rpc("any_peer", "call_remote", "unreliable")
+func _rpc_steer(dir: Vector3) -> void:
+	if not multiplayer.is_server() or not dir.is_finite() or dir.length() > 1.5:
+		return
+	_remote_steer[multiplayer.get_remote_sender_id()] = [dir, Time.get_ticks_msec() / 1000.0]
+
+
+@rpc("authority", "call_remote", "unreliable_ordered")
+func _rpc_state(pos: Vector3) -> void:
+	if pos.is_finite():
+		_target = pos
+		_has_target = true
+
+
 func _physics_process(delta: float) -> void:
+	if not is_simulating():
+		if _has_target:
+			position = position.lerp(_target, clampf(delta * 15.0, 0.0, 1.0))
+		steer = Vector3.ZERO
+		_check_events()
+		return
+	var now := Time.get_ticks_msec() / 1000.0
+	for peer in _remote_steer.keys():
+		var e: Array = _remote_steer[peer]
+		if now - float(e[1]) > STEER_TIMEOUT:
+			_remote_steer.erase(peer)
+		else:
+			steer += e[0]
+	if steer.length() > 1.0:
+		steer = steer.normalized()
 	position.y = next_height(position.y, riders, delta)
 	if riders > 0 and steer.length() > 0.01:
 		var np := position + Vector3(steer.x, 0, steer.z) * STEER_SPEED * delta
@@ -82,6 +137,11 @@ func _physics_process(delta: float) -> void:
 		position.z = home.z + off.y
 	steer = Vector3.ZERO
 	_check_events()
+	if _online():
+		_send_acc += delta
+		if _send_acc >= SEND_INTERVAL:
+			_send_acc = 0.0
+			_rpc_state.rpc(position)
 
 
 ## Reine Logik (testbar ohne Physik): neue Höhe nach `delta` Sekunden.
