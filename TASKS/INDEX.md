@@ -63,7 +63,7 @@
 | [I-06](I-06.md) | A | must | GAME | Ballon in die Welt einbauen | S | done | I-03, G-10 |
 | [I-07](I-07.md) | A | must | NET | Host-Info: eigene IP und Port anzeigen | S | done | N-06, I-02 |
 | [G-12](G-12.md) | A | nice | GAME | Kombo beim Putzen | S | done | G-04 |
-| [G-13](G-13.md) | A | nice | GAME | Co-op-Bonus beim gemeinsamen Putzen | S | open | N-03 |
+| [G-13](G-13.md) | A | nice | GAME | Co-op-Bonus beim gemeinsamen Putzen | S | done | N-03 |
 | [G-14](G-14.md) | C | nice | GAME | Fünf weitere Sternbilder (JSON) | S | open | G-02 |
 | [U-05](U-05.md) | A | nice | UI | Nacht-Zusammenfassung | M | open | G-01, U-02 |
 | [U-06](U-06.md) | C | nice | UI | Anfängerhilfe in Nacht 1 | S | open | U-02 |
