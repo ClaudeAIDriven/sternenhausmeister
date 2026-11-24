@@ -89,7 +89,7 @@ func refresh() -> void:
 			names.append(str(NetworkManager.players[id].get("name", id)))
 		lines += "Spieler (%d): %s\n" % [names.size(), ", ".join(names)]
 	lines += "WASD laufen · Leertaste springen · Maus zielen\n"
-	lines += "Linke Maustaste / E: putzen · Esc: Pause"
+	lines += "Linke Maustaste / E: putzen · B: Werkstatt · Esc: Pause"
 	if _extra != "":
 		lines += "\n\n" + _extra
 	_label.text = lines

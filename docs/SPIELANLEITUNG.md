@@ -6,7 +6,7 @@
 
 ## Spielen
 - Im Hauptmenü Namen eintragen, **Spielart** wählen (Standard, Kinder, Zen), dann **Allein putzen**.
-- Steuerung: **WASD** laufen, **Maus** umsehen, **Leertaste** springen, **linke Maustaste** oder **E** putzen, **Esc** Pause und Einstellungen. Im Shop (an der Werkstatt) kaufst du mit Sternenstaub einen größeren Wedel, schnellere Sohlen und einen längeren Stiel.
+- Steuerung: **WASD** laufen, **Maus** umsehen, **Leertaste** springen, **linke Maustaste** oder **E** putzen, **B** Werkstatt, **Esc** Pause und Einstellungen. In der Werkstatt (Taste **B**) kaufst du mit Sternenstaub einen größeren Wedel, schnellere Sohlen und einen längeren Stiel.
 - Ziel: Alle Sterne sauber wischen. Das Sternbild muss in der **richtigen Reihenfolge** geputzt werden (der Hinweis zeigt den nächsten Stern). Falsche Reihenfolge: Die Sterne werden wieder schmutzig, ohne Strafe.
 - Wer ohne Pause wischt, baut eine **Kombo** auf (mehr Staub, höherer Ton). Putzen zwei Spieler denselben Stern, gibt es **Teamarbeit-Bonus**. Mit dem **Ballon** auf der Insel erreichst du hohe Sterne.
 - Am Nachtende (Standard 10 Minuten) zeigt die Zusammenfassung 1 bis 3 Sternchen. Es gibt kein Game Over, du kannst danach weiterputzen.
