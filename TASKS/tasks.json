@@ -325,7 +325,7 @@
    "U-02"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Werkstatt-Shop: Wedelgröße, Lauftempo, Reichweite; Preise als Daten.",
   "files": [
    "shop.gd",

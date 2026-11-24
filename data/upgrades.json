@@ -1,0 +1,8 @@
+{
+ "stats": {"wipe_radius": 0.9, "speed": 6.0, "reach": 9.0},
+ "upgrades": [
+  {"id": "wipe_size", "name": "Größerer Wedel", "desc": "Wischt eine größere Fläche.", "stat": "wipe_radius", "per_level": 0.25, "max_level": 4, "base_cost": 6, "cost_growth": 1.6},
+  {"id": "speed", "name": "Flinke Sohlen", "desc": "Du läufst schneller.", "stat": "speed", "per_level": 0.8, "max_level": 4, "base_cost": 5, "cost_growth": 1.5},
+  {"id": "reach", "name": "Langer Stiel", "desc": "Du erreichst weiter entfernte Flecken.", "stat": "reach", "per_level": 1.5, "max_level": 3, "base_cost": 8, "cost_growth": 1.7}
+ ]
+}
