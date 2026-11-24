@@ -37,7 +37,7 @@
 | [U-02](U-02.md) | A | must | UI | HUD: Staub, Timer, Spielerliste | S | open | C-02 |
 | [U-03](U-03.md) | A | must | UI | Pause- und Einstellungsmenü | S | open | C-03, U-01 |
 | [U-04](U-04.md) | B | nice | UI | Barrierefreiheit: Untertitel, Farbenblind, UI-Skalierung | M | open | U-03 |
-| [B-01](B-01.md) | A | must | BUILD | Windows-Export-Preset und Skript | S | open | P-001 |
+| [B-01](B-01.md) | A | must | BUILD | Windows-Export-Preset und Skript | S | done | P-001 |
 | [B-02](B-02.md) | A | must | BUILD | NSIS-Installer-Skript | M | open | B-01 |
 | [B-03](B-03.md) | C | nice | BUILD | CI-Workflow (Tests und Export) | M | open | B-01 |
 | [B-04](B-04.md) | A | done | BUILD | Test-Runner für alle Selbsttests | S | done | P-002 |
