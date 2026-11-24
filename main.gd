@@ -17,6 +17,7 @@ var scrub_sound: AudioStreamWAV
 var chime: Array[AudioStreamWAV] = []
 var night: Night
 var pause: Pause
+var combo := Combo.new()   # G-12
 var shop: Shop
 var note_idx := 0
 var scrub_cooldown := 0.0
@@ -156,6 +157,7 @@ func _input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
+	combo.tick(Time.get_ticks_msec() / 1000.0)
 	scrub_cooldown = maxf(0.0, scrub_cooldown - delta)
 	if player == null:   # eigenen Spieler suchen (online erscheint er erst nach der Replikation)
 		player = spawner.local_player()
@@ -178,8 +180,9 @@ func _on_wipe_requested(point: Vector3) -> void:
 
 
 func _on_star_scrubbed(_star: Star, removed: int) -> void:
-	GameState.add_dust(removed * DUST_PER_SPOT)   # G-04: Sternenstaub fällt beim Putzen an
-	sfx.play(notes[note_idx % notes.size()], 1.0, -4.0)
+	var now := Time.get_ticks_msec() / 1000.0
+	GameState.add_dust(combo.hit(now, removed, DUST_PER_SPOT))   # G-04 + G-12: Staub beim Putzen, mit Kombo-Bonus
+	sfx.play(notes[note_idx % notes.size()], combo.pitch(), -4.0)
 	note_idx += 1
 
 
@@ -218,7 +221,9 @@ func _selftest() -> void:
 	for st in world.stars:
 		total_spots += st.total
 	var bonus: int = world.puzzle.bonus() if world.puzzle != null and world.puzzle.is_solved else 0   # I-04: Sternbild gelöst = Bonus-Staub
-	ok = ok and GameState.dust == 6 + total_spots * DUST_PER_SPOT + bonus   # 6 = Rest aus dem GameState-Test oben
+	# 6 = Rest aus dem GameState-Test oben; G-12: Kombo gibt je Stufe bis +50 % Staub (hier wischt der Test schnell am Stück)
+	var base_dust := 6 + total_spots * DUST_PER_SPOT + bonus
+	ok = ok and GameState.dust >= base_dust and GameState.dust <= base_dust + int(total_spots * DUST_PER_SPOT * Combo.MAX_LEVEL * Combo.BONUS_PER_LEVEL) + 1
 	ok = ok and GameState.stars_cleaned == world.stars.size() and fired["cleaned"] == world.stars.size()
 	print("SELFTEST cleaned=%d/%d progress_ok=%s" % [world.cleaned_count(), world.stars.size(), str(ok)])
 	print("SELFTEST OK" if ok else "SELFTEST FAIL")
