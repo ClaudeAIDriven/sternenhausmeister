@@ -1422,7 +1422,7 @@
    "G-21"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Sträucher und Bäume tragen Sternbeeren, Mondäpfel und Wolkenpilze (wachsen nach 90 s nach). Aufheben mit F, 6 Inventarplätze, Essen mit Q. Leuchten leicht, damit man sie nachts findet.",
   "files": [
    "fruit.gd",
