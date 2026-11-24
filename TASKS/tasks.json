@@ -548,7 +548,7 @@
    "G-02"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Jeder Stern eigene Tonhöhe; geputztes Sternbild spielt kurze Melodie.",
   "files": [
    "sfx.gd",
