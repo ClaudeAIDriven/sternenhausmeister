@@ -1015,7 +1015,7 @@
    "A-09"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "player.gd nutzt PlayerLook (Farbe/Symbol je Spieler) und ToolModels statt der Platzhalter-Kapsel, liest Tempo, Reichweite (Shop) und Maus-Empfindlichkeit (Settings).",
   "files": [
    "player.gd"
