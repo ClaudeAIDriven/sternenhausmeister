@@ -62,3 +62,22 @@ Alle Assets entstehen als eigene Arbeit (meist per Code erzeugt), Quellen in `do
 - Compatibility-Renderer: keine Reflexionen, wenige Lichter, Schatten nur für wichtige Objekte, Transparenz sparsam. Billigere Ersatzlösung nennen, wenn ein Effekt nicht geht.
 - Kachelbare Texturen immer mit Randpixel-Test prüfen, nicht nur ansehen.
 - Echte handgemalte Texturen (Bildgenerator oder Malerei) sind noch nicht erstellt: alles hier ist prozedural; Stil kann ein Mensch später mit gemalten Texturen derselben Auflösung ersetzen.
+
+## Stand nach Karten A-06 bis A-17 (aktualisiert)
+Die Stand-Spalte oben stammt aus der Planung. Tatsächlich gebaut (alles als eigene, prozedurale Arbeit; Einbau ins Spiel fehlt überall noch, weil die Spielskripte nicht zu den Karten gehörten):
+
+| Karte | Datei(en) | Was es ist | Eingebaut im Spiel |
+|---|---|---|---|
+| A-06 | `palette.gd`, `docs/STYLEGUIDE.md` | Farben, Farbenblind-Palette, Messung | nein |
+| A-07 | `sky.gd` | Himmelsphasen mit Tween, Mond (Dämmerung/Mitternacht/Morgenrot) | ja (NightSky wird schon benutzt) |
+| A-08 | `player_look.gd` | 4 Spieler mit Symbol, Zubehör, Fußring | nein (player.gd) |
+| A-09 | `tool_models.gd` | Wedel, Sauger, Tuch, Polierpad | nein |
+| A-10 | `dirt_textures.gd` | Overlays Ruß/Flecken/Patina, Schmutzmaske | nein |
+| A-11 | `shaders/star_clean.gdshader`, `star_look.gd` | Stern mit Reinigungsübergang 0..100 % | nein (star.gd) |
+| A-12 | `island_props.gd` | Boden (kachelbar), Gras, Steine, Büsche, Laterne, Schild | nein (world.gd) |
+| A-13 | `constellation_lines.gd` | Sternbild-Linien, Puls, Fertig-Burst | nein |
+| A-14 | `sky_fx.gd` | Wolken, Sternschnuppe, `reduced_motion` | nein |
+| A-15 | `ui_theme.gd`, `ui_icons.gd` | Theme, 10 Icons, 4 Spielersymbole | nein (hud.gd) |
+| A-16 | `assets/ui/logo.svg`, `menu_backdrop.gd` | Logo, Menü-Hintergrund | nein |
+
+Noch offen aus dem Art-Prompt: Anbindung aller obigen Teile an die Spielskripte (Folgekarten nötig), echte handgemalte Texturen, Schrift (Nunito/Fredoka mit Lizenz), Shop-/Einstellungs-/Sternbild-Übersicht-Oberfläche, Animationen der Figuren und Werkzeuge, Werkstatt-Upgrades, weitere Sternbild-Motive, Test auf echter GPU und mit Betroffenen (Farbenblindheit).
