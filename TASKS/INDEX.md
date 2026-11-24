@@ -19,7 +19,7 @@
 | [G-02](G-02.md) | A | must | GAME | Sternbild-Datenformat und 3 Beispiele | S | done | P-002 |
 | [G-03](G-03.md) | A | must | GAME | Sternbild-Rätsel-Logik | M | done | G-02 |
 | [G-04](G-04.md) | A | must | GAME | Sternenstaub-Währung | S | done | C-02 |
-| [G-05](G-05.md) | A | must | GAME | Shop und Upgrades | M | open | G-04, U-02 |
+| [G-05](G-05.md) | A | must | GAME | Shop und Upgrades | M | done | G-04, U-02 |
 | [G-06](G-06.md) | B | nice | GAME | Schmutztypen mit passendem Werkzeug | M | done | P-002 |
 | [G-07](G-07.md) | B | nice | GAME | Wetter-Events: Wolken und Sternschnuppen | M | open | G-01 |
 | [G-08](G-08.md) | A | must | GAME | Skalierung nach Spielerzahl | S | open | C-02, N-02 |
