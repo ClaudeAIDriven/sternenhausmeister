@@ -4,7 +4,7 @@ extends SceneTree
 func _initialize() -> void:
 	var L = load("res://constellation_loader.gd")
 	var all: Array = L.load_dir("res://data/constellations")
-	var ok: bool = all.size() == 3
+	var ok: bool = all.size() == 8
 	for d in all:
 		ok = ok and L.validate(d) == ""
 	var bad := {"id": "x", "name": "X", "stars": [{"id": 0, "pos": [0, 0]}, {"id": 1, "pos": [1, 0]}, {"id": 1, "pos": [2, 0]}], "order": [0, 1, 1]}
