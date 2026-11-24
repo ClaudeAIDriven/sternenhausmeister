@@ -35,7 +35,7 @@
 | [S-03](S-03.md) | C | nice | AUDIO | UI- und Ambient-Sounds | S | open | U-01 |
 | [U-01](U-01.md) | A | must | UI | Hauptmenü (Start, Host, Join, Einstellungen, Beenden) | M | done | C-03 |
 | [U-02](U-02.md) | A | must | UI | HUD: Staub, Timer, Spielerliste | S | done | C-02 |
-| [U-03](U-03.md) | A | must | UI | Pause- und Einstellungsmenü | S | open | C-03, U-01 |
+| [U-03](U-03.md) | A | must | UI | Pause- und Einstellungsmenü | S | done | C-03, U-01 |
 | [U-04](U-04.md) | B | nice | UI | Barrierefreiheit: Untertitel, Farbenblind, UI-Skalierung | M | open | U-03 |
 | [B-01](B-01.md) | A | must | BUILD | Windows-Export-Preset und Skript | S | done | P-001 |
 | [B-02](B-02.md) | A | must | BUILD | NSIS-Installer-Skript | M | done | B-01 |
