@@ -16,6 +16,7 @@ const MENU_SCENE := "res://menu.tscn"
 ## G-27: Callable ohne Argumente, speichert den Spielstand und gibt OK (0) oder einen Fehlercode zurück; nur der Host/Solo setzt sie.
 var save_handler: Callable
 var save_label: Label
+var seed_label: Label
 var accessibility: Node   # I-08: optional, bringt das Barrierefreiheit-Panel mit
 var is_open := false
 var buttons := {}
@@ -75,6 +76,9 @@ func _build_ui() -> void:
 	col.add_child(keys)
 	buttons["save"] = _button(col, "Spiel speichern", func(): save_now())
 	buttons["save"].visible = save_handler.is_valid()
+	seed_label = Label.new()   # M-02: Insel-Seed zum Weitergeben
+	seed_label.add_theme_font_size_override("font_size", UiTheme.FONT_HINT)
+	col.add_child(seed_label)
 	save_label = Label.new()
 	save_label.add_theme_font_size_override("font_size", UiTheme.FONT_HINT)
 	col.add_child(save_label)
@@ -132,10 +136,20 @@ func open() -> void:
 	if not NetworkManager.is_online():
 		get_tree().paused = true
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	if seed_label != null:
+		var w = get_tree().root.find_child("World", true, false)
+		var sv: int = int(w.island_seed) if w != null and "island_seed" in w else 0
+		seed_label.text = "Insel-Seed: %s" % (str(sv) if sv != 0 else "klassisch")
 	opened.emit()
 
 
 ## Speichert über `save_handler`; zeigt das Ergebnis im Pausenmenü. Gibt true bei Erfolg zurück.
+## Nach dem Setzen von save_handler aufrufen: zeigt den Speichern-Knopf.
+func save_handler_ready() -> void:
+	if buttons.has("save"):
+		buttons["save"].visible = save_handler.is_valid()
+
+
 func save_now() -> bool:
 	if not save_handler.is_valid():
 		return false

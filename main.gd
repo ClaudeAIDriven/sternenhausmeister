@@ -30,6 +30,9 @@ var weather: Weather        # M-01
 var kitchen_ui: KitchenUI
 var skills_ui: SkillsUI
 var _rate_acc := 0.0
+var nights_played := 0              # M-02
+var loaded_save := {}               # M-02: geladener Spielstand (Host/Solo)
+var _peer_progress := {}            # Host: Spielername -> {xp, skills} der Mitspieler (für den Spielstand)
 var note_idx := 0
 var scrub_cooldown := 0.0
 
@@ -79,6 +82,7 @@ func _ready() -> void:
 	minimap.bind(world, night, players_root)
 	NetworkManager.disconnected.connect(func(): get_tree().change_scene_to_file("res://menu.tscn"))
 	_build_extras()
+	_build_saving()
 	world.star_scrubbed.connect(_on_star_scrubbed)
 	world.star_cleaned.connect(_on_star_cleaned)
 	world.coop_bonus.connect(func(a: int): hud.show_puzzle_message("Teamarbeit! +%d Sternenstaub" % a, 4.0))   # G-13
@@ -288,6 +292,8 @@ func _build_extras() -> void:
 
 ## M-01: Sobald der eigene Spieler da ist: Küche/Fähigkeiten binden, XP für Kochen und Stufenaufstieg.
 func _bind_player(p: Player) -> void:
+	if not loaded_save.is_empty():   # Host/Solo: eigene Werte aus dem Spielstand
+		SaveGame.restore_player(loaded_save.get("players", {}).get(str(Settings.get_value("player_name")), {}), p.xp, p.skills)
 	p.kitchen = world.kitchen
 	kitchen_ui.bind(world.kitchen, world.inventory, p)
 	skills_ui.bind(p.skills)
@@ -300,6 +306,65 @@ func _bind_player(p: Player) -> void:
 		if bonus_food > 0.0:
 			p.food.feed(bonus_food))
 	p.xp.leveled_up.connect(func(l: int): hud.show_puzzle_message("Stufe %d! Mit K Fähigkeiten lernen." % l, 5.0))
+
+
+# ---------------------------------------------------------------- Speichern/Laden (M-02)
+
+## Host/Solo: Pause-Knopf, Autosave am Nachtende, Laden aus dem Menü (launch["load"]). Mitspieler melden ihre Werte an den Host.
+func _build_saving() -> void:
+	var is_client := NetworkManager.is_online() and not multiplayer.is_server()
+	if not is_client:
+		pause.save_handler = func(): return save_now()
+		pause.save_handler_ready()
+		GameState.night_ended.connect(func():
+			nights_played += 1
+			save_now("autosave"))
+		var slot := str(Menu.launch.get("load", ""))
+		if slot != "":
+			loaded_save = SaveGame.load_game(slot)
+			if not loaded_save.is_empty():
+				SaveGame.apply(loaded_save, world, GameState, shop)
+				nights_played = int(loaded_save.get("night", 0))
+	if not is_client and NetworkManager.is_online():
+		NetworkManager.player_joined.connect(func(id: int):
+			if id == 1 or loaded_save.is_empty():
+				return
+			var nm := str(NetworkManager.players.get(id, {}).get("name", ""))
+			var pd: Dictionary = loaded_save.get("players", {}).get(nm, {})
+			if not pd.is_empty():
+				_rpc_restore_progress.rpc_id(id, pd))
+	GameState.night_ended.connect(func():
+		if is_client and player != null:
+			_rpc_report_progress.rpc_id(1, str(Settings.get_value("player_name")), SaveGame.player_data(player.xp, player.skills)))
+
+
+func _save_slot_name() -> String:
+	return str(Menu.launch.get("slot", "")) if str(Menu.launch.get("slot", "")) != "" else "Spielstand"
+
+
+## Speichert den Spielstand (Standard: Slot aus dem Menü oder "Spielstand"). Gibt OK oder einen Fehlercode zurück.
+func save_now(slot: String = "") -> int:
+	var pl := {}
+	var my_name := str(Settings.get_value("player_name"))
+	if player != null:
+		pl[my_name] = {"xp": player.xp, "skills": player.skills}
+	var data := SaveGame.capture(world, GameState, shop, pl, nights_played, world.island_seed)
+	for n in _peer_progress:   # Mitspieler: zuletzt gemeldeter Stand
+		data["players"][n] = _peer_progress[n]
+	return SaveGame.save(slot if slot != "" else _save_slot_name(), data)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_report_progress(pname: String, pdata: Dictionary) -> void:
+	if multiplayer.is_server() and pname.length() <= 40:
+		_peer_progress[pname] = pdata
+
+
+## Host -> Spieler: gespeicherte Werte nach Spielername zurückgeben (beim Beitritt).
+@rpc("authority", "call_remote", "reliable")
+func _rpc_restore_progress(pdata: Dictionary) -> void:
+	if player != null:
+		SaveGame.restore_player(pdata, player.xp, player.skills)
 
 
 func _selftest() -> void:

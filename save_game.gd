@@ -21,6 +21,16 @@ static func path_for(n: String) -> String:
 	return base_dir.path_join(safe_name(n) + ".json")
 
 
+## Spielerdaten (XP/Fähigkeiten) als einfaches Dictionary.
+static func player_data(xp, skills) -> Dictionary:
+	var d := {}
+	if xp != null:
+		d["xp"] = {"xp": xp.xp, "level": xp.level, "points": xp.points}
+	if skills != null:
+		d["skills"] = {"levels": skills.levels.duplicate(), "role": skills.role}
+	return d
+
+
 ## Stellt den Spielstand aus den Teilen zusammen. `players`: Spielername -> {"xp": Xp, "skills": Skills} (beide optional).
 static func capture(world, game_state, shop, players: Dictionary, night: int, seed_value: int = 7) -> Dictionary:
 	var stars_state: Array = []
@@ -29,14 +39,7 @@ static func capture(world, game_state, shop, players: Dictionary, night: int, se
 	var pl := {}
 	for pname in players:
 		var e: Dictionary = players[pname]
-		var d := {}
-		if e.get("xp") != null:
-			var x = e["xp"]
-			d["xp"] = {"xp": x.xp, "level": x.level, "points": x.points}
-		if e.get("skills") != null:
-			var sk = e["skills"]
-			d["skills"] = {"levels": sk.levels.duplicate(), "role": sk.role}
-		pl[str(pname)] = d
+		pl[str(pname)] = player_data(e.get("xp"), e.get("skills"))
 	return {
 		"version": VERSION, "seed": seed_value, "night": night, "dust": game_state.dust,
 		"stars": stars_state,
@@ -86,6 +89,8 @@ static func list() -> Array[String]:
 static func apply(data: Dictionary, world, game_state, shop) -> Dictionary:
 	if data.is_empty():
 		return {}
+	if int(data.get("seed", 0)) != int(world.island_seed) and world.has_method("apply_seed"):
+		world.apply_seed(int(data.get("seed", 0)))   # gleiche Insel wie beim Speichern
 	game_state.dust = int(data.get("dust", 0))
 	var sh: Dictionary = data.get("shop", {})
 	shop.levels = {}
