@@ -20,6 +20,13 @@ func _process(_d: float) -> bool:
 	night.tick(40.0)   # 32 %: Mitternacht
 	hud.refresh()
 	ok = ok and hud.text().contains("Mitternacht") and hud.text().contains("01:25")
+	# I-05: Sternbild-Fortschritt und Meldungen
+	hud.show_puzzle("Dreieck", 2, 3)
+	ok = ok and hud.text().contains("Sternbild Dreieck: 2 / 3")
+	hud.show_puzzle_message("Falsche Reihenfolge!", 1.0)
+	ok = ok and hud.text().contains("Falsche Reihenfolge!")
+	hud._process(1.5)
+	ok = ok and not hud.text().contains("Falsche Reihenfolge!") and hud.text().contains("Esc: Pause")
 	print("TEST_HUD OK" if ok else "TEST_HUD FAIL\n" + hud.text())
 	quit(0 if ok else 1)
 	return false

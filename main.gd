@@ -52,6 +52,13 @@ func _ready() -> void:
 	NetworkManager.disconnected.connect(func(): get_tree().change_scene_to_file("res://menu.tscn"))
 	world.star_scrubbed.connect(_on_star_scrubbed)
 	world.star_cleaned.connect(_on_star_cleaned)
+	world.puzzle_changed.connect(func(done: int, total: int): hud.show_puzzle(world.puzzle.title if world.puzzle != null else "", done, total))
+	world.puzzle_wrong.connect(func(_hint: int):
+		_refresh_hud()   # geputzte Sterne zählen nach dem Zurücksetzen neu
+		hud.show_puzzle_message("Falsche Reihenfolge! Die Sterne sind wieder schmutzig. Fang mit dem ersten Stern des Sternbilds von vorn an."))
+	world.puzzle_solved.connect(func(bonus: int): hud.show_puzzle_message("Sternbild gelöst! +%d Sternenstaub ⭐" % bonus, 10.0))
+	if world.puzzle != null:
+		hud.show_puzzle(world.puzzle.title, world.puzzle.done, world.puzzle.total())
 	_refresh_hud()
 	night = Night.new()
 	add_child(night)
