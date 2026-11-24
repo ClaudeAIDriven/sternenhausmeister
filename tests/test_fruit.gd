@@ -9,7 +9,7 @@ func _process(_d: float) -> bool:
 	var ok := true
 	var w = load("res://world.gd").new()
 	root.add_child(w)
-	ok = ok and w.fruits.size() == 9 and w.inventory.items.is_empty()
+	ok = ok and w.fruits.size() == 15 and w.inventory.items.is_empty()
 	var pos: Vector3 = w.fruits[0].global_position
 	# zu weit weg: nichts
 	ok = ok and w.try_pick(pos + Vector3(10, 0, 0)) == -1
@@ -40,7 +40,7 @@ func _process(_d: float) -> bool:
 	for f in w.fruits:
 		if f.available:
 			left += 1
-	ok = ok and left == 3
+	ok = ok and left == w.fruits.size() - 6
 	# Sorten füllen unterschiedlich
 	ok = ok and Fruit.food_value("sternbeere") < Fruit.food_value("mondapfel") and Fruit.food_value("mondapfel") < Fruit.food_value("wolkenpilz")
 	ok = ok and not w.inventory.add("gibt_es_nicht")

@@ -1596,7 +1596,7 @@
    "G-22"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Brunnen (heilt 2/s), Obstgarten (viele Früchte), Aussichtsturm (zeigt Gegner auf der Minimap), Sternenschrein (60 s Buff gegen Staub), Küche. Auf der Minimap mit Symbol.",
   "files": [
    "poi.gd",
