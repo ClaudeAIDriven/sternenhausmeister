@@ -45,6 +45,7 @@ var look_index := -1
 var nameplate: Label3D
 var _shop: Node
 var health := MAX_HEALTH
+var food := Food.new()         # G-21: Sättigung, nur lokal
 var downed := false            # G-20: am Boden, wird mit repliziert
 var respawn_left := 0.0
 var revive_target: Player      # wen ich gerade wiederbelebe (für die Anzeige)
@@ -136,7 +137,7 @@ func _physics_process(delta: float) -> void:
 	update_revive(delta, Input.is_physical_key_pressed(KEY_F) and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED)
 	var input_dir := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var dir := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-	var speed := stat("speed", SPEED) * Roles.factor(role, "speed")
+	var speed := stat("speed", SPEED) * Roles.factor(role, "speed") * food.speed_factor()
 	_jump_cd = maxf(_jump_cd - delta, 0.0)
 	if _on_balloon != null and is_instance_valid(_on_balloon) and _on_balloon.is_aloft():
 		# Ballon lenken (I-11): Auf der Plattform in der Luft steuert WASD den Ballon statt den Spieler.
@@ -153,6 +154,7 @@ func _physics_process(delta: float) -> void:
 		velocity.y -= GRAVITY * delta
 	elif Input.is_action_just_pressed("jump") and _jump_cd <= 0.0:
 		velocity.y = JUMP_VELOCITY * Roles.factor(role, "jump")
+		food.on_jump()
 		_jump_cd = Roles.factor(role, "jump_cd")
 	move_and_slide()
 	_track_floor()
@@ -161,6 +163,7 @@ func _physics_process(delta: float) -> void:
 		_airborne = false
 		global_position = SPAWN_POINT
 		velocity = Vector3.ZERO
+	food.tick(delta, Vector2(velocity.x, velocity.z).length() > 0.5, cleaning)
 	_tick_health(delta)
 	if InputMap.has_action("attack") and Input.is_action_just_pressed("attack") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		try_attack()
@@ -298,7 +301,7 @@ func _tick_health(delta: float) -> void:
 	_attack_cd = maxf(_attack_cd - delta, 0.0)
 	_since_damage += delta
 	if health < MAX_HEALTH and _since_damage >= REGEN_DELAY:
-		health = minf(health + REGEN_RATE * delta, MAX_HEALTH)
+		health = minf(health + REGEN_RATE * delta * food.regen_factor(), MAX_HEALTH)
 		health_changed.emit(health)
 
 
@@ -476,4 +479,4 @@ func knock(v: Vector3) -> void:
 
 ## Wischradius-Faktor der Rolle (main.gd multipliziert damit den Shop-Radius).
 func wipe_factor() -> float:
-	return Roles.factor(role, "wipe")
+	return Roles.factor(role, "wipe") * food.clean_factor()

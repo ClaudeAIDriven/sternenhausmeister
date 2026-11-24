@@ -1401,7 +1401,7 @@
    "I-12"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Zweite Leiste (Sättigung). Sinkt langsam mit Laufen, Springen und Putzen. Satt (>60 %): Regeneration x2, Putzen +10 %. Leer: keine Regeneration, Tempo -20 %, aber kein Tod (Research: Valheim, Hunger nur als Vorteil).",
   "files": [
    "food.gd",
