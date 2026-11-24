@@ -61,6 +61,10 @@ const POI_SPOTS := {"brunnen": Vector3(-3, 0, -12), "obstgarten": Vector3(-24, 0
 const ORCHARD_FRUITS := [[Vector3(-26, 0, 12), "sternbeere"], [Vector3(-22, 0, 12), "sternbeere"], [Vector3(-26, 0, 16), "mondapfel"],
 	[Vector3(-22, 0, 16), "mondapfel"], [Vector3(-24, 0, 10), "wolkenpilz"], [Vector3(-24, 0, 18), "sternbeere"]]
 var pois: Array[Poi] = []
+## G-28: Gegner (Index = ID, bei allen gleich). Wollmäuse verschmutzen Sterne neu, Spinnen beißen; nur der Host simuliert.
+signal enemy_removed(kind: String, who: int)
+var enemies: Array[Enemy] = []
+var _enemy_sync := 0.0
 var kitchen: Kitchen
 signal fruit_picked(kind: String)    # eine Frucht liegt jetzt im eigenen Inventar
 signal fruit_eaten(kind: String)
@@ -113,6 +117,7 @@ func _wipe_authoritative(point: Vector3, radius: float, tool: int, who: int = 1)
 			note_contribution(i, who, n, Time.get_ticks_msec() / 1000.0)
 		if NetworkManager.is_online() and not stars[i].last_removed.is_empty():
 			_rpc_removed.rpc(i, stars[i].last_removed)
+	_wipe_enemies(point, radius, tool, who)
 	for idx in _pending_coop:   # erst jetzt: der letzte Wisch zählt noch für den Abschluss mit
 		_pay_coop(idx)
 	_pending_coop.clear()
@@ -350,6 +355,7 @@ func _build_stars(count: int) -> void:
 			_on_star_cleaned(s))
 		stars.append(s)
 	_setup_puzzle()
+	_build_enemies()
 	layout_changed.emit(count)
 
 
@@ -656,7 +662,18 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	if NetworkManager.is_online() and not multiplayer.is_server():
-		return   # nur der Host lässt Früchte nachwachsen
+		for e in enemies:
+			e.tick_client(delta)
+		return   # nur der Host lässt Früchte nachwachsen und simuliert Gegner
+	for e in enemies:
+		e.sim(delta, self)
+	_enemy_sync += delta
+	if _enemy_sync >= 0.2 and NetworkManager.is_online():
+		_enemy_sync = 0.0
+		var data: Array = []
+		for e in enemies:
+			data.append([e.alive, e.star_index(self), e.dir])
+		_rpc_enemies.rpc(data)
 	for i in fruits.size():
 		if fruits[i].tick(delta) and NetworkManager.is_online():
 			_rpc_fruit.rpc(i, true)
@@ -678,3 +695,101 @@ func _build_pois() -> void:
 	kp.position = Kitchen.KITCHEN_POS
 	add_child(kp)
 	pois.append(kp)
+
+
+# ---------------------------------------------------------------- Gegner (G-28)
+
+func _build_enemies() -> void:
+	for e in enemies:
+		if is_instance_valid(e):
+			e.queue_free()
+	enemies.clear()
+	var n := stars.size()
+	if n == 0:
+		return
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 4242   # bei allen Spielern gleich
+	for i in n:   # je Stern eine Wollmaus
+		var b := DustBunny.new()
+		b.id = enemies.size()
+		b.attach(stars[i], Vector3(rng.randf() - 0.5, rng.randf() - 0.5, rng.randf() - 0.5) + Vector3(0, 0.01, 0))
+		enemies.append(b)
+	for j in maxi(1, n / 2):   # Spinnen an jedem zweiten Stern (Nest)
+		var s := SpiderEnemy.new()
+		s.id = enemies.size()
+		s.attach(stars[(j * 2 + 1) % n], Vector3(0.3, -1.0, 0.2))   # Nest an der Unterseite
+		enemies.append(s)
+
+
+## Wollmaus zieht zu einem anderen Stern mit Putzspuren (sonst zu einem beliebigen).
+func hop_enemy(e: Enemy) -> void:
+	var cands: Array[Star] = []
+	for s in stars:
+		if s != e.star and not s.removed_ids.is_empty():
+			cands.append(s)
+	if cands.is_empty():
+		for s in stars:
+			if s != e.star:
+				cands.append(s)
+	if cands.is_empty():
+		return
+	var tgt: Star = cands[randi() % cands.size()]
+	e.get_parent().remove_child(e)
+	e.star = tgt
+	tgt.add_child(e)
+	e._update_pos()
+
+
+## Host: Wollmaus verschmutzt einen Fleck neu (wie Sternschnuppe, nur 1 Fleck).
+func enemy_redirty(s: Star) -> void:
+	var idx := stars.find(s)
+	var ids := s.redirty(1)
+	if ids.is_empty():
+		return
+	_recleaning[idx] = true
+	if NetworkManager.is_online():
+		_rpc_restored.rpc(idx, ids)
+	star_redirtied.emit(s, ids.size())
+
+
+## Host: Gegner im Wischbereich entfernen (je nach Werkzeug).
+func _wipe_enemies(point: Vector3, radius: float, tool: int, who: int) -> void:
+	for e in enemies:
+		if e.alive and e.global_position.distance_to(point) <= radius + 0.8 and e.can_remove(tool):
+			e.remove()
+			enemy_removed.emit(e.kind, who)
+
+
+## Host: Biss. Der Schaden wird beim Besitzer des Spielers angewendet.
+func bite_player(who: int, amount: float) -> void:
+	if who == NetworkManager.my_id() or not NetworkManager.is_online():
+		_apply_bite(amount)
+	else:
+		_rpc_bite.rpc_id(who, amount)
+
+
+func _apply_bite(amount: float) -> void:
+	var p := _local_player()
+	if p != null:
+		p.damage(amount)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_bite(amount: float) -> void:
+	if amount > 0.0 and amount <= 20.0:
+		_apply_bite(amount)
+
+
+@rpc("authority", "call_remote", "unreliable")
+func _rpc_enemies(data: Array) -> void:
+	for i in mini(data.size(), enemies.size()):
+		var e := enemies[i]
+		var d: Array = data[i]
+		var si := int(d[1])
+		if si >= 0 and si < stars.size() and stars[si] != e.star:
+			e.get_parent().remove_child(e)
+			e.star = stars[si]
+			stars[si].add_child(e)
+		e.target_dir = d[2]
+		if bool(d[0]) != e.alive:
+			e.set_alive(bool(d[0]))

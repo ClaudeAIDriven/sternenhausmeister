@@ -1554,7 +1554,7 @@
    "G-25"
   ],
   "size": "L",
-  "status": "open",
+  "status": "done",
   "goal": "Wollmäuse wuseln herum und verschmutzen geputzte Flecken; mit jedem Utensil wegputzbar. Spinnen bewachen Nester, beißen (8 Schaden) und lassen sich nur mit dem Staubsauger entfernen. Host steuert Gegner, Position wird synchronisiert.",
   "files": [
    "enemy.gd",
