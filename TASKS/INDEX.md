@@ -43,7 +43,7 @@
 | [B-04](B-04.md) | A | done | BUILD | Test-Runner für alle Selbsttests | S | done | P-002 |
 | [D-01](D-01.md) | A | done | DOC | README, CONTRIBUTING, Stilregeln | S | done | – |
 | [D-02](D-02.md) | C | nice | DOC | Playtest-Checkliste | S | done | P-002 |
-| [A-06](A-06.md) | C | nice | ART | Styleguide und Farbpalette (Midnight Toy Garden) | S | open | A-01 |
+| [A-06](A-06.md) | C | nice | ART | Styleguide und Farbpalette (Midnight Toy Garden) | S | done | A-01 |
 | [A-17](A-17.md) | C | nice | ART | Asset-Katalog mit Produktionsdaten | S | open | A-06 |
 | [A-07](A-07.md) | C | nice | ART | Himmelsphasen: Dämmerung, Mitternacht, Morgenrot | S | open | A-06, A-04 |
 | [A-08](A-08.md) | C | nice | ART | Spieler-Look: Körper, Gliedmaßen, 4 Varianten mit Symbolen | M | open | A-06 |

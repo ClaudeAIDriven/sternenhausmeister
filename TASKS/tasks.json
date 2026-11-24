@@ -769,7 +769,7 @@
    "A-01"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Verbindlicher Styleguide: Stilregeln, Palette (Himmel, Insel, Sterne, UI, 4 Spielerfarben) als `Palette`-Klasse und docs/STYLEGUIDE.md, inkl. Farbenblind-Hinweisen und Texturvorgaben.",
   "files": [
    "docs/STYLEGUIDE.md",
