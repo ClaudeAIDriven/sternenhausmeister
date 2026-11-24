@@ -26,3 +26,8 @@ Ungetestetes als ungetestet kennzeichnen (🟢 getestet · 🟡 wahrscheinlich �
 
 ## 5. Verwaiste Claims
 Ein Claim ohne Commits oder PR seit mehr als 48 h gilt als verwaist. Person A entscheidet und löscht den Branch (`git push origin --delete task/<ID>/<WER>`).
+
+## 6. Entscheidungsregel (Wunsch von Jan: keine Rückfragen)
+- Bei offenen Designfragen **selbst entscheiden** und die Entscheidung in PLAN.md festhalten. Nicht beim Nutzer nachfragen.
+- Bei echter Unsicherheit (mehrere gleich gute Wege, Folgen schwer rückgängig zu machen): **2 weitere Agenten** unabhängig mit derselben Frage befragen (je kurze Empfehlung mit Begründung), Mehrheit umsetzen, Ergebnis mit "Entscheidung: X (2:1, Gründe)" in PLAN.md notieren.
+- **Ausgenommen von Abstimmungen:** Sicherheitsfragen und abgelehnte Aktionen (Berechtigungen, Pushen nach main ohne Pull Request, Löschen fremder Branches). Eine Ablehnung wird nicht per Mehrheit umgangen: sicheren Weg wählen oder im Bericht erwähnen.
