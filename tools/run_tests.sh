@@ -8,4 +8,9 @@ cd "$(dirname "$0")/.."
 out=$(timeout 120 "$GODOT" --headless --quit-after 120 -- --selftest 2>&1)
 echo "$out" | grep -E "SELFTEST" 
 echo "$out" | grep -q "SELFTEST OK" || { echo "TESTS FAIL"; exit 1; }
+for t in tests/test_*.gd; do
+  [ -e "$t" ] || continue
+  timeout 60 "$GODOT" --headless -s "$t" 2>&1 | grep -E "^TEST_" | grep -q " OK" || { echo "TESTS FAIL: $t"; exit 1; }
+  echo "$t OK"
+done
 echo "TESTS OK"
