@@ -26,13 +26,13 @@
 | [G-09](G-09.md) | B | nice | GAME | Regel-Presets (Zen, Kinder, Standard) | S | open | G-01 |
 | [G-10](G-10.md) | B | nice | GAME | Ballon/Leiter zum Erreichen hoher Sterne | M | done | P-001 |
 | [A-01](A-01.md) | C | nice | ART | Toon-Shader mit Rim-Light | M | done | P-001 |
-| [A-02](A-02.md) | C | nice | ART | 4 Spielerfarben und Namensschilder | S | done | N-02 |
+| [A-02](A-02.md) | C | nice | ART | 4 Spielerfarben und Namensschilder | S | open | N-02 |
 | [A-03](A-03.md) | C | nice | ART | Low-Poly-Props: Ballon, Leiter, Werkstatt | M | done | P-001 |
 | [A-04](A-04.md) | C | nice | ART | Himmel: Verlauf, Nebel, Wolkeninsel | S | done | P-001 |
 | [A-05](A-05.md) | C | nice | ART | Partikel: Staub und Funkeln beim Sauberwerden | S | done | P-002 |
 | [S-01](S-01.md) | C | nice | AUDIO | Lo-Fi-Musikschleife | S | done | P-003 |
-| [S-02](S-02.md) | C | nice | AUDIO | Sternakkorde und Sternbild-Melodien | M | done | P-003, G-02 |
-| [S-03](S-03.md) | C | nice | AUDIO | UI- und Ambient-Sounds | S | open | U-01 |
+| [S-02](S-02.md) | C | nice | AUDIO | Sternakkorde und Sternbild-Melodien | M | open | P-003, G-02 |
+| [S-03](S-03.md) | C | nice | AUDIO | UI- und Ambient-Sounds | S | done | U-01 |
 | [U-01](U-01.md) | A | must | UI | Hauptmenü (Start, Host, Join, Einstellungen, Beenden) | M | done | C-03 |
 | [U-02](U-02.md) | A | must | UI | HUD: Staub, Timer, Spielerliste | S | done | C-02 |
 | [U-03](U-03.md) | A | must | UI | Pause- und Einstellungsmenü | S | done | C-03, U-01 |
@@ -61,4 +61,3 @@
 | [I-04](I-04.md) | A | must | GAME | Integration: Sternbild-Rätsel mit Linien in world.gd/star.gd | M | done | I-03, G-03, A-13 |
 | [I-05](I-05.md) | A | must | UI | HUD: Sternbild-Fortschritt und Hinweise | S | done | I-04 |
 | [I-06](I-06.md) | A | must | GAME | Ballon in die Welt einbauen | S | done | I-03, G-10 |
-| [I-07](I-07.md) | A | must | NET | Host-Info: eigene IP und Port anzeigen | S | done | N-06, I-02 |
