@@ -51,6 +51,9 @@ var balloon: Balloon
 var stars: Array[Star] = []
 ## G-31: Insel-Seed (0 = klassisches Layout). Der Host verteilt ihn; Sterne und Orte kommen dann aus IslandGen.
 var island_seed := 0
+var map_id := Maps.DEFAULT_ID   # M-03: Karte (Profil in maps.gd)
+var ground_mesh: MeshInstance3D
+var hazard_nodes: Array[Hazard] = []
 var star_positions: Array = STAR_POSITIONS.duplicate()
 var poi_spots: Dictionary = POI_SPOTS.duplicate()
 
@@ -162,6 +165,7 @@ func _on_player_joined(id: int) -> void:
 
 
 func _send_state(peer: int) -> void:
+	_rpc_map.rpc_id(peer, map_id)
 	_rpc_seed.rpc_id(peer, island_seed)   # G-31: zuerst der Seed (Sternpositionen), dann Layout und Flecken
 	_rpc_layout.rpc_id(peer, stars.size())   # zuerst das Layout, dann die entfernten Flecken
 	if puzzle != null:
@@ -200,6 +204,7 @@ func _build_island() -> void:
 	mi.mesh = mesh
 	mi.material_override = IslandProps.ground_material(5.0 * ISLAND_RADIUS / 14.0)   # A-12: handgemalt wirkender Boden
 	body.add_child(mi)
+	ground_mesh = mi
 	var cs := CollisionShape3D.new()
 	var shape := CylinderShape3D.new()
 	shape.radius = ISLAND_RADIUS
@@ -302,26 +307,7 @@ func _decorate_island() -> void:
 	sign.position = Vector3(-5, 0, -3.5)
 	add_child(sign)
 	_add_cylinder_collider(sign, 0.3, 2.0)
-	for sp in LAVA_SPOTS:   # Gefahren (I-12)
-		var lava := Hazard.new()
-		lava.kind = "lava"
-		lava.radius = 3.0
-		lava.position = sp
-		lava.add_to_group("hazards")
-		add_child(lava)
-	for sp in SPIDER_SPOTS:   # Spinnennester (I-13): schrecken Rollen mit Spinnenangst zurück
-		var nest := Hazard.new()
-		nest.kind = "spider"
-		nest.radius = 3.0
-		nest.position = sp
-		nest.add_to_group("hazards")
-		add_child(nest)
-	for sp in CACTUS_SPOTS:
-		var c := Hazard.new()
-		c.kind = "cactus"
-		c.position = sp
-		c.add_to_group("hazards")
-		add_child(c)
+	_build_hazards()
 
 
 func _add_box_collider(parent: Node3D, size: Vector3, pos: Vector3) -> void:
@@ -719,12 +705,13 @@ func _build_enemies() -> void:
 		return
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 4242   # bei allen Spielern gleich
-	for i in n:   # je Stern eine Wollmaus
+	var prof := Maps.profile(map_id)
+	for i in maxi(1, int(round(n * float(prof["bunny_mult"])))):   # je Stern (nach Karte) eine Wollmaus
 		var b := DustBunny.new()
 		b.id = enemies.size()
-		b.attach(stars[i], Vector3(rng.randf() - 0.5, rng.randf() - 0.5, rng.randf() - 0.5) + Vector3(0, 0.01, 0))
+		b.attach(stars[i % n], Vector3(rng.randf() - 0.5, rng.randf() - 0.5, rng.randf() - 0.5) + Vector3(0, 0.01, 0))
 		enemies.append(b)
-	for j in maxi(1, n / 2):   # Spinnen an jedem zweiten Stern (Nest)
+	for j in maxi(1, int(round(n / 2.0 * float(prof["spider_mult"])))):   # Spinnen (Nest)
 		var s := SpiderEnemy.new()
 		s.id = enemies.size()
 		s.attach(stars[(j * 2 + 1) % n], Vector3(0.3, -1.0, 0.2))   # Nest an der Unterseite
@@ -855,3 +842,54 @@ func set_island_seed(seed_value: int) -> bool:
 	if NetworkManager.is_online():
 		_rpc_seed.rpc(seed_value)
 	return true
+
+
+# ---------------------------------------------------------------- Karten (M-03)
+
+## Gefahren der aktuellen Karte neu aufbauen (Lava, Kakteen, Spinnennester).
+func _build_hazards() -> void:
+	for h in hazard_nodes:
+		if is_instance_valid(h):
+			h.queue_free()
+	hazard_nodes.clear()
+	var prof := Maps.profile(map_id)
+	var sets := [["lava", Maps.pick(Maps.LAVA_CANDIDATES, int(prof["lava"])), 3.0], ["cactus", Maps.pick(Maps.CACTUS_CANDIDATES, int(prof["cactus"])), 1.0],
+		["spider", Maps.pick(Maps.NEST_CANDIDATES, int(prof["nests"])), 3.0]]
+	for s in sets:
+		for sp in s[1]:
+			var h := Hazard.new()
+			h.kind = s[0]
+			if s[0] != "cactus":
+				h.radius = s[2]
+			h.position = sp
+			h.add_to_group("hazards")
+			add_child(h)
+			hazard_nodes.append(h)
+
+
+## Karte wechseln: Gefahren, Gegnerdichte und Bodenfarbe. Seed bleibt (Sterne/Orte). Geht nur vor dem ersten Putzen.
+func apply_map(id: String) -> void:
+	map_id = id if Maps.valid(id) else Maps.DEFAULT_ID
+	_build_hazards()
+	if ground_mesh != null and ground_mesh.material_override is StandardMaterial3D:
+		(ground_mesh.material_override as StandardMaterial3D).albedo_color = Maps.profile(map_id)["ground"]
+	if not stars.is_empty():
+		_build_enemies()
+
+
+## Host/Solo: Karte setzen und an alle schicken.
+func set_map(id: String) -> bool:
+	if NetworkManager.is_online() and not multiplayer.is_server():
+		return false
+	if _touched():
+		return false
+	apply_map(id)
+	if NetworkManager.is_online():
+		_rpc_map.rpc(map_id)
+	return true
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_map(id: String) -> void:
+	if Maps.valid(id):
+		apply_map(id)

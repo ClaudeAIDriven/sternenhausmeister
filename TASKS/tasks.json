@@ -1718,7 +1718,7 @@
    "M-01"
   ],
   "size": "L",
-  "status": "open",
+  "status": "done",
   "goal": "maps.gd mit 4 Karten: Mondwiese (klassisch), Lavafelder, Kaktuswüste, Spinnenhöhle. Jede mit Bodenfarbe, Himmel, Gefahrendichte (Lava/Kaktus), Gegnerdichte, Starthinweis. Auswahl im Hauptmenü, Host verteilt die Karte.",
   "files": [
    "maps.gd",
