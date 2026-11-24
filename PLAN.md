@@ -28,3 +28,4 @@ Godot-Binary lokal: /home/claude/tools/Godot_v4.3-stable_linux.x86_64
 - G-04 erledigt: Staub pro entferntem Fleck (1 Staub), GameState.dust, im Selbsttest geprüft. HUD-Anzeige folgt mit U-02. Gestapelt auf G-02.
 - G-01 erledigt: Night (Dämmerung 0-20 %, Mitternacht 20-80 %, Morgenrot 80-100 %, dann Ende; kein Game Over; Standard 600 s), Test grün. Gestapelt auf G-04. Als Nächstes für A: U-02 (HUD mit Staub/Timer), N-02, N-03, G-03, U-01.
 - U-02 erledigt: HUD zeigt Zeit/Phase, Staub, Sterne, Spielerliste (online). Test + Bild geprüft. Gestapelt auf G-01.
+- N-02 erledigt: PlayerSpawner (MultiplayerSpawner, Name=Peer-ID=Autorität) + Positions-/Drehungs-Sync. Test tools/test_netplayers.sh grün (4 Instanzen, Host-Position kommt bei Clients an). Manuell testbar: godot -- --host bzw. -- --join <IP>. Gestapelt auf U-02. Als Nächstes für A: N-03 (Sterne synchronisieren), G-03, U-01, G-05, G-08.

@@ -155,7 +155,7 @@
    "P-001"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "MultiplayerSpawner + MultiplayerSynchronizer für Position/Rotation/Wisch-Status jedes Spielers; Autorität beim jeweiligen Peer.",
   "files": [
    "world.gd",

@@ -7,6 +7,8 @@ const PENTATONIC := [261.6, 293.7, 329.6, 392.0, 440.0, 523.3, 587.3, 659.3]
 var sky: NightSky
 var world: World
 var player: Player
+var players_root: Node3D
+var spawner: PlayerSpawner
 var hud: Hud
 var sfx: Sfx
 var dust: CPUParticles3D
@@ -72,10 +74,20 @@ func _build_sound() -> void:
 
 
 func _build_player() -> void:
-	player = Player.new()
-	player.position = Vector3(0, 0.1, 6)
-	add_child(player)
-	player.wipe_requested.connect(_on_wipe_requested)
+	players_root = Node3D.new()
+	players_root.name = "Players"
+	add_child(players_root)
+	spawner = PlayerSpawner.new()
+	add_child(spawner)
+	spawner.setup(players_root)
+	# Testbetrieb per Kommandozeile: -- --host   oder   -- --join <IP>
+	var args := OS.get_cmdline_user_args()
+	if "--host" in args:
+		NetworkManager.host(NetworkManager.DEFAULT_PORT, str(Settings.get_value("player_name")))
+	elif "--join" in args and args.find("--join") + 1 < args.size():
+		NetworkManager.join(args[args.find("--join") + 1], NetworkManager.DEFAULT_PORT, str(Settings.get_value("player_name")))
+	else:
+		spawner.spawn_offline()
 
 	dust = CPUParticles3D.new()
 	dust.amount = 28
@@ -108,7 +120,11 @@ func _input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	scrub_cooldown = maxf(0.0, scrub_cooldown - delta)
-	dust.emitting = player.cleaning and player.aim_valid
+	if player == null:   # eigenen Spieler suchen (online erscheint er erst nach der Replikation)
+		player = spawner.local_player()
+		if player != null:
+			player.wipe_requested.connect(_on_wipe_requested)
+	dust.emitting = player != null and player.cleaning and player.aim_valid
 	if dust.emitting:
 		dust.global_position = player.aim_point
 

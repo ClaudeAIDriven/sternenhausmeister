@@ -20,6 +20,12 @@ var aim_point := Vector3.ZERO
 var aim_valid := false
 
 
+func _enter_tree() -> void:
+	# Netzwerk: Der Knotenname ist die Peer-ID, dieser Peer steuert seinen Spieler.
+	if str(name).is_valid_int():
+		set_multiplayer_authority(str(name).to_int())
+
+
 func _ready() -> void:
 	collision_layer = 1
 	collision_mask = 1
@@ -91,12 +97,25 @@ func _ready() -> void:
 	cam = Camera3D.new()
 	cam.position = Vector3(0, 0.7, 5.0)
 	cam.fov = 70.0
-	cam.current = true
+	cam.current = is_multiplayer_authority()
 	arm.add_child(cam)
 	arm.rotation.x = pitch
 
+	# Position und Blickrichtung an die anderen Spieler senden
+	var cfg := SceneReplicationConfig.new()
+	for prop in [^":position", ^":rotation"]:
+		cfg.add_property(prop)
+		cfg.property_set_replication_mode(prop, SceneReplicationConfig.REPLICATION_MODE_ALWAYS)
+	var sync := MultiplayerSynchronizer.new()
+	sync.name = "Sync"
+	sync.root_path = NodePath("..")
+	sync.replication_config = cfg
+	add_child(sync)
+
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not is_multiplayer_authority():
+		return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		yaw -= event.relative.x * MOUSE_SENS
 		pitch = clampf(pitch - event.relative.y * MOUSE_SENS, -1.2, 0.7)
@@ -105,6 +124,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if not is_multiplayer_authority():
+		return   # fremde Spieler werden per Synchronisation bewegt
 	var input_dir := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var dir := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	velocity.x = dir.x * SPEED
