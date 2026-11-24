@@ -937,7 +937,7 @@
    "A-07"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Wolken weich, rund, langsam; Sternschnuppe als kurzer Streifen mit Schweif; Option `reduced_motion`.",
   "files": [
    "sky_fx.gd"
