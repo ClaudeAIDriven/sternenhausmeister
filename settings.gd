@@ -11,10 +11,13 @@ const DEFAULTS := {
 	"fov": 70.0,
 	"ui_scale": 1.0,
 	"player_name": "Spieler",
+	# C-04: eigene Tastenbelegung, {Aktion: {"kb": Ereignis-Dict, "pad": Ereignis-Dict}}.
+	# Leer = Standardbelegung (siehe input_setup.gd).
+	"bindings": {},
 }
 
 var config_path := "user://settings.cfg"
-var _values: Dictionary = DEFAULTS.duplicate()
+var _values: Dictionary = DEFAULTS.duplicate(true)
 
 
 func _ready() -> void:
@@ -45,7 +48,7 @@ func save_settings() -> Error:
 
 
 func load_settings() -> Error:
-	_values = DEFAULTS.duplicate()
+	_values = DEFAULTS.duplicate(true)
 	var cf := ConfigFile.new()
 	var err := cf.load(config_path)
 	if err != OK:
@@ -57,7 +60,7 @@ func load_settings() -> Error:
 
 
 func reset_to_defaults() -> void:
-	_values = DEFAULTS.duplicate()
+	_values = DEFAULTS.duplicate(true)
 	save_settings()
 	for k in DEFAULTS:
 		changed.emit(k)

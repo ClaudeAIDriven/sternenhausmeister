@@ -117,7 +117,7 @@
    "C-03"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "InputMap aus Settings laden, Gamepad (Stick, A, RT) ergänzen, Umbelegen-Dialog-Logik.",
   "files": [
    "input_setup.gd",
