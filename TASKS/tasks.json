@@ -1739,7 +1739,7 @@
    "M-03"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "IslandGen verteilt Lava, Kakteen und Spinnennester je Karte mit Mindestabständen und freiem Weg zu allen Sternen/Orten.",
   "files": [
    "island_gen.gd",
