@@ -194,7 +194,7 @@ func _upnp_worker(port: int) -> void:
 	if err != UPNP.UPNP_RESULT_SUCCESS or up.get_gateway() == null or not up.get_gateway().is_valid_gateway():
 		call_deferred("_upnp_done", false, "Kein UPnP-Router gefunden (Fehler %d). Port %d UDP bitte von Hand freigeben, siehe docs/INTERNET.md." % [err, port], "", null, 0)
 		return
-	var map_err := up.add_port_mapping(port, port, "Sternenhausmeister", "UDP", 3600)
+	var map_err := up.add_port_mapping(port, port, "StarScrubber", "UDP", 3600)
 	if map_err != UPNP.UPNP_RESULT_SUCCESS:
 		call_deferred("_upnp_done", false, "Router erlaubt keine automatische Freigabe (Fehler %d). Port %d UDP von Hand freigeben, siehe docs/INTERNET.md." % [map_err, port], "", null, 0)
 		return

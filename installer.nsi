@@ -1,7 +1,7 @@
-; Sternenhausmeister - NSIS-Installer (B-02)
-; Aufruf: makensis installer.nsi   (erwartet build/Sternenhausmeister.exe und .pck)
+; StarScrubber - NSIS-Installer (B-02)
+; Aufruf: makensis installer.nsi   (erwartet build/StarScrubber.exe und .pck)
 Unicode true
-!define APP "Sternenhausmeister"
+!define APP "StarScrubber"
 !define VERSION "0.1.0"
 !define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP}"
 

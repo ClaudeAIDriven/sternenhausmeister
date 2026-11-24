@@ -4,7 +4,7 @@ Für Menschen: Spielgefühl beurteilt kein Modell. Pro Punkt ✅ / ❌ und eine 
 
 ## 0. Vorbereitung
 - [ ] `tools/run_tests.sh` ist grün (oder CI grün).
-- [ ] Windows: `build/Sternenhausmeister.exe` + `.pck` (oder Setup.exe) starten, Installation und Deinstallation prüfen (B-01/B-02 sind unter Windows noch ungetestet).
+- [ ] Windows: `build/StarScrubber.exe` + `.pck` (oder Setup.exe) starten, Installation und Deinstallation prüfen (B-01/B-02 sind unter Windows noch ungetestet).
 - [ ] Zum Vergleich: Kamera/Maus-Empfindlichkeit notieren.
 
 ## 1. Putz-Feel (allein)

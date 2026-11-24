@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Headless Windows-Export nach build/ (Sternenhausmeister.exe + Sternenhausmeister.pck).
+# Headless Windows-Export nach build/ (StarScrubber.exe + StarScrubber.pck).
 # Braucht Godot 4.3 und die Export-Templates (werden bei Bedarf nach ~/.local/share/godot geladen).
 set -e
 GODOT="${GODOT:-$("$(dirname "$0")/setup_godot.sh")}"
@@ -13,7 +13,7 @@ if [ ! -f "$T/windows_release_x86_64.exe" ]; then
 fi
 [ -d .godot ] || timeout 180 "$GODOT" --headless --import >/dev/null 2>&1 || true
 mkdir -p build
-"$GODOT" --headless --export-release "Windows Desktop" build/Sternenhausmeister.exe
-[ -f build/Sternenhausmeister.exe ] && [ -f build/Sternenhausmeister.pck ] || { echo "BUILD FAIL"; exit 1; }
-ls -l build/Sternenhausmeister.*
+"$GODOT" --headless --export-release "Windows Desktop" build/StarScrubber.exe
+[ -f build/StarScrubber.exe ] && [ -f build/StarScrubber.pck ] || { echo "BUILD FAIL"; exit 1; }
+ls -l build/StarScrubber.*
 echo "BUILD OK"

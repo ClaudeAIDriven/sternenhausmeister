@@ -1,6 +1,6 @@
 # Mit Freunden übers Internet spielen
 
-Sternenhausmeister nutzt **UDP-Port 24680**. Einer hostet („Raum eröffnen“), die anderen treten mit der Adresse des Hosts bei. Im selben WLAN/LAN geht es sofort. Übers Internet gibt es drei Wege. Nimm den einfachsten, der bei euch funktioniert.
+StarScrubber nutzt **UDP-Port 24680**. Einer hostet („Raum eröffnen“), die anderen treten mit der Adresse des Hosts bei. Im selben WLAN/LAN geht es sofort. Übers Internet gibt es drei Wege. Nimm den einfachsten, der bei euch funktioniert.
 
 ## Weg 1: VPN-Programm (am einfachsten, kein Router nötig)
 Alle installieren dasselbe kostenlose Programm und landen in einem gemeinsamen virtuellen Netz. Der Host nennt den anderen seine VPN-Adresse.
