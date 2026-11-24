@@ -126,6 +126,11 @@ func _physics_process(_d: float) -> bool:
 		p._attack_cd = 0.0
 		q.set_multiplayer_authority(1)
 		_check(p.try_attack(), "Schlag trifft")
+		_check(q.health == 100.0, "Friedlich: Schlag stößt nur weg (G-32)")
+		p.brawl = true   # G-32: Rauflust
+		q.brawl = true
+		p._attack_cd = 0.0
+		_check(p.try_attack(), "Schlag trifft (Rauflust)")
 		_check(q.health < 100.0, "Schlag macht Schaden")
 		q.set_multiplayer_authority(2)   # q steht still (fremder Spieler), p läuft gegen ihn
 	if frames == 100:

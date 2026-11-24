@@ -44,6 +44,7 @@ var look: Node3D
 var look_index := -1
 var nameplate: Label3D
 var _shop: Node
+var brawl := false   # G-32: Rauflust (nur der Wert des Hosts zählt, wird repliziert); Standard friedlich
 var _shown_tool := "wedel"   # G-25: welches Utensil gerade als Modell in der Hand ist
 var health := MAX_HEALTH
 var food := Food.new()         # G-21: Sättigung, nur lokal
@@ -79,6 +80,7 @@ func _ready() -> void:
 	add_to_group("players")
 	if is_multiplayer_authority():
 		role = str(Settings.get_value("role"))
+		brawl = bool(Menu.launch.get("brawl", false))
 	_last_pos = global_position
 	var cs := CollisionShape3D.new()
 	var cap := CapsuleShape3D.new()
@@ -111,6 +113,8 @@ func _ready() -> void:
 	for prop in [^":position", ^":rotation", ^":health", ^":role", ^":downed"]:
 		cfg.add_property(prop)
 		cfg.property_set_replication_mode(prop, SceneReplicationConfig.REPLICATION_MODE_ALWAYS)
+	cfg.add_property(^":brawl")   # G-32
+	cfg.property_set_replication_mode(^":brawl", SceneReplicationConfig.REPLICATION_MODE_ALWAYS)
 	var sync := MultiplayerSynchronizer.new()
 	sync.name = "Sync"
 	sync.root_path = NodePath("..")
@@ -469,7 +473,18 @@ func take_hit(amount: float, push: Vector3) -> void:
 	if not is_multiplayer_authority():
 		return
 	knock(push)
-	damage(amount)
+	if room_brawl():   # G-32: friedlich = nur wegstoßen
+		damage(amount)
+
+
+## Rauflust des Raums: Wert des Host-Spielers (Knoten "1"), ohne Host (Solo/Test) der eigene.
+func room_brawl() -> bool:
+	if is_inside_tree():
+		for n in get_tree().get_nodes_in_group("players"):
+			var o := n as Player
+			if o != null and str(o.name) == "1":
+				return o.brawl
+	return brawl
 
 
 ## Rückstoß: horizontaler Anteil klingt über ~0,3 s ab, vertikaler Anteil wirkt sofort als Sprung.
