@@ -828,6 +828,7 @@ func apply_seed(seed_value: int) -> void:
 		np.position = poi_spots[k]
 		add_child(np)
 		pois.append(np)
+	_build_hazards()
 	if not stars.is_empty():
 		_build_stars(stars.size())
 
@@ -855,6 +856,9 @@ func _build_hazards() -> void:
 	var prof := Maps.profile(map_id)
 	var sets := [["lava", Maps.pick(Maps.LAVA_CANDIDATES, int(prof["lava"])), 3.0], ["cactus", Maps.pick(Maps.CACTUS_CANDIDATES, int(prof["cactus"])), 1.0],
 		["spider", Maps.pick(Maps.NEST_CANDIDATES, int(prof["nests"])), 3.0]]
+	if island_seed != 0:   # M-04: Gefahren aus dem Seed (Mindestabstände, alles erreichbar)
+		var hz := IslandGen.generate_hazards(island_seed, prof, {"stars": star_positions, "pois": poi_spots}, ISLAND_RADIUS)
+		sets = [["lava", hz["lava"], 3.0], ["cactus", hz["cactus"], 1.0], ["spider", hz["nests"], 3.0]]
 	for s in sets:
 		for sp in s[1]:
 			var h := Hazard.new()
