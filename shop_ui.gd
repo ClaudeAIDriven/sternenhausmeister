@@ -14,6 +14,7 @@ var hint_label: Label
 var _shop: Shop
 var _root: Control
 var _col: VBoxContainer
+var _list: VBoxContainer   # G-25: scrollbare Liste (Utensilien + Upgrades)
 
 
 func _ready() -> void:
@@ -68,12 +69,20 @@ func _ready() -> void:
 	dust_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	dust_label.add_theme_color_override("font_color", Palette.STAR_GOLD)
 	_col.add_child(dust_label)
+	var scroll := ScrollContainer.new()
+	scroll.custom_minimum_size = Vector2(0, 420)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	_col.add_child(scroll)
+	_list = VBoxContainer.new()
+	_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_list.add_theme_constant_override("separation", 10)
+	scroll.add_child(_list)
 	GameState.dust_changed.connect(func(_a): refresh())
 
 
 func bind(shop: Shop) -> void:
 	_shop = shop
-	for u in shop.upgrades:
+	for u in shop._all():
 		var id: String = u["id"]
 		var row := HBoxContainer.new()
 		row.add_theme_constant_override("separation", 12)
@@ -83,9 +92,9 @@ func bind(shop: Shop) -> void:
 		row.add_child(label)
 		var button := Button.new()
 		button.custom_minimum_size = Vector2(170, 0)
-		button.pressed.connect(func(): _shop.request_buy(id))
+		button.pressed.connect(func(): _on_row_pressed(id))
 		row.add_child(button)
-		_col.add_child(row)
+		_list.add_child(row)
 		rows[id] = {"label": label, "button": button}
 	var close_button := Button.new()
 	close_button.text = "Schließen (B)"
@@ -99,18 +108,39 @@ func refresh() -> void:
 	if _shop == null:
 		return
 	dust_label.text = "Sternenstaub: %d" % GameState.dust
-	for u in _shop.upgrades:
+	for u in _shop._all():
 		var id: String = u["id"]
 		var r: Dictionary = rows[id]
 		var lv := _shop.level(id)
-		r["label"].text = "%s  (Stufe %d von %d)\n%s" % [u["name"], lv, int(u["max_level"]), u["desc"]]
 		var b: Button = r["button"]
+		if u.has("utensil_item"):   # G-25: Utensil kaufen / ausrüsten
+			var uid: String = u["utensil_item"]
+			r["label"].text = "%s%s\n%s" % [u["name"], "  (in der Hand)" if _shop.equipped == uid else "", u["desc"]]
+			if _shop.owns(uid):
+				b.text = "Ausgerüstet" if _shop.equipped == uid else "Ausrüsten"
+				b.disabled = _shop.equipped == uid
+			else:
+				b.text = "Kaufen: %d ⭐" % _shop.cost(id)
+				b.disabled = not _shop.can_buy(id)
+			continue
+		r["label"].text = "%s  (Stufe %d von %d)\n%s" % [u["name"], lv, int(u["max_level"]), u["desc"]]
 		if _shop.is_maxed(id):
 			b.text = "Maximal"
+			b.disabled = true
+		elif str(u.get("requires", "")) != "" and _shop.level(str(u["requires"])) <= 0:
+			b.text = "Utensil fehlt"
 			b.disabled = true
 		else:
 			b.text = "Kaufen: %d ⭐" % _shop.cost(id)
 			b.disabled = not _shop.can_buy(id)
+
+
+func _on_row_pressed(id: String) -> void:
+	var u := _shop._find(id)
+	if u.has("utensil_item") and _shop.owns(str(u["utensil_item"])):
+		_shop.equip(str(u["utensil_item"]))
+	else:
+		_shop.request_buy(id)
 
 
 ## Nähe zur Werkstatt (waagerecht). Ohne Spieler-Referenz (Tests, Menü) gilt: immer nah.
