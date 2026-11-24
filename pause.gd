@@ -13,6 +13,7 @@ signal closed
 const KEYS := [["Bewegen", "W A S D"], ["Springen", "Leertaste"], ["Putzen", "Linke Maustaste oder E"], ["Pause", "Esc"]]
 const MENU_SCENE := "res://menu.tscn"
 
+var accessibility: Node   # I-08: optional, bringt das Barrierefreiheit-Panel mit
 var is_open := false
 var buttons := {}
 var sliders := {}
@@ -62,6 +63,8 @@ func _build_ui() -> void:
 	_slider(col, "Maus-Empfindlichkeit", "mouse_sens", 0.001, 0.008, 0.0005)
 	_slider(col, "Sichtfeld", "fov", 60.0, 100.0, 1.0)
 	_slider(col, "UI-Größe", "ui_scale", 0.8, 1.5, 0.05, true)
+	if accessibility != null and accessibility.has_method("build_panel"):
+		col.add_child(accessibility.build_panel())
 	var keys := Label.new()
 	keys.text = "Tasten:  " + "   ·   ".join(KEYS.map(func(k): return "%s: %s" % [k[0], k[1]]))
 	keys.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

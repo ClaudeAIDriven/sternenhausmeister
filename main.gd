@@ -18,6 +18,8 @@ var chime: Array[AudioStreamWAV] = []
 var night: Night
 var pause: Pause
 var summary: NightSummary
+var rules: Dictionary = {}   # I-08: gewählte Regeln (Presets)
+var accessibility: Accessibility
 var combo := Combo.new()   # G-12
 var shop: Shop
 var note_idx := 0
@@ -53,7 +55,11 @@ func _ready() -> void:
 	summary = NightSummary.new()   # U-05: Übersicht am Nachtende
 	add_child(summary)
 	summary.bind(world)
+	accessibility = Accessibility.new()   # I-08: Untertitel, Farbenblind, UI-Größe (U-04)
+	accessibility.load_options()
+	add_child(accessibility)
 	pause = Pause.new()   # U-03: Esc
+	pause.accessibility = accessibility
 	add_child(pause)
 	NetworkManager.disconnected.connect(func(): get_tree().change_scene_to_file("res://menu.tscn"))
 	world.star_scrubbed.connect(_on_star_scrubbed)
@@ -69,7 +75,10 @@ func _ready() -> void:
 	_refresh_hud()
 	night = Night.new()
 	add_child(night)
-	night.start()   # G-01: Nacht mit sanftem Zeitlimit (Standard 10 Minuten)
+	rules = Presets.effective(str(Menu.launch.get("preset", Presets.DEFAULT_ID)))   # I-08: Spielart aus dem Menü
+	world.hint_mode = str(rules.get("hints", "after_mistake"))
+	world._show_puzzle()
+	night.start(float(rules.get("time_limit_s", Night.DEFAULT_DURATION)))   # G-01: Nacht mit sanftem Zeitlimit (Standard 10 Minuten)
 	hud.bind_night(night)
 	if "--selftest" in OS.get_cmdline_user_args():
 		call_deferred("_selftest")

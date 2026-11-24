@@ -18,6 +18,7 @@ var ip_edit: LineEdit
 var status: Label
 var buttons := {}   # "solo" | "host" | "join" | "settings" | "quit" -> Button
 var main_box: VBoxContainer
+var preset_option: OptionButton   # I-08: Spielart (Presets aus G-09)
 var settings_box: VBoxContainer
 var _canvas: CanvasLayer
 var _root: Control
@@ -70,6 +71,19 @@ func _build_ui() -> void:
 	name_edit.text = str(Settings.get_value("player_name"))
 	name_edit.max_length = 16
 	main_box.add_child(name_edit)
+	main_box.add_child(_label("Spielart"))
+	preset_option = OptionButton.new()
+	preset_option.name = "PresetOption"
+	var all := Presets.load_all()
+	var ids: Array = all.keys()
+	ids.sort_custom(func(a, b): return str(all[a]["name"]) < str(all[b]["name"]))
+	if ids.has(Presets.DEFAULT_ID):   # Standard steht vorn
+		ids.erase(Presets.DEFAULT_ID)
+		ids.push_front(Presets.DEFAULT_ID)
+	for id in ids:
+		preset_option.add_item(str(all[id]["name"]))
+		preset_option.set_item_metadata(preset_option.item_count - 1, id)
+	main_box.add_child(preset_option)
 	buttons["solo"] = _button(main_box, "Allein putzen", func(): start("solo"))
 	buttons["host"] = _button(main_box, "Raum eröffnen (Host)", func(): start("host"))
 	main_box.add_child(_label("Beitreten: Adresse des Hosts"))
@@ -166,7 +180,10 @@ func start(mode: String) -> bool:
 		ip_edit.grab_focus()
 		return false
 	Settings.set_value("player_name", pname)
-	launch = {"mode": mode, "ip": ip if mode == "join" else "", "name": pname}
+	var preset: String = Presets.DEFAULT_ID
+	if preset_option != null and preset_option.selected >= 0:
+		preset = str(preset_option.get_item_metadata(preset_option.selected))
+	launch = {"mode": mode, "ip": ip if mode == "join" else "", "name": pname, "preset": preset}
 	start_requested.emit(mode, launch["ip"], pname)
 	if auto_start:
 		get_tree().change_scene_to_file(game_scene)

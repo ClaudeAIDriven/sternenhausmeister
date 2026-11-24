@@ -1246,5 +1246,30 @@
   "skills": "GDScript",
   "owner": "A",
   "prio": "nice"
+ },
+ {
+  "id": "I-08",
+  "area": "GAME",
+  "title": "Presets und Barrierefreiheit ins Spiel einbauen",
+  "deps": [
+   "G-09",
+   "U-04",
+   "U-01",
+   "U-03"
+  ],
+  "size": "M",
+  "status": "done",
+  "goal": "Menü bietet Spielart (Presets); main.gd wendet Zeitlimit und Hinweise an; Pause enthält das Barrierefreiheit-Panel.",
+  "files": [
+   "menu.gd",
+   "main.gd",
+   "pause.gd",
+   "world.gd",
+   "tests/test_presets_wired.gd"
+  ],
+  "accept": "Test: Menü schreibt Preset in Menu.launch, Zen setzt 1800 s Nachtdauer; Pause enthält das Panel; run_tests grün.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  }
 ]

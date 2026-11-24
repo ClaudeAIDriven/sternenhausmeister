@@ -26,6 +26,7 @@ const COOP_BONUS := 5
 var _pending_coop: Array = []   # Sterne, die im laufenden Wisch fertig wurden
 var _contrib: Dictionary = {}   # Stern-Index -> {Peer-ID: [Flecken, letzte Zeit]}
 
+var hint_mode := "after_mistake"   # I-08: aus dem Preset ("none" | "after_mistake" | "always")
 var puzzle: Constellation
 var lines: ConstellationLines
 var balloon: Balloon
@@ -361,7 +362,7 @@ func _show_puzzle() -> void:
 	else:
 		lines.set_progress(float(maxi(puzzle.done - 1, 0)) / float(maxi(n - 1, 1)))
 	for i in stars.size():
-		stars[i].set_hint(not puzzle.is_solved and puzzle.positions.has(i) and puzzle.hint() == i and puzzle.done > 0)
+		stars[i].set_hint(not puzzle.is_solved and puzzle.positions.has(i) and puzzle.hint() == i and hint_mode != "none" and (hint_mode == "always" or puzzle.done > 0))
 	puzzle_changed.emit(puzzle.done, n)
 
 
