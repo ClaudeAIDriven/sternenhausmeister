@@ -605,7 +605,7 @@
    "C-02"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Moderne Anzeige statt Debug-Label.",
   "files": [
    "hud.gd"

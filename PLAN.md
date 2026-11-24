@@ -27,3 +27,4 @@ Godot-Binary lokal: /home/claude/tools/Godot_v4.3-stable_linux.x86_64
 - G-02 erledigt: Sternbild-Format (JSON) + Loader/Validierung, 3 Beispiele, Test grün. Gestapelt auf N-01.
 - G-04 erledigt: Staub pro entferntem Fleck (1 Staub), GameState.dust, im Selbsttest geprüft. HUD-Anzeige folgt mit U-02. Gestapelt auf G-02.
 - G-01 erledigt: Night (Dämmerung 0-20 %, Mitternacht 20-80 %, Morgenrot 80-100 %, dann Ende; kein Game Over; Standard 600 s), Test grün. Gestapelt auf G-04. Als Nächstes für A: U-02 (HUD mit Staub/Timer), N-02, N-03, G-03, U-01.
+- U-02 erledigt: HUD zeigt Zeit/Phase, Staub, Sterne, Spielerliste (online). Test + Bild geprüft. Gestapelt auf G-01.

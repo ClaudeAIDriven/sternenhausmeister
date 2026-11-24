@@ -34,6 +34,7 @@ func _ready() -> void:
 	night = Night.new()
 	add_child(night)
 	night.start()   # G-01: Nacht mit sanftem Zeitlimit (Standard 10 Minuten)
+	hud.bind_night(night)
 	if "--selftest" in OS.get_cmdline_user_args():
 		call_deferred("_selftest")
 
