@@ -14,6 +14,11 @@ const DIRT_COLORS := {
 const MATCH := {Kind.VACUUM: Dirt.SOOT, Kind.CLOTH: Dirt.STAIN, Kind.POLISH: Dirt.PATINA}
 
 
+## G-25: Werkzeugart aus dem Namen in den Utensil-Daten ("ANY", "VACUUM", "CLOTH", "POLISH"); unbekannt = ANY.
+static func kind_from_name(n: String) -> int:
+	return int(Kind.get(n, Kind.ANY))
+
+
 ## Wirkung (0..1) eines Werkzeugs auf einen Schmutztyp.
 static func efficiency(kind: int, dirt: int) -> float:
 	if kind == Kind.ANY or MATCH.get(kind, -1) == dirt:

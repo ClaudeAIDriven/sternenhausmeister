@@ -5,6 +5,7 @@ extends Node3D
 signal scrubbed(removed: int)
 signal cleaned
 signal reset_done
+signal redirtied(restored: int)   # G-15: Sternschnuppe hat einzelne Flecken zurückgebracht
 
 @export var radius := 2.0
 @export var spot_count := 140
@@ -17,6 +18,8 @@ var last_removed: Array[int] = []   # Fleck-IDs, die der letzte wipe() entfernt 
 var removed_ids: Array[int] = []    # alle entfernten Fleck-IDs (Zustand für Nachzügler)
 
 var _by_id := {}
+var _spot_mesh: SphereMesh
+var _spot_mats := {}
 
 var _look: MeshInstance3D
 var _light: OmniLight3D
@@ -52,37 +55,42 @@ func _ready() -> void:
 
 ## Baut alle Schmutzflecken (neu) auf. Fleck-IDs sind bei allen Spielern gleich (Reihenfolge der Fibonacci-Kugel).
 func _build_spots() -> void:
-	var spot_mesh := SphereMesh.new()
-	spot_mesh.radius = 0.3
-	spot_mesh.height = 0.6
-	spot_mesh.radial_segments = 8
-	spot_mesh.rings = 4
-	var spot_mats := {}
+	_spot_mesh = SphereMesh.new()
+	_spot_mesh.radius = 0.3
+	_spot_mesh.height = 0.6
+	_spot_mesh.radial_segments = 8
+	_spot_mesh.rings = 4
+	_spot_mats = {}
 	for d in CleanTool.DIRT_COLORS:
 		var m := StandardMaterial3D.new()
 		m.albedo_color = CleanTool.DIRT_COLORS[d]
 		m.roughness = 1.0
-		spot_mats[d] = m
+		_spot_mats[d] = m
 	for i in spot_count:
-		var y := 1.0 - (float(i) / (spot_count - 1)) * 2.0
-		var r := sqrt(maxf(0.0, 1.0 - y * y))
-		var th := PI * (3.0 - sqrt(5.0)) * i
-		var dir := Vector3(cos(th) * r, y, sin(th) * r)
-		var up := Vector3.UP if absf(dir.y) < 0.99 else Vector3.RIGHT
-		var s := MeshInstance3D.new()
-		s.mesh = spot_mesh
-		var dirt: int = i % 3
-		s.material_override = spot_mats[dirt]
-		s.set_meta("dirt", dirt)
-		s.set_meta("hp", 1.0)
-		s.set_meta("id", i)
-		_by_id[i] = s
-		s.basis = Basis.looking_at(dir, up) * Basis.from_scale(Vector3(1, 1, 0.35))
-		s.position = dir * radius * StarLook.radius_factor(dir) * 0.99   # sitzt auf der Sternoberfläche (mit Spitzen)
-		add_child(s)
-		spots.append(s)
+		spots.append(_make_spot(i))
 	total = spots.size()
 	_apply_glow()
+
+
+## Erzeugt den Fleck mit der ID i (Fibonacci-Kugel, bei allen Spielern gleich) und hängt ihn an den Stern.
+func _make_spot(i: int) -> MeshInstance3D:
+	var y := 1.0 - (float(i) / (spot_count - 1)) * 2.0
+	var r := sqrt(maxf(0.0, 1.0 - y * y))
+	var th := PI * (3.0 - sqrt(5.0)) * i
+	var dir := Vector3(cos(th) * r, y, sin(th) * r)
+	var up := Vector3.UP if absf(dir.y) < 0.99 else Vector3.RIGHT
+	var s := MeshInstance3D.new()
+	s.mesh = _spot_mesh
+	var dirt: int = i % 3
+	s.material_override = _spot_mats[dirt]
+	s.set_meta("dirt", dirt)
+	s.set_meta("hp", 1.0)
+	s.set_meta("id", i)
+	_by_id[i] = s
+	s.basis = Basis.looking_at(dir, up) * Basis.from_scale(Vector3(1, 1, 0.35))
+	s.position = dir * radius * StarLook.radius_factor(dir) * 0.99   # sitzt auf der Sternoberfläche (mit Spitzen)
+	add_child(s)
+	return s
 
 
 func _process(delta: float) -> void:
@@ -167,3 +175,34 @@ func reset() -> void:
 func set_hint(on: bool) -> void:
 	_hint = on
 	_apply_glow()
+
+
+## G-15 (Host): Bringt `count` zufällige bereits entfernte Flecken zurück (Sternschnuppe). Gibt die Fleck-IDs zurück
+## (leer, wenn nichts zu verschmutzen war). Clients wenden dieselben IDs mit `apply_restored` an.
+func redirty(count: int, rng: RandomNumberGenerator = null) -> Array[int]:
+	var pool: Array[int] = removed_ids.duplicate()
+	var picked: Array[int] = []
+	while picked.size() < count and not pool.is_empty():
+		var k := (rng.randi() if rng != null else randi()) % pool.size()
+		picked.append(pool[k])
+		pool.remove_at(k)
+	apply_restored(picked)
+	return picked
+
+
+## Bringt Flecken anhand ihrer IDs zurück (Client-Seite). Unbekannte oder noch vorhandene IDs werden ignoriert.
+func apply_restored(ids: Array) -> int:
+	var restored := 0
+	for id in ids:
+		var i := int(id)
+		if i < 0 or i >= spot_count or not removed_ids.has(i):
+			continue
+		removed_ids.erase(i)
+		spots.append(_make_spot(i))
+		restored += 1
+	if restored > 0:
+		is_clean = false
+		progress = 1.0 - float(spots.size()) / float(total)
+		_apply_glow()
+		redirtied.emit(restored)
+	return restored
