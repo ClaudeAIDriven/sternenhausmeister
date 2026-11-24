@@ -1835,7 +1835,7 @@
    "M-01"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "20 Erfolge (Spinne gefressen, Boss im Team, 100 Früchte ...), kosmetische Hüte als Belohnung, Tagebuch pro Nacht (Sterne, Staub, Zeit).",
   "files": [
    "achievements.gd",

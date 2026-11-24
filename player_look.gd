@@ -201,6 +201,29 @@ static func update_hat(look: Node3D, role_or_hat: String) -> void:
 			dome.height = 0.84
 			_add(hat, dome, gray, Vector3(0, -0.02, 0)).scale = Vector3(1, 0.7, 1)
 			_add(hat, _box(Vector3(0.12, 0.1, 0.12)), gold, Vector3(0, 0.3, -0.35))
+		"zylinder":
+			_add(hat, _cyl(0.4, 0.4, 0.06), _mat(Color(0.12, 0.1, 0.16)), Vector3(0, -0.1, 0))
+			_add(hat, _cyl(0.26, 0.26, 0.42), _mat(Color(0.12, 0.1, 0.16)), Vector3(0, 0.12, 0))
+			_add(hat, _cyl(0.27, 0.27, 0.06), red, Vector3(0, 0.0, 0))
+		"krone":
+			_add(hat, _cyl(0.3, 0.3, 0.18), gold, Vector3(0, 0.0, 0))
+			for k in 5:
+				var a := TAU * k / 5.0
+				_add(hat, _cyl(0.0, 0.07, 0.2, 6), gold, Vector3(cos(a) * 0.27, 0.18, sin(a) * 0.27))
+		"sternmuetze":
+			_add(hat, _cyl(0.0, 0.32, 0.6), _mat(Color(0.22, 0.2, 0.6)), Vector3(0, 0.25, 0))
+			var st := SphereMesh.new()
+			st.radius = 0.09
+			st.height = 0.18
+			_add(hat, st, gold, Vector3(0, 0.58, 0))
+		"schleife":
+			var bow := SphereMesh.new()
+			bow.radius = 0.14
+			bow.height = 0.28
+			var pink := _mat(Color(1.0, 0.45, 0.7))
+			_add(hat, bow, pink, Vector3(-0.15, 0.05, 0))
+			_add(hat, bow, pink, Vector3(0.15, 0.05, 0))
+			_add(hat, bow, _mat(Color(0.9, 0.3, 0.6)), Vector3(0, 0.05, 0))
 		"stirnband":
 			var band := TorusMesh.new()
 			band.inner_radius = 0.36
