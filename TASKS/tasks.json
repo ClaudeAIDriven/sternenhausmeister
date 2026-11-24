@@ -492,7 +492,7 @@
    "P-001"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Schöneres Nachtbild, kein Banding, günstig für schwache GPUs.",
   "files": [
    "sky.gd"
