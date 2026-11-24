@@ -642,7 +642,7 @@
    "U-03"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Visuelle Klanganzeige, Farbenblind-Modi, Skalierung bis 200%.",
   "files": [
    "accessibility.gd"
