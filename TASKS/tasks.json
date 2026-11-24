@@ -1816,7 +1816,7 @@
    "M-03"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Trampolinwolken (hoher Sprung zu hohen Sternen), Sternschnuppe fangen = Wunsch (Zufalls-Buff 60 s), Glühwürmchen-Schwarm folgt dem Spieler und zeigt den nächsten schmutzigen Stern.",
   "files": [
    "fun_items.gd",
