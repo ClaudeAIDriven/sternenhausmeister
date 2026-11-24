@@ -679,7 +679,7 @@
    "B-01"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "installer.nsi: Installationsordner, Startmenü, Deinstallation, Firewall-Hinweis.",
   "files": [
    "installer.nsi",
