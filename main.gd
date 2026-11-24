@@ -18,6 +18,7 @@ var chime: Array[AudioStreamWAV] = []
 var night: Night
 var pause: Pause
 var summary: NightSummary
+var tutorial: Tutorial
 var rules: Dictionary = {}   # I-08: gewählte Regeln (Presets)
 var accessibility: Accessibility
 var combo := Combo.new()   # G-12
@@ -82,6 +83,9 @@ func _ready() -> void:
 	rules = Presets.effective(str(Menu.launch.get("preset", Presets.DEFAULT_ID)))   # I-08: Spielart aus dem Menü
 	world.hint_mode = str(rules.get("hints", "after_mistake"))
 	world._show_puzzle()
+	tutorial = Tutorial.new()   # U-06: Anfängerhilfe, nur beim ersten Spiel
+	add_child(tutorial)
+	tutorial.bind(world, hud)
 	night.start(float(rules.get("time_limit_s", Night.DEFAULT_DURATION)))   # G-01: Nacht mit sanftem Zeitlimit (Standard 10 Minuten)
 	hud.bind_night(night)
 	if "--selftest" in OS.get_cmdline_user_args():
