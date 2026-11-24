@@ -86,6 +86,6 @@
 | [G-28](G-28.md) | A | must | GAME | Gegner I: Wollmäuse und Spinnen | L | done | G-25 | – |
 | [G-29](G-29.md) | A | nice | GAME | Gegner II: Rußwolke (nur im Team besiegbar) | L | done | G-28 | – |
 | [G-30](G-30.md) | C | must | GAME | Orte (POI) mit Vorteilen | M | done | G-22 | – |
-| [G-31](G-31.md) | A | nice | GAME | Prozedurale Insel aus Seed | L | open | G-30 | – |
+| [G-31](G-31.md) | A | nice | GAME | Prozedurale Insel aus Seed | L | done | G-30 | – |
 | [G-32](G-32.md) | C | nice | GAME | Friedensvertrag: Schubsen an oder aus | S | done | I-12 | – |
 | [G-33](G-33.md) | C | nice | UI | Minimap-Ping | S | done | I-14 | – |

@@ -49,6 +49,10 @@ var lines: ConstellationLines
 var balloon: Balloon
 
 var stars: Array[Star] = []
+## G-31: Insel-Seed (0 = klassisches Layout). Der Host verteilt ihn; Sterne und Orte kommen dann aus IslandGen.
+var island_seed := 0
+var star_positions: Array = STAR_POSITIONS.duplicate()
+var poi_spots: Dictionary = POI_SPOTS.duplicate()
 
 ## G-22: Früchte an festen Plätzen (bei allen gleich), Aufheben mit F, Essen mit Q. Der Host entscheidet, wer eine Frucht bekommt.
 const FRUIT_SPOTS := [
@@ -158,6 +162,7 @@ func _on_player_joined(id: int) -> void:
 
 
 func _send_state(peer: int) -> void:
+	_rpc_seed.rpc_id(peer, island_seed)   # G-31: zuerst der Seed (Sternpositionen), dann Layout und Flecken
 	_rpc_layout.rpc_id(peer, stars.size())   # zuerst das Layout, dann die entfernten Flecken
 	if puzzle != null:
 		_rpc_puzzle.rpc_id(peer, puzzle.done, puzzle.is_solved, [])
@@ -266,6 +271,11 @@ func _rpc_layout(count: int) -> void:
 		_build_stars(count)
 
 
+@rpc("authority", "call_remote", "reliable")
+func _rpc_seed(seed_value: int) -> void:
+	apply_seed(seed_value)
+
+
 ## Gras, Steine, Büsche, Laternen, Werkstatt und Schild (A-12, A-03). Haus, Laternen und Schild haben Kollision.
 func _decorate_island() -> void:
 	var deco := IslandProps.decorate(ISLAND_RADIUS - 1.0, 42, 700, 90, 36)
@@ -344,7 +354,7 @@ func _build_stars(count: int) -> void:
 		old.queue_free()
 	stars.clear()
 	for i in count:
-		var p: Vector3 = STAR_POSITIONS[i]
+		var p: Vector3 = star_positions[i]
 		var s := Star.new()
 		s.position = p
 		add_child(s)
@@ -682,10 +692,10 @@ func _process(delta: float) -> void:
 # ---------------------------------------------------------------- Orte (G-30)
 
 func _build_pois() -> void:
-	for k in POI_SPOTS:
+	for k in poi_spots:
 		var p := Poi.new()
 		p.kind = k
-		p.position = POI_SPOTS[k]
+		p.position = poi_spots[k]
 		add_child(p)
 		pois.append(p)
 	kitchen = Kitchen.new()   # G-23: die Küche ist ein Ort; Rezeptbuch (KitchenUI) bindet main an
@@ -804,3 +814,44 @@ func reward_boss(_cloud: Enemy, dust: int) -> void:
 	var gs := get_node_or_null("/root/GameState")
 	if gs != null:
 		gs.add_dust(dust)
+
+
+# ---------------------------------------------------------------- Insel aus Seed (G-31)
+
+## Setzt den Insel-Seed und baut Sterne/Orte neu auf (Seed 0 = klassisch). Host ruft `set_island_seed`, Clients bekommen ihn per RPC.
+func apply_seed(seed_value: int) -> void:
+	island_seed = seed_value
+	if seed_value == 0:
+		star_positions = STAR_POSITIONS.duplicate()
+		poi_spots = POI_SPOTS.duplicate()
+	else:
+		var lay := IslandGen.generate(seed_value, ISLAND_RADIUS)
+		star_positions = lay["stars"]
+		poi_spots = lay["pois"]
+	var keep: Array[Poi] = []
+	for p in pois:
+		if p.kind == "kueche":
+			keep.append(p)
+		else:
+			p.queue_free()
+	pois = keep
+	for k in poi_spots:
+		var np := Poi.new()
+		np.kind = k
+		np.position = poi_spots[k]
+		add_child(np)
+		pois.append(np)
+	if not stars.is_empty():
+		_build_stars(stars.size())
+
+
+## Host/Solo: Seed setzen und an alle schicken. Geht nur, solange noch nichts geputzt wurde.
+func set_island_seed(seed_value: int) -> bool:
+	if NetworkManager.is_online() and not multiplayer.is_server():
+		return false
+	if _touched():
+		return false
+	apply_seed(seed_value)
+	if NetworkManager.is_online():
+		_rpc_seed.rpc(seed_value)
+	return true
