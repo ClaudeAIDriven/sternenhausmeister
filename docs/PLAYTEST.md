@@ -49,5 +49,15 @@ Für Menschen: Spielgefühl beurteilt kein Modell. Pro Punkt ✅ / ❌ und eine 
 - [ ] Text ist lesbar (Kontrast, Größe). Farbenblind: Sterne und Schmutz unterscheidbar?
 - [ ] Spiel ist auch in Pausen/AFK nicht bestrafend.
 
+## 6b. Schnelltest für die Demo (10 Minuten, bitte zuerst)
+Build: Release `latest`, `StarScrubber-Setup.exe`. Alles ungetestet unter Windows, bitte abhaken oder als Issue melden.
+- [ ] Setup installiert, Spiel startet, Hauptmenü mit Logo „StarScrubber“ erscheint (Windows-Warnung „unbekannter Herausgeber“ ist erwartet).
+- [ ] „Allein putzen“: Hinweise erscheinen (nur beim ersten Spiel), Stern wischen klappt, Staub steigt, Taste B öffnet die Werkstatt, Kauf funktioniert.
+- [ ] Alle Sterne putzen, Sternbild in richtiger Reihenfolge: Linien leuchten, Bonus-Staub. Falsche Reihenfolge: Sterne werden wieder schmutzig.
+- [ ] Esc: Pause mit Reglern und Barrierefreiheit-Panel; „Zum Hauptmenü“ geht.
+- [ ] Zu zweit: Host „Raum eröffnen“, Adresse oben links, zweite Person tritt bei, beide sehen sich, Putzen und Kauf wirken bei beiden. Teamarbeit-Bonus erscheint, wenn beide denselben Stern putzen.
+- [ ] Ton: Putzen klingt angenehm, nicht zu laut? (nie von einem Menschen gehört)
+- [ ] Nachtende nach 10 Minuten (oder Zen/Kinder-Spielart): Zusammenfassung mit Sternchen.
+
 ## 7. Abschluss
 Drei Dinge, die Spaß gemacht haben. Drei, die gestört haben. Würdest du eine zweite Nacht spielen? Bugs als GitHub-Issue mit Build, PC und Schritten.
