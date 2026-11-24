@@ -1,0 +1,70 @@
+class_name Food
+extends RefCounted
+## G-21: Sättigungsleiste. Sinkt langsam mit Laufen, Springen und Putzen. Satt (> 60 %): Regeneration x2, Putzen +10 %.
+## Leer: keine Regeneration, Tempo -20 %. Hunger tötet nie und macht nur langsamer (Hunger ist ein Vorteil, kein Zwang).
+
+signal changed(value: float)
+
+const MAX := 100.0
+const SATED_ABOVE := 0.6           # Anteil von MAX
+const DRAIN_IDLE := 0.03           # je Sekunde, immer
+const DRAIN_MOVE := 0.10           # je Sekunde beim Laufen
+const DRAIN_CLEAN := 0.10          # je Sekunde beim Putzen
+const DRAIN_JUMP := 0.5            # je Sprung
+const REGEN_SATED := 2.0
+const CLEAN_SATED := 1.1
+const SPEED_EMPTY := 0.8
+
+var value := MAX
+
+
+func fraction() -> float:
+	return value / MAX
+
+
+func is_sated() -> bool:
+	return fraction() > SATED_ABOVE
+
+
+func is_empty() -> bool:
+	return value <= 0.0
+
+
+## Ein Zeitschritt: `moving` = läuft, `cleaning` = putzt gerade.
+func tick(delta: float, moving: bool, cleaning: bool) -> void:
+	var d := DRAIN_IDLE
+	if moving:
+		d += DRAIN_MOVE
+	if cleaning:
+		d += DRAIN_CLEAN
+	_apply(value - d * delta)
+
+
+func on_jump() -> void:
+	_apply(value - DRAIN_JUMP)
+
+
+## Essen (G-22): füllt die Leiste auf.
+func feed(amount: float) -> void:
+	_apply(value + amount)
+
+
+func regen_factor() -> float:
+	if is_empty():
+		return 0.0
+	return REGEN_SATED if is_sated() else 1.0
+
+
+func clean_factor() -> float:
+	return CLEAN_SATED if is_sated() else 1.0
+
+
+func speed_factor() -> float:
+	return SPEED_EMPTY if is_empty() else 1.0
+
+
+func _apply(v: float) -> void:
+	var nv := clampf(v, 0.0, MAX)
+	if not is_equal_approx(nv, value):
+		value = nv
+		changed.emit(value)

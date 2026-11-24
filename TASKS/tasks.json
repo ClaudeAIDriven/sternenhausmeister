@@ -1236,7 +1236,7 @@
    "G-07"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Meteor-Treffer bringt wenige neue Flecken auf einen geputzten Stern (nur Host, synchronisiert); Zen schaltet aus. Siehe IB-10.",
   "files": [
    "star.gd",
@@ -1379,7 +1379,7 @@
    "I-12"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Bei 0 Leben fällt der Spieler um (benommen), verliert 10 % Sternenstaub und wartet 60 s (Zähler auf dem Bildschirm, Zuschauer-Kamera auf Mitspieler). Ein Mitspieler kann ihn durch 3 s Halten von F neben ihm sofort wiederbeleben (Research: PEAK/DRG, Rettungsmomente statt reiner Strafe).",
   "files": [
    "player.gd",
@@ -1401,7 +1401,7 @@
    "I-12"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Zweite Leiste (Sättigung). Sinkt langsam mit Laufen, Springen und Putzen. Satt (>60 %): Regeneration x2, Putzen +10 %. Leer: keine Regeneration, Tempo -20 %, aber kein Tod (Research: Valheim, Hunger nur als Vorteil).",
   "files": [
    "food.gd",
@@ -1487,7 +1487,7 @@
    "I-09"
   ],
   "size": "L",
-  "status": "open",
+  "status": "done",
   "goal": "Werkstatt verkauft Utensilien nacheinander (Wedel → Schwamm → Besen → Staubsauger → Dampfreiniger → Sternpolierer), jedes teurer als das vorige. Jedes hat 3 eigene Upgrades (Breite, Tempo, Reichweite) gegen Staub. Staubsauger saugt Spinnen, Dampfreiniger löst zähe Flecken.",
   "files": [
    "tools.gd",
