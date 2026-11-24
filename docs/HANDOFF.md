@@ -40,7 +40,7 @@ Begründungen und Recherche: `docs/IMPROVEMENT_BRAINSTORMING.md` (Abschnitt „R
 
 ## Autopilot (Skill projekt-autopilot, eingebunden 2026-11-24)
 - `tools/tasks.py` ist die Skill-Version: zusätzlich `board` (wer baut was), `batch` (mehrere Karten ohne Dateiüberschneidung), atomarer `claim` (Schloss `lock/<ID>`), `release`, `ideas`/`idea`, `issues`. Alte Befehle (`next A|B|C`, `mine`, `index`, `status`) bleiben. Pfade in `tools/autopilot.json` (Ideen weiter in `docs/IMPROVEMENT_BRAINSTORMING.md`).
-- `tools/cli_scout.py` + Register `docs/CLI_TOOLS.md` (CLI-Anything). Braucht Netzzugriff auf hkuds.github.io; in der Cloud-Umgebung aktuell gesperrt.
+- `tools/cli_scout.py` + Register `docs/CLI_TOOLS.md` (CLI-Anything). Braucht Netzzugriff auf hkuds.github.io und clianything.cc (in der Cloud-Umgebung „Default“ freigegeben).
 - `tools/auto_continue.py`: im Terminal nach Token-Limit automatisch weiter.
 - `TASK_WHO` pro Sitzung eindeutig wählen (`bot-A1`, `bot-A2`, …), sonst bauen parallele Sitzungen dieselbe Karte.
-- ❌ Wächter (geplante Aufgabe alle 30 min, `TASK_WHO=bot-waechter`) ist noch nicht eingerichtet: das Anlegen wurde in der Sitzung abgelehnt und muss vom Menschen freigegeben werden.
+- Wächter: geplante Aufgabe „Sternenhausmeister Wächter“ (trig_01QpAoeacCCBiNrrtaHK2mAN), stündlich zu Minute 2 (30 min ist nicht erlaubt), `TASK_WHO=bot-waechter`, beendet sich sofort, wenn nichts startbar ist. Löschen, wenn alles done ist.
