@@ -1487,7 +1487,7 @@
    "I-09"
   ],
   "size": "L",
-  "status": "open",
+  "status": "done",
   "goal": "Werkstatt verkauft Utensilien nacheinander (Wedel → Schwamm → Besen → Staubsauger → Dampfreiniger → Sternpolierer), jedes teurer als das vorige. Jedes hat 3 eigene Upgrades (Breite, Tempo, Reichweite) gegen Staub. Staubsauger saugt Spinnen, Dampfreiniger löst zähe Flecken.",
   "files": [
    "tools.gd",

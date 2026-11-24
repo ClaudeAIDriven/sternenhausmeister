@@ -1,8 +1,133 @@
 {
- "stats": {"wipe_radius": 0.9, "speed": 6.0, "reach": 9.0},
+ "stats": {
+  "wipe_radius": 0.9,
+  "speed": 6.0,
+  "reach": 9.0,
+  "wipe_rate": 1.0
+ },
  "upgrades": [
-  {"id": "wipe_size", "name": "Größerer Wedel", "desc": "Wischt eine größere Fläche.", "stat": "wipe_radius", "per_level": 0.25, "max_level": 4, "base_cost": 6, "cost_growth": 1.6},
-  {"id": "speed", "name": "Flinke Sohlen", "desc": "Du läufst schneller.", "stat": "speed", "per_level": 0.8, "max_level": 4, "base_cost": 5, "cost_growth": 1.5},
-  {"id": "reach", "name": "Langer Stiel", "desc": "Du erreichst weiter entfernte Flecken.", "stat": "reach", "per_level": 1.5, "max_level": 3, "base_cost": 8, "cost_growth": 1.7}
+  {
+   "id": "wipe_size",
+   "name": "Größerer Wedel",
+   "desc": "Wischt eine größere Fläche.",
+   "stat": "wipe_radius",
+   "per_level": 0.25,
+   "max_level": 4,
+   "base_cost": 6,
+   "cost_growth": 1.6
+  },
+  {
+   "id": "speed",
+   "name": "Flinke Sohlen",
+   "desc": "Du läufst schneller.",
+   "stat": "speed",
+   "per_level": 0.8,
+   "max_level": 4,
+   "base_cost": 5,
+   "cost_growth": 1.5
+  },
+  {
+   "id": "reach",
+   "name": "Langer Stiel",
+   "desc": "Du erreichst weiter entfernte Flecken.",
+   "stat": "reach",
+   "per_level": 1.5,
+   "max_level": 3,
+   "base_cost": 8,
+   "cost_growth": 1.7
+  }
+ ],
+ "utensils": [
+  {
+   "id": "wedel",
+   "name": "Staubwedel",
+   "desc": "Der treue Wedel. Wirkt auf alles.",
+   "price": 0,
+   "tool_kind": "ANY",
+   "model": "duster",
+   "scale": 1.0,
+   "bonus": {}
+  },
+  {
+   "id": "schwamm",
+   "name": "Schwamm",
+   "desc": "Weich und breit: gut gegen Flecken.",
+   "price": 30,
+   "tool_kind": "CLOTH",
+   "model": "cloth",
+   "scale": 0.9,
+   "bonus": {
+    "wipe_radius": 0.2
+   },
+   "width": 0.12,
+   "tempo": 0.1,
+   "reach": 0.6
+  },
+  {
+   "id": "besen",
+   "name": "Besen",
+   "desc": "Lange Borsten, große Fläche, mehr Reichweite.",
+   "price": 80,
+   "tool_kind": "ANY",
+   "model": "duster",
+   "scale": 1.25,
+   "bonus": {
+    "wipe_radius": 0.5,
+    "reach": 1.5
+   },
+   "width": 0.15,
+   "tempo": 0.1,
+   "reach": 0.8
+  },
+  {
+   "id": "staubsauger",
+   "name": "Staubsauger",
+   "desc": "Saugt Ruß weg und Spinnen gleich mit.",
+   "price": 180,
+   "tool_kind": "VACUUM",
+   "model": "vacuum",
+   "scale": 1.0,
+   "special": "spiders",
+   "bonus": {
+    "wipe_radius": 0.6,
+    "reach": 2.0
+   },
+   "width": 0.15,
+   "tempo": 0.12,
+   "reach": 0.9
+  },
+  {
+   "id": "dampfreiniger",
+   "name": "Dampfreiniger",
+   "desc": "Löst zähe Flecken, die sonst nur langsam weichen.",
+   "price": 350,
+   "tool_kind": "CLOTH",
+   "model": "cloth",
+   "scale": 1.25,
+   "special": "tough",
+   "bonus": {
+    "wipe_radius": 0.7,
+    "reach": 1.0
+   },
+   "width": 0.2,
+   "tempo": 0.12,
+   "reach": 1.0
+  },
+  {
+   "id": "sternpolierer",
+   "name": "Sternpolierer",
+   "desc": "Bringt Patina zum Glänzen. Das Beste für den Schluss.",
+   "price": 700,
+   "tool_kind": "POLISH",
+   "model": "polish",
+   "scale": 1.3,
+   "bonus": {
+    "wipe_radius": 1.0,
+    "reach": 3.0
+   },
+   "width": 0.25,
+   "tempo": 0.15,
+   "reach": 1.2
+  }
  ]
 }

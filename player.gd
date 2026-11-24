@@ -36,6 +36,7 @@ var look: Node3D
 var look_index := -1
 var nameplate: Label3D
 var _shop: Node
+var _shown_tool := "wedel"   # G-25: welches Utensil gerade als Modell in der Hand ist
 var health := MAX_HEALTH
 var role := Roles.DEFAULT_ID      # I-13, wird mit repliziert
 var _jump_cd := 0.0
@@ -178,6 +179,7 @@ func _process(delta: float) -> void:
 		_phase += _anim_speed * delta * 1.7
 		if look != null:
 			PlayerLook.animate(look, _phase, clampf(_anim_speed / SPEED, 0.0, 1.0))
+	_refresh_tool()
 	# Wedel schwingt beim Putzen
 	var t := Time.get_ticks_msec() / 1000.0
 	if cleaning:
@@ -347,3 +349,35 @@ func knock(v: Vector3) -> void:
 ## Wischradius-Faktor der Rolle (main.gd multipliziert damit den Shop-Radius).
 func wipe_factor() -> float:
 	return Roles.factor(role, "wipe")
+
+
+## G-25: Ausgerüstetes Utensil aus der Werkstatt (leer = Wedel ohne Shop).
+func utensil() -> Dictionary:
+	stat("speed", SPEED)   # sucht den Shop, falls noch nicht gefunden
+	if _shop != null and is_instance_valid(_shop) and _shop.has_method("equipped_utensil"):
+		return _shop.equipped_utensil()
+	return {}
+
+
+## Werkzeugart (CleanTool.Kind) des Utensils in der Hand. main.gd reicht sie an World.wipe_at weiter.
+func tool_kind() -> int:
+	return CleanTool.kind_from_name(str(utensil().get("tool_kind", "ANY")))
+
+
+## Wischtempo-Faktor (Utensil-Upgrades "Tempo"), 1.0 = Grundwert.
+func wipe_rate() -> float:
+	return stat("wipe_rate", 1.0)
+
+
+## Modell in der Hand an das Utensil anpassen (nur wenn es sich geändert hat).
+func _refresh_tool() -> void:
+	var ut := utensil()
+	var id := str(ut.get("id", "wedel"))
+	if id == _shown_tool or brush == null:
+		return
+	_shown_tool = id
+	for c in brush.get_children():
+		c.queue_free()
+	var m := ToolModels.build(str(ut.get("model", "duster")))
+	m.scale = Vector3.ONE * float(ut.get("scale", 1.0))
+	brush.add_child(m)
