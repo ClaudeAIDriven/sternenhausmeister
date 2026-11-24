@@ -23,7 +23,7 @@
 | [G-06](G-06.md) | B | nice | GAME | Schmutztypen mit passendem Werkzeug | M | done | P-002 |
 | [G-07](G-07.md) | B | nice | GAME | Wetter-Events: Wolken und Sternschnuppen | M | done | G-01 |
 | [G-08](G-08.md) | A | must | GAME | Skalierung nach Spielerzahl | S | done | C-02, N-02 |
-| [G-09](G-09.md) | A | nice | GAME | Regel-Presets (Zen, Kinder, Standard) | S | open | G-01 |
+| [G-09](G-09.md) | A | nice | GAME | Regel-Presets (Zen, Kinder, Standard) | S | done | G-01 |
 | [G-10](G-10.md) | B | nice | GAME | Ballon/Leiter zum Erreichen hoher Sterne | M | done | P-001 |
 | [A-01](A-01.md) | C | nice | ART | Toon-Shader mit Rim-Light | M | done | P-001 |
 | [A-02](A-02.md) | C | nice | ART | 4 Spielerfarben und Namensschilder | S | done | N-02 |
@@ -36,7 +36,7 @@
 | [U-01](U-01.md) | A | must | UI | Hauptmenü (Start, Host, Join, Einstellungen, Beenden) | M | done | C-03 |
 | [U-02](U-02.md) | A | must | UI | HUD: Staub, Timer, Spielerliste | S | done | C-02 |
 | [U-03](U-03.md) | A | must | UI | Pause- und Einstellungsmenü | S | done | C-03, U-01 |
-| [U-04](U-04.md) | C | nice | UI | Barrierefreiheit: Untertitel, Farbenblind, UI-Skalierung | M | open | U-03 |
+| [U-04](U-04.md) | C | nice | UI | Barrierefreiheit: Untertitel, Farbenblind, UI-Skalierung | M | done | U-03 |
 | [B-01](B-01.md) | A | must | BUILD | Windows-Export-Preset und Skript | S | done | P-001 |
 | [B-02](B-02.md) | A | must | BUILD | NSIS-Installer-Skript | M | done | B-01 |
 | [B-03](B-03.md) | C | nice | BUILD | CI-Workflow (Tests und Export) | M | done | B-01 |

@@ -400,7 +400,7 @@
    "G-01"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Presets als Daten (Zeitlimit, Wetter, Rätselhilfe), Slider überschreiben sie.",
   "files": [
    "data/presets/",
@@ -642,7 +642,7 @@
    "U-03"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Visuelle Klanganzeige, Farbenblind-Modi, Skalierung bis 200%.",
   "files": [
    "accessibility.gd"
