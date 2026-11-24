@@ -23,7 +23,7 @@
 | [G-06](G-06.md) | B | nice | GAME | Schmutztypen mit passendem Werkzeug | M | done | P-002 |
 | [G-07](G-07.md) | B | nice | GAME | Wetter-Events: Wolken und Sternschnuppen | M | open | G-01 |
 | [G-08](G-08.md) | A | must | GAME | Skalierung nach Spielerzahl | S | done | C-02, N-02 |
-| [G-09](G-09.md) | B | nice | GAME | Regel-Presets (Zen, Kinder, Standard) | S | open | G-01 |
+| [G-09](G-09.md) | B | nice | GAME | Regel-Presets (Zen, Kinder, Standard) | S | done | G-01 |
 | [G-10](G-10.md) | B | nice | GAME | Ballon/Leiter zum Erreichen hoher Sterne | M | done | P-001 |
 | [A-01](A-01.md) | C | nice | ART | Toon-Shader mit Rim-Light | M | done | P-001 |
 | [A-02](A-02.md) | C | nice | ART | 4 Spielerfarben und Namensschilder | S | open | N-02 |
