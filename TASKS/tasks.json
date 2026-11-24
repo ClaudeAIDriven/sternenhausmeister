@@ -1115,7 +1115,7 @@
    "I-02"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Beim Hosten zeigt eine kleine Anzeige im Spiel LAN-IP(s), nach UPnP die öffentliche IP, den Port und die UPnP-Meldung; Knopf kopiert \"IP:Port\" in die Zwischenablage.",
   "files": [
    "host_info.gd",
