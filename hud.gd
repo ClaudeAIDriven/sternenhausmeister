@@ -9,6 +9,9 @@ var _night: Night
 var _cleaned := 0
 var _total := 0
 var _extra := ""
+var _puzzle := ""        # Zeile mit Sternbild-Fortschritt
+var _puzzle_msg := ""    # Hinweis nach falscher Reihenfolge / Lösung
+var _puzzle_msg_left := 0.0
 var _since_refresh := 0.0
 
 
@@ -40,12 +43,29 @@ func show_status(cleaned: int, total: int, extra: String = "") -> void:
 	refresh()
 
 
+## Sternbild-Fortschritt (I-04): z. B. "Sternbild Dreieck: 2 / 3".
+func show_puzzle(title: String, done: int, total: int) -> void:
+	_puzzle = "Sternbild %s: %d / %d" % [title, done, total]
+	refresh()
+
+
+## Kurze Meldung (Hinweis bei falscher Reihenfolge, Bonus bei Lösung), verschwindet nach `seconds`.
+func show_puzzle_message(msg: String, seconds := 6.0) -> void:
+	_puzzle_msg = msg
+	_puzzle_msg_left = seconds
+	refresh()
+
+
 func text() -> String:
 	return _label.text if _label else ""
 
 
 func _process(delta: float) -> void:
 	_since_refresh += delta
+	if _puzzle_msg_left > 0.0:
+		_puzzle_msg_left -= delta
+		if _puzzle_msg_left <= 0.0:
+			_puzzle_msg = ""
 	if _since_refresh >= 0.25:
 		_since_refresh = 0.0
 		refresh()
@@ -59,13 +79,17 @@ func refresh() -> void:
 		var secs := int(ceil(_night.time_left()))
 		lines += "Zeit: %02d:%02d  ·  %s\n" % [secs / 60, secs % 60, PHASE_NAMES[GameState.night_state]]
 	lines += "Staub: %d  ·  Sterne geputzt: %d / %d\n" % [GameState.dust, _cleaned, _total]
+	if _puzzle != "":
+		lines += _puzzle + "\n"
+	if _puzzle_msg != "":
+		lines += _puzzle_msg + "\n"
 	if NetworkManager.is_online():
 		var names: Array[String] = []
 		for id in NetworkManager.players:
 			names.append(str(NetworkManager.players[id].get("name", id)))
 		lines += "Spieler (%d): %s\n" % [names.size(), ", ".join(names)]
 	lines += "WASD laufen · Leertaste springen · Maus zielen\n"
-	lines += "Linke Maustaste / E: putzen · Klick: Maus einfangen · Esc: loslassen"
+	lines += "Linke Maustaste / E: putzen · Esc: Pause"
 	if _extra != "":
 		lines += "\n\n" + _extra
 	_label.text = lines
