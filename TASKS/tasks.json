@@ -455,7 +455,7 @@
    "N-02"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Jeder Spieler eigene Farbe, Name über dem Kopf.",
   "files": [
    "player.gd"

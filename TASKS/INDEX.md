@@ -26,7 +26,7 @@
 | [G-09](G-09.md) | B | nice | GAME | Regel-Presets (Zen, Kinder, Standard) | S | open | G-01 |
 | [G-10](G-10.md) | B | nice | GAME | Ballon/Leiter zum Erreichen hoher Sterne | M | done | P-001 |
 | [A-01](A-01.md) | C | nice | ART | Toon-Shader mit Rim-Light | M | done | P-001 |
-| [A-02](A-02.md) | C | nice | ART | 4 Spielerfarben und Namensschilder | S | open | N-02 |
+| [A-02](A-02.md) | C | nice | ART | 4 Spielerfarben und Namensschilder | S | done | N-02 |
 | [A-03](A-03.md) | C | nice | ART | Low-Poly-Props: Ballon, Leiter, Werkstatt | M | done | P-001 |
 | [A-04](A-04.md) | C | nice | ART | Himmel: Verlauf, Nebel, Wolkeninsel | S | done | P-001 |
 | [A-05](A-05.md) | C | nice | ART | Partikel: Staub und Funkeln beim Sauberwerden | S | done | P-002 |
