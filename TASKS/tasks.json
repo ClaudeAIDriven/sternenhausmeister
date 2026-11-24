@@ -1236,7 +1236,7 @@
    "G-07"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Meteor-Treffer bringt wenige neue Flecken auf einen geputzten Stern (nur Host, synchronisiert); Zen schaltet aus. Siehe IB-10.",
   "files": [
    "star.gd",
