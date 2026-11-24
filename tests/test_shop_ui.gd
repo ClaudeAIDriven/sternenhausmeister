@@ -18,7 +18,7 @@ func _process(_d: float) -> bool:
 	elif frames == 8:
 		var ui = main.shop_ui
 		var gs = root.get_node("GameState")
-		var ok: bool = ui != null and not ui.is_open and ui.rows.size() == 3
+		var ok: bool = ui != null and not ui.is_open and ui.rows.size() == 3 + 6 + 15
 		gs.dust = 0
 		ui.refresh()
 		ok = ok and ui.rows["wipe_size"]["button"].disabled and ("Stufe 0 von 4" in ui.rows["wipe_size"]["label"].text)

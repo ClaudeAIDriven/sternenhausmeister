@@ -4,7 +4,7 @@ extends SceneTree
 func _initialize() -> void:
 	var ok := true
 	var all: Array = ConstellationLoader.load_dir("res://data/constellations")
-	ok = ok and all.size() == 3
+	ok = ok and all.size() == 8
 	# richtige Reihenfolge löst jedes Beispiel und gibt Bonus
 	for d in all:
 		var c := Constellation.from_data(d)

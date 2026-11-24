@@ -19,6 +19,7 @@ var status: Label
 var buttons := {}   # "solo" | "host" | "join" | "settings" | "quit" -> Button
 var main_box: VBoxContainer
 var role_option: OptionButton    # I-13: Rolle
+var brawl_check: CheckBox   # G-32: Rauflust (Schubsen macht Schaden), Standard aus
 var preset_option: OptionButton   # I-08: Spielart (Presets aus G-09)
 var settings_box: VBoxContainer
 var _canvas: CanvasLayer
@@ -94,6 +95,11 @@ func _build_ui() -> void:
 		preset_option.add_item(str(all[id]["name"]))
 		preset_option.set_item_metadata(preset_option.item_count - 1, id)
 	main_box.add_child(preset_option)
+	brawl_check = CheckBox.new()
+	brawl_check.name = "BrawlCheck"
+	brawl_check.text = "Rauflust: Schubsen macht Schaden (nur Host)"
+	brawl_check.tooltip_text = "Aus = Friedlich: Schubsen stößt nur weg."
+	main_box.add_child(brawl_check)
 	buttons["solo"] = _button(main_box, "Allein putzen", func(): start("solo"))
 	buttons["host"] = _button(main_box, "Raum eröffnen (Host)", func(): start("host"))
 	main_box.add_child(_label("Beitreten: Adresse des Hosts"))
@@ -197,7 +203,7 @@ func start(mode: String) -> bool:
 	if role_option != null and role_option.selected >= 0:
 		role = str(role_option.get_item_metadata(role_option.selected))
 	Settings.set_value("role", role)
-	launch = {"mode": mode, "ip": ip if mode == "join" else "", "name": pname, "preset": preset}
+	launch = {"mode": mode, "ip": ip if mode == "join" else "", "name": pname, "preset": preset, "brawl": brawl_check != null and brawl_check.button_pressed}
 	start_requested.emit(mode, launch["ip"], pname)
 	if auto_start:
 		get_tree().change_scene_to_file(game_scene)

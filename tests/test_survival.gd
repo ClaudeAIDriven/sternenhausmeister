@@ -60,7 +60,9 @@ func _physics_process(_d: float) -> bool:
 		p.health = 100.0
 		p._invuln = 0.0
 		p.damage(500.0)
-		_check(died[0] == 1 and p.health == 100.0 and p._invuln > 0.0, "Tod/Respawn")
+		_check(died[0] == 1 and p.downed and p.health == 0.0, "Tod: am Boden (G-20)")
+		p.tick_downed(p.RESPAWN_TIME)   # G-20: nach 60 s Respawn mit voller Gesundheit
+		_check(not p.downed and p.health == 100.0 and p._invuln > 0.0, "Tod/Respawn")
 		p.damage(50.0)
 		_check(p.health == 100.0, "Unverwundbar nach Respawn")
 		p._invuln = 0.0
@@ -124,6 +126,11 @@ func _physics_process(_d: float) -> bool:
 		p._attack_cd = 0.0
 		q.set_multiplayer_authority(1)
 		_check(p.try_attack(), "Schlag trifft")
+		_check(q.health == 100.0, "Friedlich: Schlag stößt nur weg (G-32)")
+		p.brawl = true   # G-32: Rauflust
+		q.brawl = true
+		p._attack_cd = 0.0
+		_check(p.try_attack(), "Schlag trifft (Rauflust)")
 		_check(q.health < 100.0, "Schlag macht Schaden")
 		q.set_multiplayer_authority(2)   # q steht still (fremder Spieler), p läuft gegen ihn
 	if frames == 100:
