@@ -42,7 +42,7 @@ func _ready() -> void:
 		add_child(leg)
 
 
-func act(delta: float, world: World) -> void:
+func act(delta: float, world) -> void:
 	_bite_cd = maxf(_bite_cd - delta, 0.0)
 	if world.zen or _bite_cd > 0.0:
 		return
