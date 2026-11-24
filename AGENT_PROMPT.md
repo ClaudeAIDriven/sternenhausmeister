@@ -29,7 +29,7 @@ Einzige Quelle der Wahrheit für den Ablauf. Du bist A, B oder C (Besitzer-Buchs
 4. Nach jedem kleinen Schritt committen und pushen (absturzsicher). Danach wieder bei Schritt 1, solange das Limit reicht.
 
 ## 3b. Limit / wenig Token
-Nichts Neues beanspruchen, committen, pushen, Stand in PLAN.md. Weiter geht es automatisch: der Wächter (geplante Aufgabe alle 30 min, ID in PLAN.md) startet eine Sitzung, in der Cloud-Sitzung zusätzlich `send_later` zum Reset, im Terminal `python3 tools/auto_continue.py`.
+Nichts Neues beanspruchen, committen, pushen, Stand in PLAN.md. Weiter geht es automatisch: der Wächter (geplante Aufgabe stündlich, ID in PLAN.md) startet eine Sitzung, in der Cloud-Sitzung zusätzlich `send_later` zum Reset, im Terminal `python3 tools/auto_continue.py`.
 
 ## 4. Ehrlichkeit
 Ungetestetes als ungetestet kennzeichnen (🟢 getestet · 🟡 wahrscheinlich · 🔴 geraten · ❌ unbekannt). Spielgefühl beurteilt nur ein Mensch. Godot 4.3: /home/claude/tools/Godot_v4.3-stable_linux.x86_64, sonst von github.com/godotengine/godot/releases laden. Sichtprüfung ohne GPU: siehe PLAN.md.
