@@ -287,7 +287,7 @@
    "G-02"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Sterne müssen in richtiger Reihenfolge geputzt werden, sonst wieder verschmutzt/Hinweis; Bonus-Staub bei Erfolg.",
   "files": [
    "constellation.gd"

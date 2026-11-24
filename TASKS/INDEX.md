@@ -17,7 +17,7 @@
 | [N-06](N-06.md) | A | must | NET | Internet-Anleitung und optional UPnP | S | open | N-01 |
 | [G-01](G-01.md) | A | must | GAME | Nacht-Timer mit Dämmerung/Mitternacht/Morgenrot | S | done | C-02 |
 | [G-02](G-02.md) | A | must | GAME | Sternbild-Datenformat und 3 Beispiele | S | done | P-002 |
-| [G-03](G-03.md) | A | must | GAME | Sternbild-Rätsel-Logik | M | open | G-02 |
+| [G-03](G-03.md) | A | must | GAME | Sternbild-Rätsel-Logik | M | done | G-02 |
 | [G-04](G-04.md) | A | must | GAME | Sternenstaub-Währung | S | done | C-02 |
 | [G-05](G-05.md) | A | must | GAME | Shop und Upgrades | M | open | G-04, U-02 |
 | [G-06](G-06.md) | B | nice | GAME | Schmutztypen mit passendem Werkzeug | M | done | P-002 |
