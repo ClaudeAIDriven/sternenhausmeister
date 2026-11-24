@@ -30,6 +30,9 @@ var weather: Weather        # M-01
 var kitchen_ui: KitchenUI
 var skills_ui: SkillsUI
 var _rate_acc := 0.0
+var achievements := Achievements.new()   # M-09
+var _night_spots := 0
+var _hat_index := -1
 var swarm: FunItems.Swarm      # M-08
 var _wish_timer := 60.0
 var _trampolines: Array = []
@@ -86,6 +89,7 @@ func _ready() -> void:
 	NetworkManager.disconnected.connect(func(): get_tree().change_scene_to_file("res://menu.tscn"))
 	_build_extras()
 	_build_fun()
+	_build_achievements()
 	_build_saving()
 	world.star_scrubbed.connect(_on_star_scrubbed)
 	world.star_cleaned.connect(_on_star_cleaned)
@@ -200,6 +204,8 @@ func _build_player() -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_H and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		cycle_hat()
 	if event is InputEventMouseButton and event.pressed and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED and not pause.is_open and not summary.is_open and not shop_ui.is_open:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
@@ -248,12 +254,15 @@ func _on_star_scrubbed(_star: Star, removed: int) -> void:
 	GameState.add_dust(int(round(gain)))   # G-04 + G-12: Staub beim Putzen, mit Kombo-Bonus; Fähigkeit dust_gain
 	if player != null:
 		player.xp.add_event("spot", removed)   # M-01: XP je Fleck
+	achievements.count("spot", removed)
+	_night_spots += removed
 	sfx.play(notes[note_idx % notes.size()], combo.pitch(), -4.0)
 	note_idx += 1
 
 
 func _on_star_cleaned(star: Star) -> void:
 	GameState.report_star_cleaned(star)
+	achievements.count("star")
 	if player != null:
 		player.xp.add_event("star")
 	for i in chime.size():
@@ -304,6 +313,7 @@ func _bind_player(p: Player) -> void:
 	skills_ui.bind(p.skills)
 	world.kitchen.cooked.connect(func(_id: String):
 		p.xp.add_event("cook")
+		achievements.count("cook")
 		var bt: float = p.mod("buff_time") * Roles.factor(p.role, "buff_time")
 		for st in world.kitchen.buffs:
 			world.kitchen.buffs[st]["left"] = float(world.kitchen.buffs[st]["left"]) * bt
@@ -419,6 +429,34 @@ func _tick_fun(delta: float) -> void:
 		hud.show_puzzle_message("Eine Wunsch-Sternschnuppe! Fang sie!", 5.0)
 		w.caught.connect(func(_p, stat: String):
 			hud.show_puzzle_message("Wunsch erfüllt: %s +20 %% für 60 s" % str(FunItems.WISH_STATS.get(stat, stat)), 5.0))
+
+
+# ---------------------------------------------------------------- Erfolge (M-09)
+
+func _build_achievements() -> void:
+	achievements.load_file()
+	achievements.unlocked.connect(func(_id: String, title: String, hat: String):
+		hud.show_puzzle_message("Erfolg: %s%s" % [title, "  ·  neuer Hut (H wechselt)" if hat != "" else ""], 6.0))
+	world.enemy_removed.connect(func(kind: String, who: int):
+		if who == NetworkManager.my_id():
+			achievements.count(kind))
+	world.puzzle_solved.connect(func(_b: int): achievements.count("constellation"))
+	world.fruit_picked.connect(func(_k: String): achievements.count("fruit"))
+	GameState.dust_changed.connect(func(a: int): achievements.set_max("dust_max", GameState.dust))
+	GameState.night_ended.connect(func():
+		achievements.record_night(nights_played + 1, GameState.stars_cleaned, GameState.dust, _night_spots)
+		_night_spots = 0)
+
+
+## H: nächsten freigeschalteten Hut aufsetzen (nur lokal sichtbar, "" = Rollenhut).
+func cycle_hat() -> String:
+	var opts: Array = [""] + achievements.hats
+	_hat_index = (_hat_index + 1) % opts.size()
+	var id: String = opts[_hat_index]
+	if player != null and player.look != null:
+		player.hat_override = id
+		PlayerLook.update_hat(player.look, id if id != "" else player.role)
+	return id
 
 
 func _selftest() -> void:

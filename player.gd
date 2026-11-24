@@ -56,6 +56,7 @@ var skills: Skills             # M-01: Fähigkeiten (aus data/skills.json), nur 
 var kitchen: Kitchen           # M-01: Küchen-Buffs (main setzt es aus der Welt)
 var _air_jumps_left := 0
 var _hat_role := ""
+var hat_override := ""   # M-09: selbst gewählter Hut (nur lokal sichtbar)
 var downed := false            # G-20: am Boden, wird mit repliziert
 var respawn_left := 0.0
 var revive_target: Player      # wen ich gerade wiederbelebe (für die Anzeige)
@@ -234,7 +235,7 @@ func _process(delta: float) -> void:
 	_refresh_tool()
 	if look != null and role != _hat_role:   # M-06: Hut folgt der (replizierten) Rolle
 		_hat_role = role
-		PlayerLook.update_hat(look, role)
+		PlayerLook.update_hat(look, hat_override if hat_override != "" else role)
 	# Wedel schwingt beim Putzen
 	var t := Time.get_ticks_msec() / 1000.0
 	if cleaning:
