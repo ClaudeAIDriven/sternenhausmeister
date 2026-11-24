@@ -1046,5 +1046,26 @@
   "skills": "GDScript, Godot-Shader",
   "owner": "A",
   "prio": "must"
+ },
+ {
+  "id": "I-04",
+  "area": "GAME",
+  "title": "Integration: Sternbild-Rätsel mit Linien in world.gd/star.gd",
+  "deps": [
+   "I-03",
+   "G-03",
+   "A-13"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "World wählt ein Sternbild passend zur Sternzahl; die Sterne müssen in der Reihenfolge geputzt werden (Constellation). Richtig: Linie wächst; falsch: alle bisherigen Sterne werden wieder schmutzig, der nächste richtige Stern leuchtet als Hinweis; gelöst: Bonus-Staub und Linien-Burst. Host entscheidet, alle sehen es.",
+  "files": [
+   "star.gd",
+   "world.gd"
+  ],
+  "accept": "Test: richtige Reihenfolge löst und zahlt Bonus, falsche setzt zurück (Sterne wieder schmutzig); Netz-Test: Client sieht Rücksetzen und Lösung.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  }
 ]
