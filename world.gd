@@ -785,7 +785,7 @@ func bite_player(who: int, amount: float) -> void:
 func _apply_bite(amount: float) -> void:
 	var p := _local_player()
 	if p != null:
-		p.damage(amount)
+		p.damage(amount * p.mod("spider_fear"))
 
 
 @rpc("authority", "call_remote", "reliable")

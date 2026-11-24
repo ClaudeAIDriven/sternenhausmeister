@@ -26,6 +26,10 @@ var shop: Shop
 var shop_ui: ShopUI
 var health_ui: HealthUI
 var minimap: Minimap
+var weather: Weather        # M-01
+var kitchen_ui: KitchenUI
+var skills_ui: SkillsUI
+var _rate_acc := 0.0
 var note_idx := 0
 var scrub_cooldown := 0.0
 
@@ -74,6 +78,7 @@ func _ready() -> void:
 	add_child(minimap)
 	minimap.bind(world, night, players_root)
 	NetworkManager.disconnected.connect(func(): get_tree().change_scene_to_file("res://menu.tscn"))
+	_build_extras()
 	world.star_scrubbed.connect(_on_star_scrubbed)
 	world.star_cleaned.connect(_on_star_cleaned)
 	world.coop_bonus.connect(func(a: int): hud.show_puzzle_message("Teamarbeit! +%d Sternenstaub" % a, 4.0))   # G-13
@@ -201,6 +206,9 @@ func _process(delta: float) -> void:
 			health_ui.bind(player)
 			shop_ui.player_ref = player
 			minimap.local_player = player
+			_bind_player(player)
+	if player != null:
+		world.inventory.extra_slots = int(player.skills.add("bag_slots"))   # Fähigkeit: größerer Beutel
 	dust.emitting = player != null and player.cleaning and player.aim_valid
 	if dust.emitting:
 		dust.global_position = player.aim_point
@@ -211,7 +219,15 @@ func _refresh_hud(extra := "") -> void:
 
 
 func _on_wipe_requested(point: Vector3) -> void:
-	world.wipe_at(point, shop.value("wipe_radius") * (player.wipe_factor() if player != null else 1.0))   # I-13: Rollen-Faktor
+	var radius: float = shop.value("wipe_radius") * (player.wipe_factor() if player != null else 1.0)   # I-13: Rollen-Faktor
+	var tool: int = player.tool_kind() if player != null else CleanTool.Kind.ANY   # G-25: Utensil bestimmt die Werkzeugart
+	_rate_acc += player.wipe_rate() if player != null else 1.0   # Wischtempo: <1 lässt Frames aus, >1 wischt mehrfach
+	var guard := 0
+	while _rate_acc >= 1.0 and guard < 3:
+		world.wipe_at(point, radius, tool)
+		_rate_acc -= 1.0
+		guard += 1
+	_rate_acc = minf(_rate_acc, 2.0)
 	if scrub_cooldown <= 0.0:
 		sfx.play(scrub_sound, randf_range(0.9, 1.15), -6.0)
 		scrub_cooldown = 0.11
@@ -219,19 +235,71 @@ func _on_wipe_requested(point: Vector3) -> void:
 
 func _on_star_scrubbed(_star: Star, removed: int) -> void:
 	var now := Time.get_ticks_msec() / 1000.0
-	GameState.add_dust(combo.hit(now, removed, DUST_PER_SPOT))   # G-04 + G-12: Staub beim Putzen, mit Kombo-Bonus
+	var gain: float = float(combo.hit(now, removed, DUST_PER_SPOT)) * (player.mod("dust_gain") if player != null else 1.0)
+	GameState.add_dust(int(round(gain)))   # G-04 + G-12: Staub beim Putzen, mit Kombo-Bonus; Fähigkeit dust_gain
+	if player != null:
+		player.xp.add_event("spot", removed)   # M-01: XP je Fleck
 	sfx.play(notes[note_idx % notes.size()], combo.pitch(), -4.0)
 	note_idx += 1
 
 
 func _on_star_cleaned(star: Star) -> void:
 	GameState.report_star_cleaned(star)
+	if player != null:
+		player.xp.add_event("star")
 	for i in chime.size():
 		sfx.play(chime[i], 1.0, -8.0)
 	if world.cleaned_count() >= world.stars.size():
 		_refresh_hud("Nacht geschafft! Der Himmel glänzt. ⭐")
 	else:
 		_refresh_hud("Stern geputzt!")
+
+
+## M-01: Wetter, Küche, Fähigkeiten und XP-Quellen. Läuft einmal beim Start (Spieler kommt erst später, siehe _bind_player).
+func _build_extras() -> void:
+	weather = Weather.new()
+	weather.name = "Weather"
+	Presets.apply(Presets.effective(str(Menu.launch.get("preset", Presets.DEFAULT_ID))), null, weather)   # Zen/aus/normal
+	add_child(weather)
+	var pos: Array = []
+	for s in world.stars:
+		pos.append(s.position)
+	weather.set_star_positions(pos)
+	weather.seed_rng(4711)
+	world.layout_changed.connect(func(_n: int):
+		var p2: Array = []
+		for s in world.stars:
+			p2.append(s.position)
+		weather.set_star_positions(p2))
+	world.attach_weather(weather)
+	weather.warning.connect(func(_k: int, text: String, secs: float): hud.show_puzzle_message(text, secs))
+	kitchen_ui = KitchenUI.new()
+	add_child(kitchen_ui)
+	skills_ui = SkillsUI.new()
+	add_child(skills_ui)
+	world.enemy_removed.connect(func(kind: String, who: int):
+		if player != null and who == NetworkManager.my_id():
+			player.xp.add_event("enemy")
+			hud.show_puzzle_message("%s besiegt! +XP" % kind.capitalize(), 3.0))
+	world.puzzle_solved.connect(func(_b: int):
+		if player != null:
+			player.xp.add_event("constellation"))
+
+
+## M-01: Sobald der eigene Spieler da ist: Küche/Fähigkeiten binden, XP für Kochen und Stufenaufstieg.
+func _bind_player(p: Player) -> void:
+	p.kitchen = world.kitchen
+	kitchen_ui.bind(world.kitchen, world.inventory, p)
+	skills_ui.bind(p.skills)
+	world.kitchen.cooked.connect(func(_id: String):
+		p.xp.add_event("cook")
+		var bt: float = p.mod("buff_time") * Roles.factor(p.role, "buff_time")
+		for st in world.kitchen.buffs:
+			world.kitchen.buffs[st]["left"] = float(world.kitchen.buffs[st]["left"]) * bt
+		var bonus_food: float = (p.mod("recipe_food") * Roles.factor(p.role, "recipe_food") - 1.0) * 30.0
+		if bonus_food > 0.0:
+			p.food.feed(bonus_food))
+	p.xp.leveled_up.connect(func(l: int): hud.show_puzzle_message("Stufe %d! Mit K Fähigkeiten lernen." % l, 5.0))
 
 
 func _selftest() -> void:

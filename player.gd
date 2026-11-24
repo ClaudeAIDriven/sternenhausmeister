@@ -51,6 +51,10 @@ var brawl := false   # G-32: Rauflust (nur der Wert des Hosts zählt, wird repli
 var _shown_tool := "wedel"   # G-25: welches Utensil gerade als Modell in der Hand ist
 var health := MAX_HEALTH
 var food := Food.new()         # G-21: Sättigung, nur lokal
+var xp := Xp.new()             # M-01: Erfahrung, nur lokal
+var skills: Skills             # M-01: Fähigkeiten (aus data/skills.json), nur lokal
+var kitchen: Kitchen           # M-01: Küchen-Buffs (main setzt es aus der Welt)
+var _air_jumps_left := 0
 var downed := false            # G-20: am Boden, wird mit repliziert
 var respawn_left := 0.0
 var revive_target: Player      # wen ich gerade wiederbelebe (für die Anzeige)
@@ -81,6 +85,8 @@ func _ready() -> void:
 	collision_layer = 1
 	collision_mask = 1
 	add_to_group("players")
+	skills = Skills.new(xp, role)
+	skills.load_data()
 	if is_multiplayer_authority():
 		role = str(Settings.get_value("role"))
 		if Roles.can(role, "climb"):
@@ -154,7 +160,7 @@ func _physics_process(delta: float) -> void:
 	update_revive(delta, Input.is_physical_key_pressed(KEY_F) and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED)
 	var input_dir := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var dir := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-	var speed := stat("speed", SPEED) * Roles.factor(role, "speed") * food.speed_factor()
+	var speed := stat("speed", SPEED) * Roles.factor(role, "speed") * food.speed_factor() * mod("speed")
 	_jump_cd = maxf(_jump_cd - delta, 0.0)
 	if _on_balloon != null and is_instance_valid(_on_balloon) and _on_balloon.is_aloft():
 		# Ballon lenken (I-11): Auf der Plattform in der Luft steuert WASD den Ballon statt den Spieler.
@@ -169,10 +175,15 @@ func _physics_process(delta: float) -> void:
 	_impulse = Vector3(_impulse.x, 0, _impulse.z).lerp(Vector3.ZERO, clampf(delta * 6.0, 0.0, 1.0))
 	if not is_on_floor():
 		velocity.y -= GRAVITY * delta
+		if _air_jumps_left > 0 and Input.is_action_just_pressed("jump"):   # M-01: Doppelsprung (Fähigkeit)
+			_air_jumps_left -= 1
+			velocity.y = JUMP_VELOCITY * Roles.factor(role, "jump") * mod("jump")
+			_peak_y = global_position.y
 	elif Input.is_action_just_pressed("jump") and _jump_cd <= 0.0:
-		velocity.y = JUMP_VELOCITY * Roles.factor(role, "jump")
+		velocity.y = JUMP_VELOCITY * Roles.factor(role, "jump") * mod("jump")
 		food.on_jump()
-		_jump_cd = Roles.factor(role, "jump_cd")
+		_jump_cd = Roles.factor(role, "jump_cd") * mod("jump_cd")
+		_air_jumps_left = int(skills.add("double_jump")) if skills != null else 0
 	_apply_climb(Input.get_vector("move_left", "move_right", "move_forward", "move_back"))
 	move_and_slide()
 	_track_floor()
@@ -181,7 +192,7 @@ func _physics_process(delta: float) -> void:
 		_airborne = false
 		global_position = SPAWN_POINT
 		velocity = Vector3.ZERO
-	food.tick(delta * Roles.factor(role, "hunger"), Vector2(velocity.x, velocity.z).length() > 0.5, cleaning)
+	food.tick(delta * Roles.factor(role, "hunger") * mod("hunger"), Vector2(velocity.x, velocity.z).length() > 0.5, cleaning)
 	_tick_health(delta)
 	if InputMap.has_action("attack") and Input.is_action_just_pressed("attack") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		try_attack()
@@ -194,7 +205,7 @@ func _physics_process(delta: float) -> void:
 
 func _update_aim() -> void:
 	var from := cam.global_position
-	var reach := stat("reach", REACH)
+	var reach := stat("reach", REACH) * mod("reach") + (skills.add("reach") if skills != null else 0.0)
 	var to := from - cam.global_transform.basis.z * (reach + 5.0)
 	var q := PhysicsRayQueryParameters3D.create(from, to, 2)
 	var hit := get_world_3d().direct_space_state.intersect_ray(q)
@@ -307,7 +318,7 @@ func _track_fall(_delta: float) -> void:
 			_airborne = false
 			var drop := _peak_y - global_position.y
 			if drop > SAFE_FALL:
-				damage((drop - SAFE_FALL) * FALL_DAMAGE)
+				damage((drop - SAFE_FALL) * FALL_DAMAGE * mod("fall_damage"))
 	else:
 		if not _airborne:
 			_airborne = true
@@ -320,7 +331,7 @@ func _tick_health(delta: float) -> void:
 	_attack_cd = maxf(_attack_cd - delta, 0.0)
 	_since_damage += delta
 	if health < MAX_HEALTH and _since_damage >= REGEN_DELAY:
-		health = minf(health + REGEN_RATE * delta * food.regen_factor(), MAX_HEALTH)
+		health = minf(health + REGEN_RATE * delta * food.regen_factor() * mod("regen"), MAX_HEALTH)
 		health_changed.emit(health)
 
 
@@ -507,9 +518,21 @@ func knock(v: Vector3) -> void:
 		velocity.y = maxf(velocity.y, v.y)
 
 
+## M-01: Gesamtfaktor eines Stats aus Fähigkeiten, Küchen-Buff und Schrein (1.0 = keine Wirkung).
+func mod(stat_name: String) -> float:
+	var m := 1.0
+	if skills != null:
+		skills.role = role
+		m *= skills.mult(stat_name)
+	if kitchen != null and is_instance_valid(kitchen):
+		m *= kitchen.buff_mult(stat_name)
+	m *= Poi.buff_mult(stat_name)
+	return m
+
+
 ## Wischradius-Faktor der Rolle (main.gd multipliziert damit den Shop-Radius).
 func wipe_factor() -> float:
-	return Roles.factor(role, "wipe") * food.clean_factor()
+	return Roles.factor(role, "wipe") * food.clean_factor() * mod("wipe")
 
 
 ## G-25: Ausgerüstetes Utensil aus der Werkstatt (leer = Wedel ohne Shop).
@@ -527,7 +550,7 @@ func tool_kind() -> int:
 
 ## Wischtempo-Faktor (Utensil-Upgrades "Tempo"), 1.0 = Grundwert.
 func wipe_rate() -> float:
-	return stat("wipe_rate", 1.0)
+	return stat("wipe_rate", 1.0) * mod("wipe_rate")
 
 
 ## Modell in der Hand an das Utensil anpassen (nur wenn es sich geändert hat).
@@ -588,7 +611,7 @@ func place_ladder() -> bool:
 	var now := Time.get_ticks_msec() / 1000.0
 	if not Roles.can(role, "ladder") or now < _ladder_cd or downed:
 		return false
-	_ladder_cd = now + LADDER_COOLDOWN
+	_ladder_cd = now + LADDER_COOLDOWN * mod("ladder_cd")
 	var fwd := -global_transform.basis.z
 	fwd.y = 0.0
 	var pos := global_position + fwd.normalized() * 1.2
