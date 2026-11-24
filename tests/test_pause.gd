@@ -24,7 +24,7 @@ func _process(_d: float) -> bool:
 	p.sliders["mouse_sens"].value = 0.005
 	ok = ok and is_equal_approx(float(st.get_value("mouse_sens")), 0.005)
 	# FOV wirkt auf die Kamera des eigenen Spielers
-	var pl := Player.new()
+	var pl = load("res://player.gd").new()
 	pl.name = "1"
 	root.add_child(pl)
 	p.sliders["fov"].value = 90.0
