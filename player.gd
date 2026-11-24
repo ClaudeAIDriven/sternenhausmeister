@@ -3,12 +3,26 @@ extends CharacterBody3D
 ## Dritte-Person-Spieler mit Staubwedel. Halte die linke Maustaste (oder E), um zu putzen.
 
 signal wipe_requested(point: Vector3)
+signal health_changed(value: float)
+signal died
+signal hit_landed(target: Player)
 
 const SPEED := 6.0
 const JUMP_VELOCITY := 7.0
 const GRAVITY := 18.0
 const REACH := 9.0
 const MOUSE_SENS := 0.003
+## I-12: Gesundheit. Sie regeneriert erst nach REGEN_DELAY Sekunden ohne Schaden und dann nur langsam.
+const MAX_HEALTH := 100.0
+const REGEN_DELAY := 6.0
+const REGEN_RATE := 1.0         # Punkte pro Sekunde
+const SAFE_FALL := 5.0          # Fallhöhe in m ohne Schaden
+const FALL_DAMAGE := 7.0        # Schaden je weiterem Meter
+const HIT_DAMAGE := 12.0        # Schlag eines anderen Spielers
+const ATTACK_RANGE := 2.4
+const ATTACK_COOLDOWN := 0.7
+const RESPAWN_INVULN := 2.0
+const SPAWN_POINT := Vector3(0, 2, 6)
 
 var yaw := 0.0
 var pitch := -0.25
@@ -22,6 +36,19 @@ var look: Node3D
 var look_index := -1
 var nameplate: Label3D
 var _shop: Node
+var health := MAX_HEALTH
+var role := Roles.DEFAULT_ID      # I-13, wird mit repliziert
+var _jump_cd := 0.0
+var _impulse := Vector3.ZERO
+var _since_damage := 0.0
+var _invuln := 0.0
+var _attack_cd := 0.0
+var _airborne := false
+var _peak_y := 0.0
+var _on_balloon: Balloon
+var _last_pos := Vector3.ZERO
+var _anim_speed := 0.0
+var _phase := 0.0
 
 
 func _enter_tree() -> void:
@@ -33,6 +60,10 @@ func _enter_tree() -> void:
 func _ready() -> void:
 	collision_layer = 1
 	collision_mask = 1
+	add_to_group("players")
+	if is_multiplayer_authority():
+		role = str(Settings.get_value("role"))
+	_last_pos = global_position
 	var cs := CollisionShape3D.new()
 	var cap := CapsuleShape3D.new()
 	cap.radius = 0.4
@@ -61,7 +92,7 @@ func _ready() -> void:
 
 	# Position und Blickrichtung an die anderen Spieler senden
 	var cfg := SceneReplicationConfig.new()
-	for prop in [^":position", ^":rotation"]:
+	for prop in [^":position", ^":rotation", ^":health", ^":role"]:
 		cfg.add_property(prop)
 		cfg.property_set_replication_mode(prop, SceneReplicationConfig.REPLICATION_MODE_ALWAYS)
 	var sync := MultiplayerSynchronizer.new()
@@ -87,17 +118,34 @@ func _physics_process(delta: float) -> void:
 		return   # fremde Spieler werden per Synchronisation bewegt
 	var input_dir := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var dir := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-	var speed := stat("speed", SPEED)
-	velocity.x = dir.x * speed
-	velocity.z = dir.z * speed
+	var speed := stat("speed", SPEED) * Roles.factor(role, "speed")
+	_jump_cd = maxf(_jump_cd - delta, 0.0)
+	if _on_balloon != null and is_instance_valid(_on_balloon) and _on_balloon.is_aloft():
+		# Ballon lenken (I-11): Auf der Plattform in der Luft steuert WASD den Ballon statt den Spieler.
+		_on_balloon.steer = dir
+		velocity.x = 0.0
+		velocity.z = 0.0
+	else:
+		velocity.x = dir.x * speed
+		velocity.z = dir.z * speed
+	velocity.x += _impulse.x
+	velocity.z += _impulse.z
+	_impulse = Vector3(_impulse.x, 0, _impulse.z).lerp(Vector3.ZERO, clampf(delta * 6.0, 0.0, 1.0))
 	if not is_on_floor():
 		velocity.y -= GRAVITY * delta
-	elif Input.is_action_just_pressed("jump"):
-		velocity.y = JUMP_VELOCITY
+	elif Input.is_action_just_pressed("jump") and _jump_cd <= 0.0:
+		velocity.y = JUMP_VELOCITY * Roles.factor(role, "jump")
+		_jump_cd = Roles.factor(role, "jump_cd")
 	move_and_slide()
+	_track_floor()
+	_track_fall(delta)
 	if global_position.y < -25.0:
-		global_position = Vector3(0, 2, 6)
+		_airborne = false
+		global_position = SPAWN_POINT
 		velocity = Vector3.ZERO
+	_tick_health(delta)
+	if InputMap.has_action("attack") and Input.is_action_just_pressed("attack") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		try_attack()
 
 	_update_aim()
 	cleaning = Input.is_action_pressed("clean") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED
@@ -119,7 +167,17 @@ func _update_aim() -> void:
 			aim_valid = true
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	# Lauf-Animation (I-11): aus der tatsächlichen Bewegung abgeleitet, damit sie auch bei fremden Spielern passt
+	if delta > 0.0 and is_inside_tree():
+		var moved := global_position - _last_pos
+		moved.y = 0.0
+		var sp := minf(moved.length() / delta, SPEED * 1.6)
+		_anim_speed = lerpf(_anim_speed, sp, clampf(delta * 12.0, 0.0, 1.0))
+		_last_pos = global_position
+		_phase += _anim_speed * delta * 1.7
+		if look != null:
+			PlayerLook.animate(look, _phase, clampf(_anim_speed / SPEED, 0.0, 1.0))
 	# Wedel schwingt beim Putzen
 	var t := Time.get_ticks_msec() / 1000.0
 	if cleaning:
@@ -185,3 +243,107 @@ func _refresh_look() -> void:
 	look = PlayerLook.build(idx)
 	look.name = "Look"
 	add_child(look)
+
+
+# ---------------------------------------------------------------- Gesundheit (I-12)
+
+func _track_floor() -> void:
+	_on_balloon = null
+	if not is_on_floor():
+		return
+	for i in get_slide_collision_count():
+		var c := get_slide_collision(i).get_collider()
+		if c is Balloon:
+			_on_balloon = c
+			return
+
+
+## Fallschaden: höchster Punkt in der Luft minus Landehöhe, erst ab SAFE_FALL Metern.
+func _track_fall(_delta: float) -> void:
+	if is_on_floor():
+		if _airborne:
+			_airborne = false
+			var drop := _peak_y - global_position.y
+			if drop > SAFE_FALL:
+				damage((drop - SAFE_FALL) * FALL_DAMAGE)
+	else:
+		if not _airborne:
+			_airborne = true
+			_peak_y = global_position.y
+		_peak_y = maxf(_peak_y, global_position.y)
+
+
+func _tick_health(delta: float) -> void:
+	_invuln = maxf(_invuln - delta, 0.0)
+	_attack_cd = maxf(_attack_cd - delta, 0.0)
+	_since_damage += delta
+	if health < MAX_HEALTH and _since_damage >= REGEN_DELAY:
+		health = minf(health + REGEN_RATE * delta, MAX_HEALTH)
+		health_changed.emit(health)
+
+
+## Schaden (nur beim Besitzer-Peer wirksam). Bei 0: kurz benommen, zurück zur Startlaterne mit voller Gesundheit.
+func damage(amount: float) -> void:
+	if amount <= 0.0 or _invuln > 0.0 or not is_multiplayer_authority():
+		return
+	health = maxf(health - amount, 0.0)
+	_since_damage = 0.0
+	health_changed.emit(health)
+	if health <= 0.0:
+		health = MAX_HEALTH
+		global_position = SPAWN_POINT
+		velocity = Vector3.ZERO
+		_airborne = false
+		_invuln = RESPAWN_INVULN
+		health_changed.emit(health)
+		died.emit()
+
+
+## Schlag auf den nächsten anderen Spieler vor dir (Reichweite ATTACK_RANGE, Abklingzeit ATTACK_COOLDOWN).
+func try_attack() -> bool:
+	if _attack_cd > 0.0:
+		return false
+	_attack_cd = ATTACK_COOLDOWN
+	var fwd := -global_transform.basis.z
+	fwd.y = 0.0
+	fwd = fwd.normalized()
+	var best: Player = null
+	var best_d := ATTACK_RANGE
+	for n in get_tree().get_nodes_in_group("players"):
+		var o := n as Player
+		if o == null or o == self:
+			continue
+		var d := o.global_position - global_position
+		d.y = 0.0
+		if d.length() < best_d and (d.length() < 0.8 or d.normalized().dot(fwd) > 0.3):
+			best = o
+			best_d = d.length()
+	if best == null:
+		return false
+	var push := fwd * 7.0 + Vector3(0, 3.0, 0)
+	if best.is_multiplayer_authority():
+		best.take_hit(HIT_DAMAGE, push)   # lokal (Solo/Test)
+	else:
+		best.take_hit.rpc_id(best.get_multiplayer_authority(), HIT_DAMAGE, push)
+	hit_landed.emit(best)
+	return true
+
+
+@rpc("any_peer", "call_local", "reliable")
+func take_hit(amount: float, push: Vector3) -> void:
+	if not is_multiplayer_authority():
+		return
+	knock(push)
+	damage(amount)
+
+
+## Rückstoß: horizontaler Anteil klingt über ~0,3 s ab, vertikaler Anteil wirkt sofort als Sprung.
+func knock(v: Vector3) -> void:
+	_impulse = Vector3(v.x, 0, v.z)
+	if v.y > 0.0:
+		velocity.y = maxf(velocity.y, v.y)
+
+
+## Wischradius-Faktor der Rolle (main.gd multipliziert damit den Shop-Radius).
+func wipe_factor() -> float:
+	return Roles.factor(role, "wipe")

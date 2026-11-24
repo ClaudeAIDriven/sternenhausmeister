@@ -6,7 +6,7 @@ extends RefCounted
 ## Pro Aktion gibt es zwei Plätze: "kb" (Taste oder Maustaste) und "pad" (Gamepad-Knopf oder -Achse).
 ## Gespeichert wird nur, was vom Standard abweicht (Settings-Schlüssel "bindings").
 
-const ACTIONS := ["move_forward", "move_back", "move_left", "move_right", "jump", "clean"]
+const ACTIONS := ["move_forward", "move_back", "move_left", "move_right", "jump", "clean", "attack"]
 const SLOTS := ["kb", "pad"]
 
 
@@ -19,6 +19,7 @@ static func defaults() -> Dictionary:
 		"move_right": {"kb": _key(KEY_D), "pad": _axis(JOY_AXIS_LEFT_X, 1.0)},
 		"jump": {"kb": _key(KEY_SPACE), "pad": _btn(JOY_BUTTON_A)},
 		"clean": {"kb": _mouse(MOUSE_BUTTON_LEFT), "pad": _axis(JOY_AXIS_TRIGGER_RIGHT, 1.0)},
+		"attack": {"kb": _mouse(MOUSE_BUTTON_RIGHT), "pad": _btn(JOY_BUTTON_X)},
 	}
 
 

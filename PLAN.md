@@ -84,4 +84,8 @@ I-08 Presets (Spielart im Menü, Zeitlimit, Hinweise) und Barrierefreiheit-Panel
 I-09 Werkstatt-Oberfläche: Taste B, Upgrades kaufen (Shop hatte keine UI); Online-Kauf über Host ungetestet im echten Netz
 U-06 Anfängerhilfe: Hinweise in 3 Schritten beim ersten Spiel, erster Sternbild-Stern pulsiert (Texte/Timing ungetestet von Menschen)
 I-10 Shop-Kauf im Netz: Preis wird bei allen abgebucht (Staub ist je Spieler gespiegelt, kleine Abweichungen durch Kombo möglich)
+I-11 Spielwelt: Lauf-Animation, Ballon ebenerdig und lenkbar, Kollision Haus/Laternen/Schild, Werkstatt mit F in der Nähe, Insel Radius 32
+I-12 Gesundheit: Lebensleiste, Regeneration nach 6 s, Fallschaden ab 5 m, Schubsen (rechte Maustaste), Lava, Kaktus, Respawn
+I-13 Rollen: Allrounder, Hüpfer, Gründlicher Putzer (Spinnenangst), Flitzer
+I-14 Minimap mit Werkstatt, Ballon, Sternen, Gefahren, Spielern, Fortschritt und Zeit
 G-15 (bot-A): Star.redirty()/apply_restored() (3–6 Flecken, Fleck-IDs wie bei Wischen), World.meteor_strike()/attach_weather() (nur Host, Zen = `zen`/Weather.cosmetic = nichts, gelöstes Sternbild bleibt gelöst), RPC _rpc_restored; erneutes Putzen zählt im Sternbild/Team-Bonus nicht doppelt. 🟢 tests/test_redirty.gd OK, 🟢 Netztest tools/test_netredirty.sh (Host+2 Clients) OK. ❌ Noch nicht in main.gd verdrahtet (world.attach_weather(weather) fehlt; Zen-Schalter muss zen/cosmetic setzen). 🟡 GameState.stars_cleaned zählt einen erneut geputzten Stern ein zweites Mal. Spielgefühl (Anzahl 3–6) ungetestet.

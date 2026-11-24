@@ -9,7 +9,7 @@ enum Step { START, FIRST_WIPE, FIRST_STAR, PUZZLE, DONE }
 
 const TEXTS := {
 	Step.START: "Willkommen auf der Wolkeninsel! Geh nah an einen schmutzigen Stern und halte die linke Maustaste (oder E) zum Putzen.",
-	Step.FIRST_WIPE: "Schön! Putz den ganzen Stern sauber. Mit der Taste B öffnest du die Werkstatt: Dort kaufst du Upgrades mit Sternenstaub.",
+	Step.FIRST_WIPE: "Schön! Putz den ganzen Stern sauber. Geh zur Werkstatt (Haus mit rotem Dach, auf der Karte oben rechts) und drück F: Dort kaufst du Upgrades mit Sternenstaub.",
 	Step.FIRST_STAR: "Der erste Stern glänzt! Die Sterne bilden ein Sternbild. Putz sie in der richtigen Reihenfolge, der pulsierende Stern ist als Nächstes dran.",
 	Step.PUZZLE: "",
 }

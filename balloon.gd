@@ -8,20 +8,28 @@ extends AnimatableBody3D
 signal reached_top
 signal returned
 
+const GROUND_Y := -0.13   # Oberkante der Plattform liegt 2 cm über dem Boden (y=0): ebenerdig betretbar
 const RISE_SPEED := 2.5   # m/s aufwärts
 const FALL_SPEED := 1.5   # m/s abwärts, wenn leer
 const BOARD_SIZE := Vector3(3.0, 0.3, 3.0)
+
+const STEER_SPEED := 4.5
+const MAX_DRIFT := 22.0         # so weit darf der Ballon von seinem Startpunkt wegtreiben
+const ALOFT_HEIGHT := 1.5       # ab dieser Höhe lenkt WASD den Ballon, statt den Spieler zu bewegen
 
 @export var top_height := 14.0   # Höhe der Plattform über dem Start (Sterne in 12 m sind so erreichbar)
 var base_y := 0.0
 var riders := 0
 var at_top := false
+var steer := Vector3.ZERO       # vom mitfahrenden Spieler gesetzt (Weltrichtung, Länge 0..1)
+var home := Vector3.ZERO
 var _area: Area3D
 
 
 func _ready() -> void:
 	base_y = position.y
-	sync_to_physics = true
+	home = position
+	sync_to_physics = false
 	collision_layer = 1
 	collision_mask = 0
 	var cs := CollisionShape3D.new()
@@ -65,6 +73,14 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	position.y = next_height(position.y, riders, delta)
+	if riders > 0 and steer.length() > 0.01:
+		var np := position + Vector3(steer.x, 0, steer.z) * STEER_SPEED * delta
+		var off := Vector2(np.x - home.x, np.z - home.z)
+		if off.length() > MAX_DRIFT:
+			off = off.normalized() * MAX_DRIFT
+		position.x = home.x + off.x
+		position.z = home.z + off.y
+	steer = Vector3.ZERO
 	_check_events()
 
 
@@ -73,6 +89,10 @@ func next_height(y: float, rider_count: int, delta: float) -> float:
 	if rider_count > 0:
 		return minf(y + RISE_SPEED * delta, base_y + top_height)
 	return maxf(y - FALL_SPEED * delta, base_y)
+
+
+func is_aloft() -> bool:
+	return position.y > base_y + ALOFT_HEIGHT
 
 
 func _check_events() -> void:

@@ -22,7 +22,15 @@ func _process(_d: float) -> bool:
 		gs.dust = 0
 		ui.refresh()
 		ok = ok and ui.rows["wipe_size"]["button"].disabled and ("Stufe 0 von 4" in ui.rows["wipe_size"]["label"].text)
+		# I-11: Weit weg von der Werkstatt öffnet weder B noch F; in der Nähe schon
+		ui.player_ref = main.player
+		main.player.global_position = Vector3(0, 0.1, 20)
 		ui._unhandled_input(_key(KEY_B))
+		ui._unhandled_input(_key(KEY_F))
+		ok = ok and not ui.is_open and not ui.is_near()
+		main.player.global_position = main.world.WORKSHOP_POS + Vector3(2, 0.1, 4)
+		ok = ok and ui.is_near()
+		ui._unhandled_input(_key(KEY_F))
 		ok = ok and ui.is_open and ui._root.visible
 		gs.add_dust(50)   # dust_changed -> refresh
 		var b: Button = ui.rows["wipe_size"]["button"]

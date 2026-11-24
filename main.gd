@@ -24,6 +24,8 @@ var accessibility: Accessibility
 var combo := Combo.new()   # G-12
 var shop: Shop
 var shop_ui: ShopUI
+var health_ui: HealthUI
+var minimap: Minimap
 var note_idx := 0
 var scrub_cooldown := 0.0
 
@@ -63,9 +65,14 @@ func _ready() -> void:
 	pause = Pause.new()   # U-03: Esc
 	pause.accessibility = accessibility
 	add_child(pause)
-	shop_ui = ShopUI.new()   # I-09: Werkstatt-Oberfläche (Taste B, nach der Pause angelegt: Esc kommt zuerst hier an)
+	shop_ui = ShopUI.new()   # I-09: Werkstatt-Oberfläche (F an der Werkstatt, nach der Pause angelegt: Esc kommt zuerst hier an)
 	add_child(shop_ui)
 	shop_ui.bind(shop)
+	health_ui = HealthUI.new()   # I-12
+	add_child(health_ui)
+	minimap = Minimap.new()   # I-14
+	add_child(minimap)
+	minimap.bind(world, night, players_root)
 	NetworkManager.disconnected.connect(func(): get_tree().change_scene_to_file("res://menu.tscn"))
 	world.star_scrubbed.connect(_on_star_scrubbed)
 	world.star_cleaned.connect(_on_star_cleaned)
@@ -88,6 +95,7 @@ func _ready() -> void:
 	tutorial.bind(world, hud)
 	night.start(float(rules.get("time_limit_s", Night.DEFAULT_DURATION)))   # G-01: Nacht mit sanftem Zeitlimit (Standard 10 Minuten)
 	hud.bind_night(night)
+	minimap.night = night
 	if "--selftest" in OS.get_cmdline_user_args():
 		call_deferred("_selftest")
 
@@ -104,6 +112,11 @@ func _setup_input() -> void:
 			var e := InputEventKey.new()
 			e.physical_keycode = map[action]
 			InputMap.action_add_event(action, e)
+	if not InputMap.has_action("attack"):
+		InputMap.add_action("attack")
+		var rm := InputEventMouseButton.new()
+		rm.button_index = MOUSE_BUTTON_RIGHT
+		InputMap.action_add_event("attack", rm)
 	if not InputMap.has_action("clean"):
 		InputMap.add_action("clean")
 		var m := InputEventMouseButton.new()
@@ -185,6 +198,9 @@ func _process(delta: float) -> void:
 		player = spawner.local_player()
 		if player != null:
 			player.wipe_requested.connect(_on_wipe_requested)
+			health_ui.bind(player)
+			shop_ui.player_ref = player
+			minimap.local_player = player
 	dust.emitting = player != null and player.cleaning and player.aim_valid
 	if dust.emitting:
 		dust.global_position = player.aim_point
@@ -195,7 +211,7 @@ func _refresh_hud(extra := "") -> void:
 
 
 func _on_wipe_requested(point: Vector3) -> void:
-	world.wipe_at(point, shop.value("wipe_radius"))
+	world.wipe_at(point, shop.value("wipe_radius") * (player.wipe_factor() if player != null else 1.0))   # I-13: Rollen-Faktor
 	if scrub_cooldown <= 0.0:
 		sfx.play(scrub_sound, randf_range(0.9, 1.15), -6.0)
 		scrub_cooldown = 0.11

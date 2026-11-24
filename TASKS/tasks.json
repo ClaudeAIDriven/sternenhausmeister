@@ -1314,5 +1314,360 @@
   "skills": "GDScript",
   "owner": "A",
   "prio": "must"
+ },
+ {
+  "id": "I-11",
+  "area": "GAME",
+  "title": "Spielwelt: Animation, Ballon ebenerdig/lenkbar, Kollision, Werkstatt-F, große Insel",
+  "deps": [],
+  "size": "M",
+  "status": "done",
+  "goal": "Spielwelt: Animation, Ballon ebenerdig/lenkbar, Kollision, Werkstatt-F, große Insel (PR #86).",
+  "files": [],
+  "accept": "tests/test_survival.gd",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
+ },
+ {
+  "id": "I-12",
+  "area": "GAME",
+  "title": "Gesundheit: Lebensleiste, Fall, Schubsen, Lava, Kaktus",
+  "deps": [],
+  "size": "M",
+  "status": "done",
+  "goal": "Gesundheit: Lebensleiste, Fall, Schubsen, Lava, Kaktus (PR #86).",
+  "files": [],
+  "accept": "tests/test_survival.gd",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
+ },
+ {
+  "id": "I-13",
+  "area": "GAME",
+  "title": "Rollen: Allrounder, Hüpfer, Putzer, Flitzer",
+  "deps": [],
+  "size": "M",
+  "status": "done",
+  "goal": "Rollen: Allrounder, Hüpfer, Putzer, Flitzer (PR #86).",
+  "files": [],
+  "accept": "tests/test_survival.gd",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
+ },
+ {
+  "id": "I-14",
+  "area": "UI",
+  "title": "Minimap mit Fortschritt und Zeit",
+  "deps": [],
+  "size": "M",
+  "status": "done",
+  "goal": "Minimap mit Fortschritt und Zeit (PR #86).",
+  "files": [],
+  "accept": "tests/test_survival.gd",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
+ },
+ {
+  "id": "G-20",
+  "area": "GAME",
+  "title": "Tod: 60-s-Respawn, 10 % Staubverlust, Wiederbeleben",
+  "deps": [
+   "I-12"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Bei 0 Leben fällt der Spieler um (benommen), verliert 10 % Sternenstaub und wartet 60 s (Zähler auf dem Bildschirm, Zuschauer-Kamera auf Mitspieler). Ein Mitspieler kann ihn durch 3 s Halten von F neben ihm sofort wiederbeleben (Research: PEAK/DRG, Rettungsmomente statt reiner Strafe).",
+  "files": [
+   "player.gd",
+   "health_ui.gd",
+   "main.gd",
+   "game_state.gd",
+   "tests/test_death.gd"
+  ],
+  "accept": "Test: Tod zieht 10 % ab, Respawn nach 60 s, Wiederbeleben verkürzt; Screenshot.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
+ },
+ {
+  "id": "G-21",
+  "area": "GAME",
+  "title": "Essen: Food-Leiste mit Bonus statt Zwang",
+  "deps": [
+   "I-12"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Zweite Leiste (Sättigung). Sinkt langsam mit Laufen, Springen und Putzen. Satt (>60 %): Regeneration x2, Putzen +10 %. Leer: keine Regeneration, Tempo -20 %, aber kein Tod (Research: Valheim, Hunger nur als Vorteil).",
+  "files": [
+   "food.gd",
+   "player.gd",
+   "health_ui.gd",
+   "tests/test_food.gd"
+  ],
+  "accept": "Test: Leiste sinkt mit Bewegung/Putzen, Boni/Mali greifen; Screenshot.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
+ },
+ {
+  "id": "G-22",
+  "area": "GAME",
+  "title": "Früchte finden und Inventar",
+  "deps": [
+   "G-21"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Sträucher und Bäume tragen Sternbeeren, Mondäpfel und Wolkenpilze (wachsen nach 90 s nach). Aufheben mit F, 6 Inventarplätze, Essen mit Q. Leuchten leicht, damit man sie nachts findet.",
+  "files": [
+   "fruit.gd",
+   "inventory.gd",
+   "world.gd",
+   "hud.gd",
+   "tests/test_fruit.gd"
+  ],
+  "accept": "Test: Aufheben, Essen füllt Leiste, Nachwachsen; Netz: nur einer bekommt die Frucht.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
+ },
+ {
+  "id": "G-23",
+  "area": "GAME",
+  "title": "Küche mit Rezepten",
+  "deps": [
+   "G-22"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Küche (Lagerfeuer mit Topf) als Ort auf der Insel. Rezepte in data/recipes.json (z. B. Mondapfel-Kompott, Sternbeeren-Suppe, Pilzpfanne). Gerichte füllen mehr und geben Zeit-Buffs (Wischradius, Tempo, Sprung). Rezeptbuch-Oberfläche mit F an der Küche.",
+  "files": [
+   "kitchen.gd",
+   "kitchen_ui.gd",
+   "data/recipes.json",
+   "tests/test_kitchen.gd"
+  ],
+  "accept": "Test: Rezept verbraucht Zutaten, Gericht gibt Buff; Screenshot.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
+ },
+ {
+  "id": "G-24",
+  "area": "GAME",
+  "title": "Rollen II: Koch und Kletterer",
+  "deps": [
+   "I-13",
+   "G-23"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Koch: Food-Leiste +50 %, Rezepte füllen 50 % mehr und Buffs halten länger. Kletterer: kann steile Flächen hochklettern und eine Leiter (8 s) aufstellen, die alle nutzen; braucht 50 % mehr Essen. Jede Rolle bekommt einen Team-Nutzen (Research: DRG-Interdependenz).",
+  "files": [
+   "roles.gd",
+   "player.gd",
+   "ladder.gd",
+   "tests/test_roles2.gd"
+  ],
+  "accept": "Test: Faktoren je Rolle, Leiter nutzbar; Screenshot.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
+ },
+ {
+  "id": "G-25",
+  "area": "GAME",
+  "title": "Putz-Utensilien freischalten und aufrüsten",
+  "deps": [
+   "I-09"
+  ],
+  "size": "L",
+  "status": "open",
+  "goal": "Werkstatt verkauft Utensilien nacheinander (Wedel → Schwamm → Besen → Staubsauger → Dampfreiniger → Sternpolierer), jedes teurer als das vorige. Jedes hat 3 eigene Upgrades (Breite, Tempo, Reichweite) gegen Staub. Staubsauger saugt Spinnen, Dampfreiniger löst zähe Flecken.",
+  "files": [
+   "tools.gd",
+   "shop.gd",
+   "shop_ui.gd",
+   "data/upgrades.json",
+   "player.gd",
+   "tests/test_utensils.gd"
+  ],
+  "accept": "Test: Reihenfolge, steigende Preise, Upgrades wirken; Netz: Kauf bei allen; Screenshot.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
+ },
+ {
+  "id": "G-26",
+  "area": "GAME",
+  "title": "XP und Fähigkeiten",
+  "deps": [
+   "G-25"
+  ],
+  "size": "L",
+  "status": "open",
+  "goal": "XP für Putzen, Sterne, Sternbilder, Gegner, Kochen, Wiederbeleben. Stufenaufstieg gibt einen Fähigkeitspunkt. Fähigkeitsbaum: allgemein (Ausdauer, Lunge, Taschen) und je Rolle 3 Fähigkeiten (z. B. Hüpfer: Doppelsprung; Koch: Festmahl; Putzer: Glanzwisch).",
+  "files": [
+   "xp.gd",
+   "skills.gd",
+   "skills_ui.gd",
+   "data/skills.json",
+   "tests/test_xp.gd"
+  ],
+  "accept": "Test: XP-Kurve, Punkt bei Aufstieg, Fähigkeit wirkt; Screenshot.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
+ },
+ {
+  "id": "G-27",
+  "area": "GAME",
+  "title": "Speichern und Laden (Host)",
+  "deps": [
+   "G-25",
+   "G-26"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Host speichert im Pausenmenü (user://saves/<Name>.json): Seed, Sternzustand, Staub, Shop/Utensilien, XP/Fähigkeiten je Spielername, Nacht. Menü: Spielstand laden (Solo und Host). Automatisches Speichern am Nachtende.",
+  "files": [
+   "save_game.gd",
+   "pause.gd",
+   "menu.gd",
+   "tests/test_save.gd"
+  ],
+  "accept": "Test: Speichern, neu laden, Werte gleich; Screenshot Menü.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
+ },
+ {
+  "id": "G-28",
+  "area": "GAME",
+  "title": "Gegner I: Wollmäuse und Spinnen",
+  "deps": [
+   "G-25"
+  ],
+  "size": "L",
+  "status": "open",
+  "goal": "Wollmäuse wuseln herum und verschmutzen geputzte Flecken; mit jedem Utensil wegputzbar. Spinnen bewachen Nester, beißen (8 Schaden) und lassen sich nur mit dem Staubsauger entfernen. Host steuert Gegner, Position wird synchronisiert.",
+  "files": [
+   "enemy.gd",
+   "dust_bunny.gd",
+   "spider.gd",
+   "world.gd",
+   "tests/test_enemies.gd"
+  ],
+  "accept": "Test: Wollmaus putzbar, Spinne nur mit Sauger; Netztest; Screenshot.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
+ },
+ {
+  "id": "G-29",
+  "area": "GAME",
+  "title": "Gegner II: Rußwolke (nur im Team besiegbar)",
+  "deps": [
+   "G-28"
+  ],
+  "size": "L",
+  "status": "open",
+  "goal": "Große Rußwolke zieht über die Insel und verdunkelt Sterne. Nur besiegbar, wenn mindestens 2 Spieler gleichzeitig wischen (solo: Schild fällt in Wellen). Gibt viel XP und Staub.",
+  "files": [
+   "soot_cloud.gd",
+   "world.gd",
+   "tests/test_boss.gd"
+  ],
+  "accept": "Test: Schaden nur bei 2 gleichzeitigen Wischern; Screenshot.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "nice"
+ },
+ {
+  "id": "G-30",
+  "area": "GAME",
+  "title": "Orte (POI) mit Vorteilen",
+  "deps": [
+   "G-22"
+  ],
+  "size": "M",
+  "status": "open",
+  "goal": "Brunnen (heilt 2/s), Obstgarten (viele Früchte), Aussichtsturm (zeigt Gegner auf der Minimap), Sternenschrein (60 s Buff gegen Staub), Küche. Auf der Minimap mit Symbol.",
+  "files": [
+   "poi.gd",
+   "world.gd",
+   "minimap.gd",
+   "tests/test_poi.gd"
+  ],
+  "accept": "Test: jeder Ort wirkt; Screenshot.",
+  "skills": "GDScript",
+  "owner": "C",
+  "prio": "must"
+ },
+ {
+  "id": "G-31",
+  "area": "GAME",
+  "title": "Prozedurale Insel aus Seed",
+  "deps": [
+   "G-30"
+  ],
+  "size": "L",
+  "status": "open",
+  "goal": "Insel-Layout aus einem Seed: Sterne, Orte, Gefahren, Gegner und Deko werden mit Mindestabständen verteilt; der Seed steht im Pausenmenü und im Speicherstand. Host verteilt den Seed an alle.",
+  "files": [
+   "island_gen.gd",
+   "world.gd",
+   "tests/test_island_gen.gd"
+  ],
+  "accept": "Test: gleicher Seed = gleiche Insel, Mindestabstände, alles erreichbar.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "nice"
+ },
+ {
+  "id": "G-32",
+  "area": "GAME",
+  "title": "Friedensvertrag: Schubsen an oder aus",
+  "deps": [
+   "I-12"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Raumoption 'Friedlich' (Standard): Schubsen stößt nur weg, macht keinen Schaden. 'Rauflust': Schaden wie bisher. Research: Koop-Spieler mögen Griefing nicht.",
+  "files": [
+   "presets.gd",
+   "player.gd",
+   "menu.gd",
+   "tests/test_peace.gd"
+  ],
+  "accept": "Test: kein Schaden im Frieden.",
+  "skills": "GDScript",
+  "owner": "C",
+  "prio": "nice"
+ },
+ {
+  "id": "G-33",
+  "area": "UI",
+  "title": "Minimap-Ping",
+  "deps": [
+   "I-14"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "Mittlere Maustaste setzt einen Ping (Hilfe/Stern hier) auf der Minimap aller Spieler, 8 s sichtbar, Pfeil am Bildschirmrand.",
+  "files": [
+   "minimap.gd",
+   "player.gd",
+   "tests/test_ping.gd"
+  ],
+  "accept": "Test: Ping erscheint und verschwindet; Netztest.",
+  "skills": "GDScript",
+  "owner": "C",
+  "prio": "nice"
  }
 ]

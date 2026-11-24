@@ -5,9 +5,26 @@ extends Node3D
 signal star_scrubbed(star: Star, removed: int)
 signal star_cleaned(star: Star)
 
-const STAR_POSITIONS := [Vector3(0, 5.0, -7), Vector3(-9, 6.0, 1), Vector3(8, 5.5, 3),
+## I-11: Die Insel ist ~2,3-mal so groß wie früher (Radius 32 statt 14). Sterne liegen weit verteilt; Werkstatt und Ballon bilden die Mitte.
+const ISLAND_RADIUS := 32.0
+const STAR_SPREAD := 2.0
+const BASE_STAR_POSITIONS := [Vector3(0, 5.0, -7), Vector3(-9, 6.0, 1), Vector3(8, 5.5, 3),
 	Vector3(4.5, 6.2, -11.0), Vector3(-12.0, 5.5, -6.0), Vector3(-3.0, 6.0, 9.5),
 	Vector3(11.0, 6.0, 8.0), Vector3(-6.5, 6.5, -10.5)]
+## Weltpositionen: Grundmuster (Sternbild-Formen bleiben erhalten) in x/z gestreckt.
+static var STAR_POSITIONS: Array = _spread_stars()
+const WORKSHOP_POS := Vector3(-8, 0, -6)
+const WORKSHOP_RANGE := 6.0
+const LAVA_SPOTS := [Vector3(24, 0, -4), Vector3(-20, 0, 20)]
+const SPIDER_SPOTS := [Vector3(-9, 0, 17), Vector3(14, 0, -21), Vector3(-23, 0, -9)]
+const CACTUS_SPOTS := [Vector3(12, 0, 12), Vector3(-3, 0, -25), Vector3(20, 0, -18), Vector3(-25, 0, 6), Vector3(4, 0, 25), Vector3(-14, 0, -2)]
+
+
+static func _spread_stars() -> Array:
+	var out: Array = []
+	for p in BASE_STAR_POSITIONS:
+		out.append(Vector3(p.x * STAR_SPREAD, p.y, p.z * STAR_SPREAD))
+	return out
 const MIN_STARS := 3
 ## Ein Spieler bekommt 3 Sterne, jeder weitere Spieler einen mehr (bis 8). Zeitlimit bleibt gleich, also mehr Arbeit für mehr Hände.
 const STARS_PER_EXTRA_PLAYER := 1
@@ -135,8 +152,8 @@ func _build_island() -> void:
 	var body := StaticBody3D.new()
 	body.collision_layer = 1
 	var mesh := CylinderMesh.new()
-	mesh.top_radius = 14.0
-	mesh.bottom_radius = 9.0
+	mesh.top_radius = ISLAND_RADIUS
+	mesh.bottom_radius = ISLAND_RADIUS * 0.65
 	mesh.height = 2.0
 	var mat := StandardMaterial3D.new()
 	mat.albedo_color = Palette.UI_IVORY.darkened(0.1)   # Wolkenränder
@@ -146,11 +163,11 @@ func _build_island() -> void:
 	mat.roughness = 0.9
 	var mi := MeshInstance3D.new()
 	mi.mesh = mesh
-	mi.material_override = IslandProps.ground_material(5.0)   # A-12: handgemalt wirkender Boden
+	mi.material_override = IslandProps.ground_material(5.0 * ISLAND_RADIUS / 14.0)   # A-12: handgemalt wirkender Boden
 	body.add_child(mi)
 	var cs := CollisionShape3D.new()
 	var shape := CylinderShape3D.new()
-	shape.radius = 14.0
+	shape.radius = ISLAND_RADIUS
 	shape.height = 2.0
 	cs.shape = shape
 	body.add_child(cs)
@@ -163,12 +180,12 @@ func _build_island() -> void:
 	var puff := SphereMesh.new()
 	puff.radius = 1.6
 	puff.height = 3.2
-	for i in 18:
-		var a := TAU * i / 18.0
+	for i in 40:
+		var a := TAU * i / 40.0
 		var p := MeshInstance3D.new()
 		p.mesh = puff
 		p.material_override = mat
-		p.position = Vector3(cos(a) * 13.5, -0.4 + rng.randf() * 0.6, sin(a) * 13.5)
+		p.position = Vector3(cos(a) * (ISLAND_RADIUS - 0.5), -0.4 + rng.randf() * 0.6, sin(a) * (ISLAND_RADIUS - 0.5))
 		p.scale = Vector3.ONE * rng.randf_range(0.8, 1.4)
 		add_child(p)
 
@@ -219,27 +236,77 @@ func _rpc_layout(count: int) -> void:
 		_build_stars(count)
 
 
-## Gras, Steine, Büsche, Laternen, Werkstatt und Schild (A-12, A-03). Rein optisch, ohne Kollision.
+## Gras, Steine, Büsche, Laternen, Werkstatt und Schild (A-12, A-03). Haus, Laternen und Schild haben Kollision.
 func _decorate_island() -> void:
-	var deco := IslandProps.decorate(13.0, 42)
+	var deco := IslandProps.decorate(ISLAND_RADIUS - 1.0, 42, 700, 90, 36)
 	deco.name = "Deko"
 	add_child(deco)
 	for p in [Vector3(4, 0, 6), Vector3(-5, 0, 7), Vector3(7, 0, -5)]:
 		var lamp := IslandProps.lantern()
 		lamp.position = p
 		add_child(lamp)
+		_add_cylinder_collider(lamp, 0.25, 2.5)
 	var shop_house := Props.workshop()
-	shop_house.position = Vector3(-8, 0, -6)
+	shop_house.position = WORKSHOP_POS
 	shop_house.rotation.y = 0.6
 	add_child(shop_house)
+	# Kollision (I-11): Wände der Hütte und Werkbank sind fest; Maße wie in Props.workshop()
+	_add_box_collider(shop_house, Vector3(4.0, 2.4, 3.0), Vector3(0, 1.2, 0))
+	_add_box_collider(shop_house, Vector3(1.8, 0.9, 0.8), Vector3(3.0, 0.45, 0.0))
 	# Ballon (G-10): steigt mit Mitfahrern, so werden die hohen Sterne erreichbar
 	balloon = Balloon.new()
 	balloon.name = "Ballon"
-	balloon.position = Vector3(9.5, 0.15, -2.0)
+	balloon.position = Vector3(9.5, Balloon.GROUND_Y, -2.0)   # Plattform bündig mit dem Boden: man läuft einfach hinauf
 	add_child(balloon)
 	var sign := IslandProps.sign_post("Werkstatt")
 	sign.position = Vector3(-5, 0, -3.5)
 	add_child(sign)
+	_add_cylinder_collider(sign, 0.3, 2.0)
+	for sp in LAVA_SPOTS:   # Gefahren (I-12)
+		var lava := Hazard.new()
+		lava.kind = "lava"
+		lava.radius = 3.0
+		lava.position = sp
+		lava.add_to_group("hazards")
+		add_child(lava)
+	for sp in SPIDER_SPOTS:   # Spinnennester (I-13): schrecken Rollen mit Spinnenangst zurück
+		var nest := Hazard.new()
+		nest.kind = "spider"
+		nest.radius = 3.0
+		nest.position = sp
+		nest.add_to_group("hazards")
+		add_child(nest)
+	for sp in CACTUS_SPOTS:
+		var c := Hazard.new()
+		c.kind = "cactus"
+		c.position = sp
+		c.add_to_group("hazards")
+		add_child(c)
+
+
+func _add_box_collider(parent: Node3D, size: Vector3, pos: Vector3) -> void:
+	var body := StaticBody3D.new()
+	body.collision_layer = 1
+	var cs := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = size
+	cs.shape = box
+	cs.position = pos
+	body.add_child(cs)
+	parent.add_child(body)
+
+
+func _add_cylinder_collider(parent: Node3D, radius: float, height: float) -> void:
+	var body := StaticBody3D.new()
+	body.collision_layer = 1
+	var cs := CollisionShape3D.new()
+	var sh := CylinderShape3D.new()
+	sh.radius = radius
+	sh.height = height
+	cs.shape = sh
+	cs.position.y = height * 0.5
+	body.add_child(cs)
+	parent.add_child(body)
 
 
 func _build_stars(count: int) -> void:

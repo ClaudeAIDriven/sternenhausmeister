@@ -71,3 +71,21 @@
 | [I-08](I-08.md) | A | must | GAME | Presets und Barrierefreiheit ins Spiel einbauen | M | done | G-09, U-04, U-01, U-03 |
 | [I-09](I-09.md) | A | must | UI | Werkstatt-Oberfläche (Shop-UI) | S | done | G-05, U-03 |
 | [I-10](I-10.md) | A | must | NET | Shop-Kauf im Netz: Staub bei allen abbuchen | S | done | G-05, I-09 |
+| [I-11](I-11.md) | A | must | GAME | Spielwelt: Animation, Ballon ebenerdig/lenkbar, Kollision, Werkstatt-F, große Insel | M | done | – |
+| [I-12](I-12.md) | A | must | GAME | Gesundheit: Lebensleiste, Fall, Schubsen, Lava, Kaktus | M | done | – |
+| [I-13](I-13.md) | A | must | GAME | Rollen: Allrounder, Hüpfer, Putzer, Flitzer | M | done | – |
+| [I-14](I-14.md) | A | must | UI | Minimap mit Fortschritt und Zeit | M | done | – |
+| [G-20](G-20.md) | A | must | GAME | Tod: 60-s-Respawn, 10 % Staubverlust, Wiederbeleben | M | open | I-12 |
+| [G-21](G-21.md) | A | must | GAME | Essen: Food-Leiste mit Bonus statt Zwang | M | open | I-12 |
+| [G-22](G-22.md) | A | must | GAME | Früchte finden und Inventar | M | open | G-21 |
+| [G-23](G-23.md) | A | must | GAME | Küche mit Rezepten | M | open | G-22 |
+| [G-24](G-24.md) | A | must | GAME | Rollen II: Koch und Kletterer | M | open | I-13, G-23 |
+| [G-25](G-25.md) | A | must | GAME | Putz-Utensilien freischalten und aufrüsten | L | open | I-09 |
+| [G-26](G-26.md) | A | must | GAME | XP und Fähigkeiten | L | open | G-25 |
+| [G-27](G-27.md) | A | must | GAME | Speichern und Laden (Host) | M | open | G-25, G-26 |
+| [G-28](G-28.md) | A | must | GAME | Gegner I: Wollmäuse und Spinnen | L | open | G-25 |
+| [G-29](G-29.md) | A | nice | GAME | Gegner II: Rußwolke (nur im Team besiegbar) | L | open | G-28 |
+| [G-30](G-30.md) | C | must | GAME | Orte (POI) mit Vorteilen | M | open | G-22 |
+| [G-31](G-31.md) | A | nice | GAME | Prozedurale Insel aus Seed | L | open | G-30 |
+| [G-32](G-32.md) | C | nice | GAME | Friedensvertrag: Schubsen an oder aus | S | open | I-12 |
+| [G-33](G-33.md) | C | nice | UI | Minimap-Ping | S | open | I-14 |

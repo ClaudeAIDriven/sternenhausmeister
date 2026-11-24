@@ -11,6 +11,7 @@ const DEFAULTS := {
 	"fov": 70.0,
 	"ui_scale": 1.0,
 	"player_name": "Spieler",
+	"role": "allrounder",   # I-13: gewählte Rolle (siehe roles.gd)
 	"tutorial_done": false,   # U-06: Anfängerhilfe nur beim ersten Spiel
 	# C-04: eigene Tastenbelegung, {Aktion: {"kb": Ereignis-Dict, "pad": Ereignis-Dict}}.
 	# Leer = Standardbelegung (siehe input_setup.gd).
