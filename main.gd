@@ -1,6 +1,7 @@
 extends Node3D
 ## Einstieg: verbindet Himmel, Welt, Spieler, Ton und Anzeige. Die Details stecken in sky.gd, world.gd, hud.gd.
 
+const DUST_PER_SPOT := 1
 const PENTATONIC := [261.6, 293.7, 329.6, 392.0, 440.0, 523.3, 587.3, 659.3]
 
 var sky: NightSky
@@ -119,7 +120,8 @@ func _on_wipe_requested(point: Vector3) -> void:
 		scrub_cooldown = 0.11
 
 
-func _on_star_scrubbed(_star: Star, _removed: int) -> void:
+func _on_star_scrubbed(_star: Star, removed: int) -> void:
+	GameState.add_dust(removed * DUST_PER_SPOT)   # G-04: Sternenstaub fällt beim Putzen an
 	sfx.play(notes[note_idx % notes.size()], 1.0, -4.0)
 	note_idx += 1
 
@@ -155,6 +157,10 @@ func _selftest() -> void:
 			guard += 1
 		ok = ok and s.is_clean and is_equal_approx(s.progress, 1.0)
 	ok = ok and world.cleaned_count() == world.stars.size()
+	var total_spots := 0
+	for st in world.stars:
+		total_spots += st.total
+	ok = ok and GameState.dust == 6 + total_spots * DUST_PER_SPOT   # 6 = Rest aus dem GameState-Test oben
 	ok = ok and GameState.stars_cleaned == world.stars.size() and fired["cleaned"] == world.stars.size()
 	print("SELFTEST cleaned=%d/%d progress_ok=%s" % [world.cleaned_count(), world.stars.size(), str(ok)])
 	print("SELFTEST OK" if ok else "SELFTEST FAIL")

@@ -305,7 +305,7 @@
    "C-02"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Beim Putzen fällt Staub an, GameState.dust steigt, Anzeige im HUD.",
   "files": [
    "game_state.gd",
