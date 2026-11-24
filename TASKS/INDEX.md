@@ -81,7 +81,7 @@
 | [G-23](G-23.md) | A | must | GAME | Küche mit Rezepten | M | done | G-22 | – |
 | [G-24](G-24.md) | A | must | GAME | Rollen II: Koch und Kletterer | M | done | I-13, G-23 | – |
 | [G-25](G-25.md) | A | must | GAME | Putz-Utensilien freischalten und aufrüsten | L | done | I-09 | – |
-| [G-26](G-26.md) | A | must | GAME | XP und Fähigkeiten | L | open | G-25 | – |
+| [G-26](G-26.md) | A | must | GAME | XP und Fähigkeiten | L | done | G-25 | – |
 | [G-27](G-27.md) | A | must | GAME | Speichern und Laden (Host) | M | open | G-25, G-26 | – |
 | [G-28](G-28.md) | A | must | GAME | Gegner I: Wollmäuse und Spinnen | L | open | G-25 | – |
 | [G-29](G-29.md) | A | nice | GAME | Gegner II: Rußwolke (nur im Team besiegbar) | L | open | G-28 | – |

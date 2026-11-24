@@ -1,0 +1,235 @@
+{
+ "skills": [
+  {
+   "id": "ausdauer",
+   "name": "Ausdauer",
+   "desc": "Du wirst langsamer hungrig (-10 % Verbrauch je Stufe).",
+   "role": "",
+   "max_level": 3,
+   "effect": {
+    "stat": "hunger",
+    "mult": 0.9
+   }
+  },
+  {
+   "id": "lunge",
+   "name": "Lunge",
+   "desc": "Du erholst dich schneller (+25 % Regeneration je Stufe).",
+   "role": "",
+   "max_level": 3,
+   "effect": {
+    "stat": "regen",
+    "mult": 1.25
+   }
+  },
+  {
+   "id": "taschen",
+   "name": "Taschen",
+   "desc": "Ein Beutelplatz mehr je Stufe.",
+   "role": "",
+   "max_level": 2,
+   "effect": {
+    "stat": "bag_slots",
+    "add": 1
+   }
+  },
+  {
+   "id": "allrounder_fleiss",
+   "name": "Fleißiger Wedel",
+   "desc": "+5 % Sternenstaub je Stufe.",
+   "role": "allrounder",
+   "max_level": 3,
+   "effect": {
+    "stat": "dust_gain",
+    "mult": 1.05
+   }
+  },
+  {
+   "id": "allrounder_reach",
+   "name": "Langer Arm",
+   "desc": "+0,5 m Reichweite je Stufe.",
+   "role": "allrounder",
+   "max_level": 3,
+   "effect": {
+    "stat": "reach",
+    "add": 0.5
+   }
+  },
+  {
+   "id": "allrounder_regen",
+   "name": "Zähes Fell",
+   "desc": "Weniger Fallschaden (-10 % je Stufe).",
+   "role": "allrounder",
+   "max_level": 3,
+   "effect": {
+    "stat": "fall_damage",
+    "mult": 0.9
+   }
+  },
+  {
+   "id": "springer_doppel",
+   "name": "Doppelsprung",
+   "desc": "Ein zweiter Sprung in der Luft.",
+   "role": "springer",
+   "max_level": 1,
+   "effect": {
+    "stat": "double_jump",
+    "add": 1
+   }
+  },
+  {
+   "id": "springer_weich",
+   "name": "Weiche Landung",
+   "desc": "-20 % Fallschaden je Stufe.",
+   "role": "springer",
+   "max_level": 3,
+   "effect": {
+    "stat": "fall_damage",
+    "mult": 0.8
+   }
+  },
+  {
+   "id": "springer_kurz",
+   "name": "Kurze Pause",
+   "desc": "Sprung-Abklingzeit -20 % je Stufe.",
+   "role": "springer",
+   "max_level": 3,
+   "effect": {
+    "stat": "jump_cd",
+    "mult": 0.8
+   }
+  },
+  {
+   "id": "putzer_glanz",
+   "name": "Glanzwisch",
+   "desc": "+10 % Wischradius je Stufe.",
+   "role": "putzer",
+   "max_level": 3,
+   "effect": {
+    "stat": "wipe",
+    "mult": 1.1
+   }
+  },
+  {
+   "id": "putzer_mut",
+   "name": "Spinnenmut",
+   "desc": "Weniger Angst vor Spinnen (Abstand -25 % je Stufe).",
+   "role": "putzer",
+   "max_level": 3,
+   "effect": {
+    "stat": "spider_fear",
+    "mult": 0.75
+   }
+  },
+  {
+   "id": "putzer_schnell",
+   "name": "Flotter Besen",
+   "desc": "+10 % Wischtempo je Stufe.",
+   "role": "putzer",
+   "max_level": 3,
+   "effect": {
+    "stat": "wipe_rate",
+    "mult": 1.1
+   }
+  },
+  {
+   "id": "flitzer_sohlen",
+   "name": "Heiße Sohlen",
+   "desc": "+8 % Tempo je Stufe.",
+   "role": "flitzer",
+   "max_level": 3,
+   "effect": {
+    "stat": "speed",
+    "mult": 1.08
+   }
+  },
+  {
+   "id": "flitzer_sorgfalt",
+   "name": "Etwas Sorgfalt",
+   "desc": "+10 % Wischradius je Stufe (gleicht die Schlamperei aus).",
+   "role": "flitzer",
+   "max_level": 3,
+   "effect": {
+    "stat": "wipe",
+    "mult": 1.1
+   }
+  },
+  {
+   "id": "flitzer_kondition",
+   "name": "Kondition",
+   "desc": "-10 % Hunger je Stufe.",
+   "role": "flitzer",
+   "max_level": 3,
+   "effect": {
+    "stat": "hunger",
+    "mult": 0.9
+   }
+  },
+  {
+   "id": "koch_festmahl",
+   "name": "Festmahl",
+   "desc": "Gerichte füllen 20 % mehr je Stufe.",
+   "role": "koch",
+   "max_level": 3,
+   "effect": {
+    "stat": "recipe_food",
+    "mult": 1.2
+   }
+  },
+  {
+   "id": "koch_aroma",
+   "name": "Aroma",
+   "desc": "Gericht-Buffs halten 20 % länger je Stufe.",
+   "role": "koch",
+   "max_level": 3,
+   "effect": {
+    "stat": "buff_time",
+    "mult": 1.2
+   }
+  },
+  {
+   "id": "koch_vorrat",
+   "name": "Vorratskammer",
+   "desc": "Zwei Beutelplätze mehr.",
+   "role": "koch",
+   "max_level": 1,
+   "effect": {
+    "stat": "bag_slots",
+    "add": 2
+   }
+  },
+  {
+   "id": "kletterer_griff",
+   "name": "Fester Griff",
+   "desc": "+20 % Klettertempo je Stufe.",
+   "role": "kletterer",
+   "max_level": 3,
+   "effect": {
+    "stat": "climb",
+    "mult": 1.2
+   }
+  },
+  {
+   "id": "kletterer_leiter",
+   "name": "Lange Leiter",
+   "desc": "Die Leiter steht 2 s länger je Stufe.",
+   "role": "kletterer",
+   "max_level": 3,
+   "effect": {
+    "stat": "ladder_time",
+    "add": 2.0
+   }
+  },
+  {
+   "id": "kletterer_haken",
+   "name": "Kurze Pause",
+   "desc": "Leiter-Abklingzeit -20 % je Stufe.",
+   "role": "kletterer",
+   "max_level": 3,
+   "effect": {
+    "stat": "ladder_cd",
+    "mult": 0.8
+   }
+  }
+ ]
+}
