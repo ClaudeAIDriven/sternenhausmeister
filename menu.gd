@@ -21,6 +21,7 @@ var buttons := {}   # "solo" | "host" | "join" | "settings" | "quit" -> Button
 var main_box: VBoxContainer
 var role_option: OptionButton    # I-13: Rolle
 var brawl_check: CheckBox   # G-32: Rauflust (Schubsen macht Schaden), Standard aus
+var seed_edit: LineEdit
 var map_option: OptionButton   # M-03: Karte
 var preset_option: OptionButton   # I-08: Spielart (Presets aus G-09)
 var settings_box: VBoxContainer
@@ -51,9 +52,20 @@ func _build_ui() -> void:
 	panel.offset_right = 48 + 440
 	panel.grow_vertical = Control.GROW_DIRECTION_BOTH
 	_root.add_child(panel)
+	var scroll := ScrollContainer.new()   # M-07: passt auch auf kleine Fenster
+	scroll.name = "Scroll"
+	scroll.custom_minimum_size = Vector2(440, 0)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	panel.add_child(scroll)
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", 10)
-	panel.add_child(col)
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(col)
+	panel.anchor_top = 0.0
+	panel.anchor_bottom = 1.0
+	panel.offset_top = 16
+	panel.offset_bottom = -16
 
 	var logo := load("res://assets/ui/logo.svg") as Texture2D
 	if logo != null:
@@ -83,14 +95,22 @@ func _build_ui() -> void:
 		role_option.set_item_metadata(role_option.item_count - 1, rid)
 		if rid == str(Settings.get_value("role")):
 			role_option.select(role_option.item_count - 1)
+	role_option.fit_to_longest_item = false
 	main_box.add_child(role_option)
 	main_box.add_child(_label("Karte"))
 	map_option = OptionButton.new()
 	map_option.name = "MapOption"
 	for id in Maps.ids():
-		map_option.add_item("%s – %s" % [Maps.profile(id)["name"], Maps.profile(id)["desc"]])
+		map_option.add_item(str(Maps.profile(id)["name"]))
 		map_option.set_item_metadata(map_option.item_count - 1, id)
+	map_option.fit_to_longest_item = false
+	map_option.item_selected.connect(func(i: int): _set_status(str(Maps.profile(str(map_option.get_item_metadata(i)))["desc"])))
 	main_box.add_child(map_option)
+	seed_edit = LineEdit.new()   # M-07: Insel-Seed (leer = klassisch bzw. zufällig je nach Karte)
+	seed_edit.name = "SeedEdit"
+	seed_edit.placeholder_text = "Insel-Seed (leer = automatisch)"
+	seed_edit.max_length = 9
+	main_box.add_child(seed_edit)
 	main_box.add_child(_label("Spielart"))
 	preset_option = OptionButton.new()
 	preset_option.name = "PresetOption"
@@ -103,6 +123,7 @@ func _build_ui() -> void:
 	for id in ids:
 		preset_option.add_item(str(all[id]["name"]))
 		preset_option.set_item_metadata(preset_option.item_count - 1, id)
+	preset_option.fit_to_longest_item = false
 	main_box.add_child(preset_option)
 	brawl_check = CheckBox.new()
 	brawl_check.name = "BrawlCheck"
@@ -115,6 +136,7 @@ func _build_ui() -> void:
 	for n in SaveGame.list():
 		save_option.add_item("Laden: " + n)
 		save_option.set_item_metadata(save_option.item_count - 1, n)
+	save_option.fit_to_longest_item = false
 	main_box.add_child(save_option)
 	buttons["solo"] = _button(main_box, "Allein putzen", func(): start("solo"))
 	buttons["host"] = _button(main_box, "Raum eröffnen (Host)", func(): start("host"))
@@ -219,7 +241,8 @@ func start(mode: String) -> bool:
 	if role_option != null and role_option.selected >= 0:
 		role = str(role_option.get_item_metadata(role_option.selected))
 	Settings.set_value("role", role)
-	launch = {"mode": mode, "ip": ip if mode == "join" else "", "name": pname, "preset": preset, "map": str(map_option.get_item_metadata(map_option.selected)) if (map_option != null and map_option.selected >= 0) else Maps.DEFAULT_ID,
+	launch = {"mode": mode, "ip": ip if mode == "join" else "", "name": pname, "preset": preset, "seed": seed_edit.text.strip_edges() if seed_edit != null else "",
+		"map": str(map_option.get_item_metadata(map_option.selected)) if (map_option != null and map_option.selected >= 0) else Maps.DEFAULT_ID,
 		"brawl": brawl_check != null and brawl_check.button_pressed,
 		"load": str(save_option.get_item_metadata(save_option.selected)) if (save_option != null and save_option.selected > 0 and mode != "join") else ""}
 	start_requested.emit(mode, launch["ip"], pname)

@@ -1796,7 +1796,7 @@
   "title": "Grafik-Update III: UI-Stil, Menühintergrund, HUD, Icons",
   "deps": [],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Einheitlicher UI-Stil, animierter Menühintergrund, bessere Fortschrittsbalken, Utensil- und Frucht-Icons, Kartenvorschau im Menü.",
   "files": [
    "hud.gd",

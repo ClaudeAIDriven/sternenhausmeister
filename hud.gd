@@ -20,10 +20,29 @@ var _world: World
 
 
 func _ready() -> void:
+	var panel := PanelContainer.new()   # M-07: Anzeige in einer abgesetzten, halbtransparenten Tafel
+	panel.name = "HudPanel"
+	panel.position = Vector2(14, 12)
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.05, 0.06, 0.16, 0.58)
+	sb.border_color = Color(1.0, 0.82, 0.4, 0.55)
+	sb.set_border_width_all(2)
+	sb.set_corner_radius_all(12)
+	sb.content_margin_left = 14
+	sb.content_margin_right = 14
+	sb.content_margin_top = 8
+	sb.content_margin_bottom = 8
+	panel.add_theme_stylebox_override("panel", sb)
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(panel)
 	_label = Label.new()
-	_label.position = Vector2(20, 16)
-	_label.add_theme_font_size_override("font_size", 22)
-	add_child(_label)
+	_label.custom_minimum_size = Vector2(560, 0)
+	_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_label.add_theme_font_size_override("font_size", 20)
+	_label.add_theme_color_override("font_color", Palette.UI_IVORY)
+	_label.add_theme_color_override("font_outline_color", Palette.UI_PANEL)
+	_label.add_theme_constant_override("outline_size", 4)
+	panel.add_child(_label)
 	var cross := Label.new()
 	cross.text = "+"
 	cross.add_theme_font_size_override("font_size", 28)
@@ -139,8 +158,7 @@ func refresh() -> void:
 		for id in NetworkManager.players:
 			names.append(str(NetworkManager.players[id].get("name", id)))
 		lines += "Spieler (%d): %s\n" % [names.size(), ", ".join(names)]
-	lines += "WASD laufen · Leertaste springen · Maus zielen\n"
-	lines += "Linke Maustaste / E: putzen · Rechte Maustaste: schubsen · F an der Werkstatt: Upgrades · Esc: Pause"
+	lines += "WASD · Leertaste · E putzen · Rechtsklick schubsen · F Werkstatt/Küche · K Fähigkeiten · Esc: Pause"
 	if _extra != "":
 		lines += "\n\n" + _extra
 	_label.text = lines
