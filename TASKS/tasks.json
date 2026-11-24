@@ -1067,5 +1067,24 @@
   "skills": "GDScript",
   "owner": "A",
   "prio": "must"
+ },
+ {
+  "id": "I-05",
+  "area": "UI",
+  "title": "HUD: Sternbild-Fortschritt und Hinweise",
+  "deps": [
+   "I-04"
+  ],
+  "size": "S",
+  "status": "open",
+  "goal": "HUD zeigt Name und Fortschritt des Sternbilds, Meldungen bei falscher Reihenfolge (Hinweis) und bei Lösung (Bonus); Steuerungshinweis nennt Esc als Pause.",
+  "files": [
+   "hud.gd",
+   "main.gd"
+  ],
+  "accept": "Test: HUD-Text enthält Sternbild-Fortschritt und reagiert auf puzzle_changed/puzzle_wrong/puzzle_solved; Screenshot.",
+  "skills": "GDScript, Godot-UI",
+  "owner": "A",
+  "prio": "must"
  }
 ]
