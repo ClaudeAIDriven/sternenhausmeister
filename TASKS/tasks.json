@@ -919,7 +919,7 @@
    "A-06"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "`ConstellationLines.build(points)`: dünne goldene Linien mit runden Enden, Lichtpunkte an Knoten, sanftes Pulsieren, Fertig-Burst.",
   "files": [
    "constellation_lines.gd"
