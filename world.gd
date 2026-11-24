@@ -50,6 +50,19 @@ var balloon: Balloon
 
 var stars: Array[Star] = []
 
+## G-22: Früchte an festen Plätzen (bei allen gleich), Aufheben mit F, Essen mit Q. Der Host entscheidet, wer eine Frucht bekommt.
+const FRUIT_SPOTS := [
+	[Vector3(12, 0, 10), "sternbeere"], [Vector3(-14, 0, 8), "sternbeere"], [Vector3(2, 0, -14), "sternbeere"],
+	[Vector3(16, 0, -8), "mondapfel"], [Vector3(-16, 0, -12), "mondapfel"], [Vector3(-4, 0, 16), "mondapfel"],
+	[Vector3(20, 0, 3), "wolkenpilz"], [Vector3(-20, 0, 0), "wolkenpilz"], [Vector3(6, 0, 22), "wolkenpilz"]]
+const FRUIT_RANGE := 2.5
+signal fruit_picked(kind: String)    # eine Frucht liegt jetzt im eigenen Inventar
+signal fruit_eaten(kind: String)
+signal fruit_message(text: String)
+var fruits: Array[Fruit] = []
+var inventory := Inventory.new()
+var pick_log: Array = []             # Host: wer hat welche Frucht bekommen (für Tests)
+
 ## G-15: Sternschnuppen-Treffer bringen wenige Flecken auf einen geputzten Stern zurück (nur Host entscheidet, wird synchronisiert).
 ## Zen (`zen = true`) schaltet das ab. Beim erneuten Putzen zählt der Stern nicht noch einmal fürs Sternbild/den Team-Bonus.
 const METEOR_SPOTS_MIN := 3
@@ -65,6 +78,7 @@ func _init() -> void:
 
 func _ready() -> void:
 	_build_island()
+	_build_fruits()
 	_build_stars(star_count_for(_player_count()))
 	GameState.player_count_changed.connect(func(_n): _rescale())
 	NetworkManager.players_changed.connect(_rescale)
@@ -135,6 +149,10 @@ func _send_state(peer: int) -> void:
 	_rpc_layout.rpc_id(peer, stars.size())   # zuerst das Layout, dann die entfernten Flecken
 	if puzzle != null:
 		_rpc_puzzle.rpc_id(peer, puzzle.done, puzzle.is_solved, [])
+	var avail: Array = []
+	for f in fruits:
+		avail.append(f.available)
+	_rpc_fruit_state.rpc_id(peer, avail)
 	for i in stars.size():
 		if not stars[i].removed_ids.is_empty():
 			_rpc_removed.rpc_id(peer, i, stars[i].removed_ids)
@@ -501,3 +519,137 @@ func _rpc_restored(star_idx: int, ids: Array) -> void:
 func attach_weather(w: Weather) -> void:
 	w.meteor_strike.connect(func(i: int): meteor_strike(i))
 	zen = w.cosmetic
+
+
+# ---------------------------------------------------------------- Früchte (G-22)
+
+func _build_fruits() -> void:
+	for spot in FRUIT_SPOTS:
+		var f := Fruit.new()
+		f.kind = spot[1]
+		f.position = spot[0]
+		add_child(f)
+		fruits.append(f)
+
+
+## Index der nächsten verfügbaren Frucht in Reichweite um `pos` (-1: keine).
+func nearest_fruit(pos: Vector3) -> int:
+	var best := -1
+	var best_d := FRUIT_RANGE
+	for i in fruits.size():
+		if not fruits[i].available:
+			continue
+		var d := Vector2(fruits[i].global_position.x - pos.x, fruits[i].global_position.z - pos.z).length()
+		if d < best_d:
+			best_d = d
+			best = i
+	return best
+
+
+## Frucht aufheben (Taste F). Gibt den Index der angefragten Frucht zurück (-1: nichts in Reichweite oder Inventar voll).
+## Online fragen Clients den Host; ob sie die Frucht wirklich bekommen, entscheidet der Host.
+func try_pick(pos: Vector3) -> int:
+	var idx := nearest_fruit(pos)
+	if idx < 0:
+		return -1
+	if inventory.is_full():
+		fruit_message.emit("Dein Beutel ist voll (6 Plätze). Iss mit Q etwas.")
+		return -1
+	if NetworkManager.is_online() and not multiplayer.is_server():
+		_rpc_pick.rpc_id(1, idx)
+		return idx
+	_pick_authoritative(idx, NetworkManager.my_id())
+	return idx
+
+
+func _pick_authoritative(idx: int, who: int) -> bool:
+	if idx < 0 or idx >= fruits.size() or not fruits[idx].available:
+		return false
+	var node := _player_node(who)
+	if node != null and Vector2(node.global_position.x - fruits[idx].global_position.x, node.global_position.z - fruits[idx].global_position.z).length() > FRUIT_RANGE + 2.0:
+		return false   # zu weit weg (Schummelschutz, großzügig wegen Verzögerung)
+	var kind := fruits[idx].kind
+	fruits[idx].set_available(false)
+	pick_log.append([who, idx])
+	if NetworkManager.is_online():
+		_rpc_fruit.rpc(idx, false)
+	if who == NetworkManager.my_id() or not NetworkManager.is_online():
+		_receive_fruit(kind)
+	else:
+		_rpc_give.rpc_id(who, kind)
+	return true
+
+
+func _player_node(who: int) -> Node3D:
+	for n in get_tree().get_nodes_in_group("players"):
+		if str(n.name) == str(who):
+			return n as Node3D
+	return null
+
+
+func _receive_fruit(kind: String) -> void:
+	if inventory.add(kind):
+		fruit_picked.emit(kind)
+		fruit_message.emit("%s eingesammelt (Q: essen)" % Fruit.display_name(kind))
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_pick(idx: int) -> void:
+	if multiplayer.is_server():
+		_pick_authoritative(idx, multiplayer.get_remote_sender_id())
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_give(kind: String) -> void:
+	_receive_fruit(kind)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_fruit(idx: int, available: bool) -> void:
+	if idx >= 0 and idx < fruits.size():
+		fruits[idx].set_available(available)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_fruit_state(avail: Array) -> void:
+	for i in mini(avail.size(), fruits.size()):
+		fruits[i].set_available(bool(avail[i]))
+
+
+## Essen (Taste Q): die vorderste Frucht füllt die Sättigung des eigenen Spielers.
+func eat_fruit(player: Player) -> String:
+	if player == null:
+		return ""
+	var kind := inventory.eat(player.food)
+	if kind != "":
+		fruit_eaten.emit(kind)
+		fruit_message.emit("%s gegessen" % Fruit.display_name(kind))
+	return kind
+
+
+func _local_player() -> Player:
+	for n in get_tree().get_nodes_in_group("players"):
+		var p := n as Player
+		if p != null and p.is_multiplayer_authority():
+			return p
+	return null
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not (event is InputEventKey and event.pressed and not event.echo) or Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+		return
+	var p := _local_player()
+	if p == null or p.downed:
+		return
+	if event.physical_keycode == KEY_F:
+		try_pick(p.global_position)
+	elif event.physical_keycode == KEY_Q:
+		eat_fruit(p)
+
+
+func _process(delta: float) -> void:
+	if NetworkManager.is_online() and not multiplayer.is_server():
+		return   # nur der Host lässt Früchte nachwachsen
+	for i in fruits.size():
+		if fruits[i].tick(delta) and NetworkManager.is_online():
+			_rpc_fruit.rpc(i, true)

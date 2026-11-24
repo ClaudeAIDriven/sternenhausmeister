@@ -13,6 +13,10 @@ var _puzzle := ""        # Zeile mit Sternbild-Fortschritt
 var _puzzle_msg := ""    # Hinweis nach falscher Reihenfolge / Lösung
 var _puzzle_msg_left := 0.0
 var _since_refresh := 0.0
+var _inv_label: Label    # G-22: Beutel unten links, 6 Plätze
+var _msg_label: Label    # G-22: kurze Frucht-Meldung
+var _msg_left := 0.0
+var _world: World
 
 
 func _ready() -> void:
@@ -26,6 +30,23 @@ func _ready() -> void:
 	cross.set_anchors_preset(Control.PRESET_CENTER)
 	cross.position = Vector2(-8, -18)
 	add_child(cross)
+	_inv_label = Label.new()
+	_inv_label.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	_inv_label.offset_left = 14
+	_inv_label.offset_top = -92
+	_inv_label.add_theme_font_size_override("font_size", 18)
+	_inv_label.add_theme_color_override("font_color", Palette.UI_IVORY)
+	_inv_label.add_theme_color_override("font_outline_color", Palette.UI_PANEL)
+	_inv_label.add_theme_constant_override("outline_size", 6)
+	add_child(_inv_label)
+	_msg_label = Label.new()
+	_msg_label.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	_msg_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_msg_label.offset_top = -150
+	_msg_label.add_theme_color_override("font_color", Palette.STAR_GOLD)
+	_msg_label.add_theme_color_override("font_outline_color", Palette.UI_PANEL)
+	_msg_label.add_theme_constant_override("outline_size", 6)
+	add_child(_msg_label)
 	GameState.dust_changed.connect(func(_a): refresh())
 	GameState.phase_changed.connect(func(_p): refresh())
 	NetworkManager.players_changed.connect(refresh)
@@ -60,7 +81,34 @@ func text() -> String:
 	return _label.text if _label else ""
 
 
+## G-22: Beutel und Meldungen einer Welt anzeigen (wird in _process automatisch gesucht, wenn nicht gesetzt).
+func bind_world(w: World) -> void:
+	_world = w
+	w.fruit_message.connect(func(t: String):
+		_msg_label.text = t
+		_msg_left = 3.0)
+
+
+## Beutel als Text: "Beutel (F aufheben, Q essen): [Sternbeere] [-] ..."
+func inventory_text() -> String:
+	if _world == null:
+		return ""
+	var parts: Array[String] = []
+	for i in Inventory.SLOTS:
+		parts.append("[%s]" % (Fruit.display_name(_world.inventory.items[i]) if i < _world.inventory.items.size() else "–"))
+	return "Beutel (F: aufheben, Q: essen)\n" + " ".join(parts)
+
+
 func _process(delta: float) -> void:
+	if _world == null and get_tree() != null:
+		var w := get_tree().root.find_child("World", true, false) as World
+		if w != null:
+			bind_world(w)
+	if _msg_left > 0.0:
+		_msg_left -= delta
+		if _msg_left <= 0.0:
+			_msg_label.text = ""
+	_inv_label.text = inventory_text()
 	_since_refresh += delta
 	if _puzzle_msg_left > 0.0:
 		_puzzle_msg_left -= delta
