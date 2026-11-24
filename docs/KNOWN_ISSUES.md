@@ -10,3 +10,12 @@ Steigen, Sinken und Lenken rechnet jeder Rechner selbst. Online können Ballonpo
 
 ## Bewegung nach dem Umbenennen (Meldung Jan, 2026-11-24)
 Nicht nachstellbar in Solo/Host unter Linux; siehe docs/HANDOFF.md.
+
+## Finale (M-01 bis M-10): ehrliche Lücken
+- 🟢 Mit Xvfb/llvmpipe gerendert und angesehen: Menü, HUD, Himmel, Sterne, Rußwolke. 🔴 Nie auf echter GPU/Windows gesehen: Schatten, SSAO, Glow-Stärke, Shader (Gras, Milchstraße, Polarlicht) sind nur im Compatibility-Renderer geprüft; Szene wirkt eher hell/blau.
+- 🔴 Balance ist geschätzt: Staubpreise, XP-Kurve, Gegnerhäufigkeit, Bossleben, Wunschhäufigkeit, Trampolinhöhe.
+- 🟡 Netz zu zweit nur per Headless-Tests (Sterne, Gegner, Früchte, Neu-Verschmutzen, Rätsel); Karten-/Seed-RPC, Mitspieler-XP-Speicherung, Anruf Spieler am Boden/Wiederbeleben, Ping, Rauflust sind nicht von Menschen getestet.
+- 🟡 Hut-Auswahl (H) ist nur lokal sichtbar; Rollen-Hüte sind für alle sichtbar. Kein Erfolge-/Tagebuch-Menü (nur Meldungen und Datei).
+- 🟡 Fähigkeiten `ladder_time`/`climb` und XP fürs Wiederbeleben sind nicht angebunden. `GameState.stars_cleaned` zählt neu geputzte Sterne doppelt.
+- 🟡 Spinnen/Wollmäuse sitzen auf Sternoberflächen (Wisch-Zielstrahl trifft nur Sterne); Rußwolke „verdunkelt" nur optisch durch dunkle Kugeln.
+- Headless-Tests melden viele Zeilen „Parameter m is null" (Dummy-Renderer), harmlos.

@@ -1859,7 +1859,7 @@
    "M-09"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Balance prüfen, kompletter Headless-Durchlauf (Solo + Netz), Spielanleitung aktualisieren, bekannte Lücken dokumentieren.",
   "files": [
    "docs/SPIELANLEITUNG.md",

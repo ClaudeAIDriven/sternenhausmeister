@@ -14,6 +14,7 @@ func _start() -> void:
 	nm = root.get_node("NetworkManager")
 	world = load("res://world.gd").new()
 	root.add_child(world)
+	world.zen = true   # M-xx: Wollmäuse würden sonst Flecken neu verschmutzen und die Zählung verfälschen
 	nm.drones_enabled = false
 	nm.player_joined.connect(func(_id): joined += 1)
 	var a := OS.get_cmdline_user_args()
