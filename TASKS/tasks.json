@@ -231,7 +231,7 @@
    "N-01"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "docs/INTERNET.md: Port-Weiterleitung, Tailscale/Radmin-Tipp; optional UPnP-Versuch beim Hosten.",
   "files": [
    "docs/INTERNET.md",

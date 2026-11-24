@@ -14,7 +14,7 @@
 | [N-03](N-03.md) | A | must | NET | Stern-Zustand serverautoritativ synchronisieren | M | done | N-01 |
 | [N-04](N-04.md) | A | must | NET | Lokales 4-Instanzen-Testskript | S | done | N-01 |
 | [N-05](N-05.md) | A | must | NET | Disconnect/Rejoin und Drohnen-Ersatz | M | done | N-02 |
-| [N-06](N-06.md) | A | must | NET | Internet-Anleitung und optional UPnP | S | open | N-01 |
+| [N-06](N-06.md) | A | must | NET | Internet-Anleitung und optional UPnP | S | done | N-01 |
 | [G-01](G-01.md) | A | must | GAME | Nacht-Timer mit Dämmerung/Mitternacht/Morgenrot | S | done | C-02 |
 | [G-02](G-02.md) | A | must | GAME | Sternbild-Datenformat und 3 Beispiele | S | done | P-002 |
 | [G-03](G-03.md) | A | must | GAME | Sternbild-Rätsel-Logik | M | done | G-02 |
