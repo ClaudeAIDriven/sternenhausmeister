@@ -38,3 +38,32 @@ jobs:
           path: |
             build/StarScrubber.exe
             build/StarScrubber.pck
+
+  # Bei jedem Merge auf main: aktuelle Windows-Version als Release "latest" veröffentlichen (Download ohne Login).
+  release-latest:
+    needs: export-windows
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Godot-Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/tools
+            ~/.local/share/godot/export_templates
+          key: godot-4.3-linux-templates
+      - name: NSIS installieren
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq nsis
+      - name: Exe und Installer bauen
+        run: tools/build_installer.sh
+      - name: Release "latest" aktualisieren
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest build/StarScrubber-Setup.exe build/StarScrubber.exe build/StarScrubber.pck \
+            --prerelease --title "StarScrubber (neuester Stand von main)" \
+            --notes "Automatisch gebaut aus Commit ${GITHUB_SHA::7}. Setup.exe installiert das Spiel. Ungetestet unter Windows, siehe docs/PLAYTEST.md."
