@@ -63,6 +63,32 @@ static func ground_material(tiles := 6.0) -> StandardMaterial3D:
 
 
 # --- Einzelteile ---
+const GRASS_SHADER := "
+shader_type spatial;
+render_mode cull_disabled;
+uniform vec4 base_color : source_color = vec4(0.4, 0.7, 0.6, 1.0);
+void vertex() {
+	float sway = sin(TIME * 1.6 + MODEL_MATRIX[3].x * 0.45 + MODEL_MATRIX[3].z * 0.3) * 0.09;
+	VERTEX.x += sway * max(VERTEX.y, 0.0);
+	VERTEX.z += sway * 0.6 * max(VERTEX.y, 0.0);
+}
+void fragment() {
+	ALBEDO = base_color.rgb * (0.65 + 0.35 * clamp(UV.y, 0.0, 1.0));
+	ROUGHNESS = 0.9;
+}
+"
+
+
+## Gras mit leichtem Wiegen im Wind (M-05).
+static func grass_material(c: Color) -> ShaderMaterial:
+	var sh := Shader.new()
+	sh.code = GRASS_SHADER
+	var m := ShaderMaterial.new()
+	m.shader = sh
+	m.set_shader_parameter("base_color", c)
+	return m
+
+
 static func grass_tuft_mesh() -> ArrayMesh:
 	# drei gekreuzte, spitze Halme als ein Mesh
 	var st := SurfaceTool.new()
@@ -126,7 +152,7 @@ static func decorate(radius := 13.0, seed_value := 42, grass_n := 160, rock_n :=
 	for i in grass_n:
 		var p: Vector3 = spot.call(3.0, radius - 0.6)
 		gt.append(Transform3D(Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3.ONE * rng.randf_range(0.7, 1.5)), p))
-	_multimesh(root, grass_tuft_mesh(), _mat(Palette.player_color(3).lerp(Palette.ISLAND, 0.25)), gt, "Grass")
+	_multimesh(root, grass_tuft_mesh(), grass_material(Palette.player_color(3).lerp(Palette.ISLAND, 0.25)), gt, "Grass")
 	var rt: Array[Transform3D] = []
 	for i in rock_n:
 		var p: Vector3 = spot.call(4.0, radius - 0.4)

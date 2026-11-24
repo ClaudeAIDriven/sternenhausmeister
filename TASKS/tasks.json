@@ -1757,7 +1757,7 @@
   "title": "Grafik-Update I: Himmel, Beleuchtung, Glow, Nebel, Boden",
   "deps": [],
   "size": "L",
-  "status": "open",
+  "status": "done",
   "goal": "WorldEnvironment mit Glow/Bloom, Tonemapping, Nebel, Sternenhimmel mit Milchstraße und Polarlicht, bessere Mondbeleuchtung, Boden-Shader mit Gras-Wind, Schatten.",
   "files": [
    "sky.gd",
