@@ -56,6 +56,12 @@ const FRUIT_SPOTS := [
 	[Vector3(16, 0, -8), "mondapfel"], [Vector3(-16, 0, -12), "mondapfel"], [Vector3(-4, 0, 16), "mondapfel"],
 	[Vector3(20, 0, 3), "wolkenpilz"], [Vector3(-20, 0, 0), "wolkenpilz"], [Vector3(6, 0, 22), "wolkenpilz"]]
 const FRUIT_RANGE := 2.5
+## G-30: Orte. Der Obstgarten trägt viele Früchte (sie hängen an FRUIT_SPOTS, damit alle dieselben Indizes haben).
+const POI_SPOTS := {"brunnen": Vector3(-3, 0, -12), "obstgarten": Vector3(-24, 0, 14), "turm": Vector3(20, 0, -18), "schrein": Vector3(24, 0, 12)}
+const ORCHARD_FRUITS := [[Vector3(-26, 0, 12), "sternbeere"], [Vector3(-22, 0, 12), "sternbeere"], [Vector3(-26, 0, 16), "mondapfel"],
+	[Vector3(-22, 0, 16), "mondapfel"], [Vector3(-24, 0, 10), "wolkenpilz"], [Vector3(-24, 0, 18), "sternbeere"]]
+var pois: Array[Poi] = []
+var kitchen: Kitchen
 signal fruit_picked(kind: String)    # eine Frucht liegt jetzt im eigenen Inventar
 signal fruit_eaten(kind: String)
 signal fruit_message(text: String)
@@ -79,6 +85,7 @@ func _init() -> void:
 func _ready() -> void:
 	_build_island()
 	_build_fruits()
+	_build_pois()
 	_build_stars(star_count_for(_player_count()))
 	GameState.player_count_changed.connect(func(_n): _rescale())
 	NetworkManager.players_changed.connect(_rescale)
@@ -524,7 +531,7 @@ func attach_weather(w: Weather) -> void:
 # ---------------------------------------------------------------- Früchte (G-22)
 
 func _build_fruits() -> void:
-	for spot in FRUIT_SPOTS:
+	for spot in FRUIT_SPOTS + ORCHARD_FRUITS:
 		var f := Fruit.new()
 		f.kind = spot[1]
 		f.position = spot[0]
@@ -653,3 +660,21 @@ func _process(delta: float) -> void:
 	for i in fruits.size():
 		if fruits[i].tick(delta) and NetworkManager.is_online():
 			_rpc_fruit.rpc(i, true)
+
+
+# ---------------------------------------------------------------- Orte (G-30)
+
+func _build_pois() -> void:
+	for k in POI_SPOTS:
+		var p := Poi.new()
+		p.kind = k
+		p.position = POI_SPOTS[k]
+		add_child(p)
+		pois.append(p)
+	kitchen = Kitchen.new()   # G-23: die Küche ist ein Ort; Rezeptbuch (KitchenUI) bindet main an
+	add_child(kitchen)
+	var kp := Poi.new()
+	kp.kind = "kueche"
+	kp.position = Kitchen.KITCHEN_POS
+	add_child(kp)
+	pois.append(kp)

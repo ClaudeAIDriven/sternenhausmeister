@@ -102,6 +102,11 @@ func _draw_map() -> void:
 			_:
 				r = 3.5
 		c.draw_circle(to_map(h.position), r, col)
+	for poi in get_tree().get_nodes_in_group("pois"):   # G-30: Orte mit Symbol
+		_draw_poi(c, poi as Poi)
+	if Poi.tower_active:   # Aussichtsturm: Gegner sichtbar
+		for e in get_tree().get_nodes_in_group("enemies"):
+			c.draw_circle(to_map((e as Node3D).global_position), 3.0, Color(0.9, 0.2, 0.7))
 	var ws := to_map(World.WORKSHOP_POS)   # Werkstatt: Haus-Symbol
 	c.draw_rect(Rect2(ws - Vector2(5, 4), Vector2(10, 8)), Palette.UI_IVORY)
 	c.draw_colored_polygon(PackedVector2Array([ws + Vector2(-7, -4), ws + Vector2(7, -4), ws + Vector2(0, -11)]), Color(0.8, 0.3, 0.35))
@@ -192,3 +197,19 @@ func _draw_ping_arrows() -> void:
 		var dir := (ep - size * 0.5).normalized()
 		var perp := Vector2(-dir.y, dir.x)
 		_overlay.draw_colored_polygon(PackedVector2Array([ep + dir * 16.0, ep - dir * 8.0 + perp * 10.0, ep - dir * 8.0 - perp * 10.0]), col)
+
+
+func _draw_poi(c: Control, poi: Poi) -> void:
+	if poi == null:
+		return
+	var p := to_map(poi.global_position)
+	var col := poi.map_color()
+	match poi.map_shape():
+		"square":
+			c.draw_rect(Rect2(p - Vector2(4, 4), Vector2(8, 8)), col)
+		"triangle":
+			c.draw_colored_polygon(PackedVector2Array([p + Vector2(0, -6), p + Vector2(5, 4), p + Vector2(-5, 4)]), col)
+		"diamond":
+			c.draw_colored_polygon(PackedVector2Array([p + Vector2(0, -6), p + Vector2(5, 0), p + Vector2(0, 6), p + Vector2(-5, 0)]), col)
+		_:
+			c.draw_circle(p, 4.5, col)
