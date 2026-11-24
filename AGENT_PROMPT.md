@@ -2,6 +2,9 @@
 
 Einzige Quelle der Wahrheit für den Ablauf. Dein Bereich: A = CORE,NET · B = GAME,UI · C = ART,AUDIO,BUILD,DOC. Setze `export TASK_WHO=<dein Name>` (z. B. jan, bot-A, anna).
 
+## 0. Einmalig pro Umgebung
+`tools/setup_godot.sh` lädt Godot 4.3 automatisch (kein manuelles Installieren nötig). `tools/run_tests.sh` ruft es selbst auf.
+
 ## 1. Zuerst den Stand prüfen (immer, vor jeder Arbeit)
 1. `git pull --ff-only origin main` und `python3 tools/tasks.py status`. Meldet es OFFLINE oder einen Fehler: **abbrechen und melden**, nichts auf Verdacht tun.
 2. `tools/run_tests.sh` auf main. Rot? Dann nur die rote Stelle reparieren (neue Aufgabe `fix-…`), nichts Neues beginnen.
