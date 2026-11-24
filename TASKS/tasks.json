@@ -974,7 +974,7 @@
    "A-15"
   ],
   "size": "S",
-  "status": "open",
+  "status": "done",
   "goal": "Logo `Sternenhausmeister` als SVG (skalierbar) und einfacher Menü-Hintergrund (Insel vor Himmel) als Szenenbeschreibung.",
   "files": [
    "assets/ui/logo.svg",
