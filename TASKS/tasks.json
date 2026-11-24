@@ -344,7 +344,7 @@
    "P-002"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Ruß/Flecken/Patina; Werkzeuge Sauger/Tuch/Polierpad; falsches Werkzeug wirkt schwächer.",
   "files": [
    "star.gd",
