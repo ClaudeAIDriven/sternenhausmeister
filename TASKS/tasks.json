@@ -437,7 +437,7 @@
    "P-001"
   ],
   "size": "M",
-  "status": "open",
+  "status": "done",
   "goal": "Godot-Shader für Cel-Look (2–3 Stufen, Kantenlicht) für Spieler/Insel/Sterne.",
   "files": [
    "shaders/toon.gdshader"
