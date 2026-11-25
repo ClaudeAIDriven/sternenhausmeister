@@ -103,4 +103,4 @@
 | [M-12](M-12.md) | A | must | NET | Ballon host-autoritativ (Lenken im Netz) | S | done | M-11 | – |
 | [M-13](M-13.md) | A | nice | UI | Hut für alle sichtbar, Erfolge und Tagebuch im Pausenmenü | S | done | M-12 | – |
 | [M-14](M-14.md) | A | nice | GAME | Erfolg „Retter“ anbinden, Prüftest für alle Erfolge | S | done | M-13 | – |
-| [M-15](M-15.md) | A | must | GAME | Feedback-Runde: Spinnen laufen, Schwung-Animation, Schattenkante, doppelte Insel, Sounds, 12 Beutelplätze | M | in_progress | M-14 | – |
+| [M-15](M-15.md) | A | must | GAME | Feedback-Runde: Spinnen laufen, Schwung-Animation, Schattenkante, doppelte Insel, Sounds, 12 Beutelplätze | M | done | M-14 | – |

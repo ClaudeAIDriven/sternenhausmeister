@@ -1963,7 +1963,7 @@
    "M-14"
   ],
   "size": "M",
-  "status": "in_progress",
+  "status": "done",
   "goal": "Testerfeedback umsetzen: Spinnen krabbeln und jagen, Arm schwingt beim Putzen und Schlagen, harte Schattenkante weg, Insel Radius 64, Sounds fürs Essen und Treffen, 12 Beutelplätze mit mehr Früchten.",
   "files": [
    "spider.gd",
