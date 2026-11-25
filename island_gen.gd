@@ -20,7 +20,7 @@ const POI_KINDS := ["brunnen", "obstgarten", "turm", "schrein"]
 
 
 ## Liefert {"seed", "stars": Array[Vector3], "pois": {kind: Vector3}}. Nur x/z der Orte sind frei, y = 0.
-static func generate(seed_value: int, island_radius: float = 32.0) -> Dictionary:
+static func generate(seed_value: int, island_radius: float = 64.0) -> Dictionary:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_value
 	var stars: Array = []
@@ -75,7 +75,7 @@ static func _hits_fixed(p: Vector2, extra: float) -> bool:
 
 
 ## Prüft ein Layout: Mindestabstände, Insel-Grenzen, feste Hindernisse, Höhe. Gibt eine Liste von Fehlern zurück (leer = ok).
-static func validate(layout: Dictionary, island_radius: float = 32.0) -> Array[String]:
+static func validate(layout: Dictionary, island_radius: float = 64.0) -> Array[String]:
 	var errs: Array[String] = []
 	var stars: Array = layout.get("stars", [])
 	var pois: Dictionary = layout.get("pois", {})
@@ -122,7 +122,7 @@ const GRID := 1.0   # Rasterweite der Erreichbarkeitsprüfung (m)
 ## Mindestabstände: Lava ≥ 9, Nester ≥ 9, Kakteen ≥ 4 untereinander; zu Orten ≥ Radius + 3; zum Start ≥ 6; nicht auf festen Bauten.
 ## Danach Flood-Fill: Start, alle Orte und alle Sternmitten (am Boden) müssen erreichbar bleiben, sonst wird die letzte Gefahr entfernt.
 ## Gibt {"lava": [Vector3], "cactus": [...], "nests": [...]} zurück.
-static func generate_hazards(seed_value: int, counts: Dictionary, layout: Dictionary, island_radius: float = 32.0) -> Dictionary:
+static func generate_hazards(seed_value: int, counts: Dictionary, layout: Dictionary, island_radius: float = 64.0) -> Dictionary:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_value * 7919 + 13
 	var placed: Array = []   # [Vector2, radius, kind]
@@ -169,7 +169,7 @@ static func generate_hazards(seed_value: int, counts: Dictionary, layout: Dictio
 
 
 ## Flood-Fill auf einem Raster: erreicht der Start alle Orte und die Fläche unter jedem Stern?
-static func reachable(hazards: Dictionary, layout: Dictionary, island_radius: float = 32.0) -> bool:
+static func reachable(hazards: Dictionary, layout: Dictionary, island_radius: float = 64.0) -> bool:
 	var blocked: Array = []   # [Vector2, radius]
 	for p in hazards.get("lava", []):
 		blocked.append([Vector2(p.x, p.z), LAVA_RADIUS])

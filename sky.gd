@@ -127,7 +127,10 @@ func _build_environment() -> void:
 	moon.light_color = Color(0.7, 0.8, 1.0)
 	moon.light_energy = 0.55
 	moon.shadow_enabled = true      # M-05: weiche Mondschatten
-	moon.directional_shadow_max_distance = 90.0
+	moon.directional_shadow_max_distance = 220.0   # Bugfix: harte Schattenkante
+	moon.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_4_SPLITS
+	moon.directional_shadow_fade_start = 0.9
+	moon.shadow_normal_bias = 2.0
 	moon.shadow_blur = 1.6
 	moon.rotation_degrees = Vector3(-50, 30, 0)
 	add_child(moon)

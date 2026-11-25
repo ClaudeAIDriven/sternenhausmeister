@@ -9,6 +9,7 @@ signal ping_received(sender: int, point: Vector3)   # G-33
 signal revived(by_teammate: bool)   # G-20
 signal helped_up(target: Player)    # M-14: ich habe jemanden wiederbelebt
 signal hit_landed(target: Player)
+signal hurt(amount: float)   # ich wurde von einem Mitspieler geschlagen
 
 const SPEED := 6.0
 const JUMP_VELOCITY := 7.0
@@ -76,6 +77,7 @@ var _peak_y := 0.0
 var _on_balloon: Balloon
 var _last_pos := Vector3.ZERO
 var _anim_speed := 0.0
+var _swing_t := 0.0
 var _phase := 0.0
 
 
@@ -233,7 +235,13 @@ func _process(delta: float) -> void:
 		_last_pos = global_position
 		_phase += _anim_speed * delta * 1.7
 		if look != null:
-			PlayerLook.animate(look, _phase, clampf(_anim_speed / SPEED, 0.0, 1.0))
+			_swing_t = maxf(_swing_t - delta, 0.0)
+			var sw := 0.0
+			if _swing_t > 0.0:
+				sw = sin(_swing_t / 0.3 * PI)
+			elif cleaning and aim_valid:
+				sw = 0.5 + 0.5 * sin(Time.get_ticks_msec() * 0.016)
+			PlayerLook.animate(look, _phase, clampf(_anim_speed / SPEED, 0.0, 1.0), sw)
 	if look != null:   # G-20: Gefallene liegen auf der Seite
 		look.rotation.z = lerpf(look.rotation.z, PI * 0.5 if downed else 0.0, clampf(delta * 8.0, 0.0, 1.0))
 	_refresh_tool()
@@ -482,6 +490,7 @@ func try_attack() -> bool:
 	if _attack_cd > 0.0:
 		return false
 	_attack_cd = ATTACK_COOLDOWN
+	_swing_t = 0.3
 	var fwd := -global_transform.basis.z
 	fwd.y = 0.0
 	fwd = fwd.normalized()
@@ -512,6 +521,7 @@ func take_hit(amount: float, push: Vector3) -> void:
 	if not is_multiplayer_authority():
 		return
 	knock(push)
+	hurt.emit(amount)
 	if room_brawl():   # G-32: friedlich = nur wegstoßen
 		damage(amount)
 

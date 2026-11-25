@@ -1954,5 +1954,32 @@
   "skills": "GDScript",
   "owner": "A",
   "prio": "nice"
+ },
+ {
+  "id": "M-15",
+  "area": "GAME",
+  "title": "Feedback-Runde: Spinnen laufen, Schwung-Animation, Schattenkante, doppelte Insel, Sounds, 12 Beutelplätze",
+  "deps": [
+   "M-14"
+  ],
+  "size": "M",
+  "status": "done",
+  "goal": "Testerfeedback umsetzen: Spinnen krabbeln und jagen, Arm schwingt beim Putzen und Schlagen, harte Schattenkante weg, Insel Radius 64, Sounds fürs Essen und Treffen, 12 Beutelplätze mit mehr Früchten.",
+  "files": [
+   "spider.gd",
+   "player.gd",
+   "player_look.gd",
+   "sky.gd",
+   "world.gd",
+   "maps.gd",
+   "island_gen.gd",
+   "inventory.gd",
+   "main.gd",
+   "tests/test_fruit.gd"
+  ],
+  "accept": "Alle Tests und Netztests grün.",
+  "skills": "GDScript",
+  "owner": "A",
+  "prio": "must"
  }
 ]

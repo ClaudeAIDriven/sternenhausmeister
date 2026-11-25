@@ -1,10 +1,10 @@
 class_name Inventory
 extends RefCounted
-## G-22: Sechs Plätze für Früchte (nur lokal beim Spieler). Q isst die vorderste Frucht und füllt die Sättigung (Food, G-21).
+## G-22: Zwölf Plätze für Früchte (nur lokal beim Spieler). Q isst die vorderste Frucht und füllt die Sättigung (Food, G-21).
 
 signal changed
 
-const SLOTS := 6
+const SLOTS := 12   # mehr Essen sammeln: 12 statt 6 Plätze
 
 var items: Array[String] = []
 var extra_slots := 0   # M-01: Fähigkeit "bag_slots"
