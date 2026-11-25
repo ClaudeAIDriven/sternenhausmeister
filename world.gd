@@ -6,8 +6,8 @@ signal star_scrubbed(star: Star, removed: int)
 signal star_cleaned(star: Star)
 
 ## I-11: Die Insel ist ~2,3-mal so groß wie früher (Radius 32 statt 14). Sterne liegen weit verteilt; Werkstatt und Ballon bilden die Mitte.
-const ISLAND_RADIUS := 32.0
-const STAR_SPREAD := 2.0
+const ISLAND_RADIUS := 64.0   # Bugfix: Karte war zu klein, jetzt doppelter Radius
+const STAR_SPREAD := 4.0
 const BASE_STAR_POSITIONS := [Vector3(0, 5.0, -7), Vector3(-9, 6.0, 1), Vector3(8, 5.5, 3),
 	Vector3(4.5, 6.2, -11.0), Vector3(-12.0, 5.5, -6.0), Vector3(-3.0, 6.0, 9.5),
 	Vector3(11.0, 6.0, 8.0), Vector3(-6.5, 6.5, -10.5)]
@@ -15,9 +15,9 @@ const BASE_STAR_POSITIONS := [Vector3(0, 5.0, -7), Vector3(-9, 6.0, 1), Vector3(
 static var STAR_POSITIONS: Array = _spread_stars()
 const WORKSHOP_POS := Vector3(-8, 0, -6)
 const WORKSHOP_RANGE := 6.0
-const LAVA_SPOTS := [Vector3(24, 0, -4), Vector3(-20, 0, 20)]
-const SPIDER_SPOTS := [Vector3(-9, 0, 17), Vector3(14, 0, -21), Vector3(-23, 0, -9)]
-const CACTUS_SPOTS := [Vector3(12, 0, 12), Vector3(-3, 0, -25), Vector3(20, 0, -18), Vector3(-25, 0, 6), Vector3(4, 0, 25), Vector3(-14, 0, -2)]
+const LAVA_SPOTS := [Vector3(48, 0, -8), Vector3(-40, 0, 40)]
+const SPIDER_SPOTS := [Vector3(-18, 0, 34), Vector3(28, 0, -42), Vector3(-46, 0, -18)]
+const CACTUS_SPOTS := [Vector3(24, 0, 24), Vector3(-6, 0, -50), Vector3(40, 0, -36), Vector3(-50, 0, 12), Vector3(8, 0, 50), Vector3(-28, 0, -4)]
 
 
 static func _spread_stars() -> Array:
@@ -67,6 +67,11 @@ const FRUIT_RANGE := 2.5
 const POI_SPOTS := {"brunnen": Vector3(-3, 0, -12), "obstgarten": Vector3(-24, 0, 14), "turm": Vector3(20, 0, -18), "schrein": Vector3(24, 0, 12)}
 const ORCHARD_FRUITS := [[Vector3(-26, 0, 12), "sternbeere"], [Vector3(-22, 0, 12), "sternbeere"], [Vector3(-26, 0, 16), "mondapfel"],
 	[Vector3(-22, 0, 16), "mondapfel"], [Vector3(-24, 0, 10), "wolkenpilz"], [Vector3(-24, 0, 18), "sternbeere"]]
+## Größere Insel: weitere Früchte, am Ende angehängt (Indizes bleiben stabil).
+const EXTRA_FRUITS := [[Vector3(36, 0, 20), "sternbeere"], [Vector3(-38, 0, 24), "mondapfel"], [Vector3(30, 0, -36), "wolkenpilz"],
+	[Vector3(-34, 0, -30), "sternbeere"], [Vector3(46, 0, -6), "mondapfel"], [Vector3(-46, 0, -8), "wolkenpilz"],
+	[Vector3(8, 0, 44), "sternbeere"], [Vector3(-10, 0, -46), "mondapfel"], [Vector3(24, 0, 40), "wolkenpilz"],
+	[Vector3(-26, 0, 42), "sternbeere"], [Vector3(14, 0, -48), "mondapfel"], [Vector3(-48, 0, 30), "wolkenpilz"]]
 var pois: Array[Poi] = []
 ## G-28: Gegner (Index = ID, bei allen gleich). Wollmäuse verschmutzen Sterne neu, Spinnen beißen; nur der Host simuliert.
 signal enemy_removed(kind: String, who: int)
@@ -283,7 +288,7 @@ func _rpc_seed(seed_value: int) -> void:
 
 ## Gras, Steine, Büsche, Laternen, Werkstatt und Schild (A-12, A-03). Haus, Laternen und Schild haben Kollision.
 func _decorate_island() -> void:
-	var deco := IslandProps.decorate(ISLAND_RADIUS - 1.0, 42, 700, 90, 36)
+	var deco := IslandProps.decorate(ISLAND_RADIUS - 1.0, 42, 2400, 300, 120)
 	deco.name = "Deko"
 	add_child(deco)
 	for p in [Vector3(4, 0, 6), Vector3(-5, 0, 7), Vector3(7, 0, -5)]:
@@ -533,7 +538,7 @@ func attach_weather(w: Weather) -> void:
 # ---------------------------------------------------------------- Früchte (G-22)
 
 func _build_fruits() -> void:
-	for spot in FRUIT_SPOTS + ORCHARD_FRUITS:
+	for spot in FRUIT_SPOTS + ORCHARD_FRUITS + EXTRA_FRUITS:
 		var f := Fruit.new()
 		f.kind = spot[1]
 		f.position = spot[0]

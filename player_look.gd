@@ -233,7 +233,7 @@ static func update_hat(look: Node3D, role_or_hat: String) -> void:
 
 ## Lauf-Animation: Beine und Arme schwingen gegengleich. `phase` wächst mit der Strecke, `amount` (0..1) ist die Lauf-Intensität.
 ## Ruhe (amount 0) stellt die Grundhaltung wieder her. Arme behalten ihre leichte Grund-Neigung (z-Achse).
-static func animate(look: Node3D, phase: float, amount: float) -> void:
+static func animate(look: Node3D, phase: float, amount: float, swing: float = 0.0) -> void:
 	var li := 0
 	var ai := 0
 	for c in look.get_children():
@@ -246,6 +246,8 @@ static func animate(look: Node3D, phase: float, amount: float) -> void:
 		elif part == "Arm":
 			var sgn2 := -1.0 if ai == 0 else 1.0
 			c.rotation.x = sin(phase) * 0.7 * amount * sgn2
+			if swing > 0.0 and ai == 1:   # Bugfix: Schwung beim Putzen/Schlagen (rechter Arm)
+				c.rotation.x = -swing * 2.2
 			ai += 1
 
 

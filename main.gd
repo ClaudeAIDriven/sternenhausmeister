@@ -14,6 +14,10 @@ var sfx: Sfx
 var dust: CPUParticles3D
 var notes: Array[AudioStreamWAV] = []
 var scrub_sound: AudioStreamWAV
+var eat_sound: AudioStreamWAV
+var hit_sound: AudioStreamWAV
+var pop_sound: AudioStreamWAV
+var pick_sound: AudioStreamWAV
 var chime: Array[AudioStreamWAV] = []
 var night: Night
 var pause: Pause
@@ -93,6 +97,9 @@ func _ready() -> void:
 	_build_achievements()
 	_build_saving()
 	world.star_scrubbed.connect(_on_star_scrubbed)
+	world.fruit_eaten.connect(func(_k: String): sfx.play(eat_sound, randf_range(0.95, 1.1), -3.0))
+	world.fruit_picked.connect(func(_k: String): sfx.play(pick_sound, randf_range(0.95, 1.1), -6.0))
+	world.enemy_removed.connect(func(_k: String, _w: int): sfx.play(pop_sound, randf_range(0.9, 1.2), -3.0))
 	world.star_cleaned.connect(_on_star_cleaned)
 	world.coop_bonus.connect(func(a: int): hud.show_puzzle_message("Teamarbeit! +%d Sternenstaub" % a, 4.0))   # G-13
 	world.puzzle_changed.connect(func(done: int, total: int): hud.show_puzzle(world.puzzle.title if world.puzzle != null else "", done, total))
@@ -151,6 +158,10 @@ func _build_sound() -> void:
 	for f in PENTATONIC:
 		notes.append(Sfx.make_tone(f, 0.45, 0.35))
 	scrub_sound = Sfx.make_tone(180.0, 0.08, 0.18, 0.7)
+	eat_sound = Sfx.make_melody([392.0, 523.3, 659.3], 0.07, 0.16, 0.35)   # Mampf: kleine aufsteigende Tonfolge
+	hit_sound = Sfx.make_tone(95.0, 0.16, 0.6, 0.45)   # dumpfer Schlag
+	pop_sound = Sfx.make_tone(620.0, 0.12, 0.4, 0.25)   # Gegner weggeputzt
+	pick_sound = Sfx.make_tone(880.0, 0.07, 0.3)
 	for f in [523.3, 659.3, 784.0, 1046.5]:
 		chime.append(Sfx.make_tone(f, 1.4, 0.4))
 
@@ -307,6 +318,8 @@ func _build_extras() -> void:
 
 ## M-01: Sobald der eigene Spieler da ist: Küche/Fähigkeiten binden, XP für Kochen und Stufenaufstieg.
 func _bind_player(p: Player) -> void:
+	p.hit_landed.connect(func(_t: Player): sfx.play(hit_sound, randf_range(0.9, 1.1), 0.0))   # ich habe getroffen
+	p.hurt.connect(func(_a: float): sfx.play(hit_sound, randf_range(0.7, 0.85), 0.0))        # ich wurde getroffen
 	if not loaded_save.is_empty():   # Host/Solo: eigene Werte aus dem Spielstand
 		SaveGame.restore_player(loaded_save.get("players", {}).get(str(Settings.get_value("player_name")), {}), p.xp, p.skills)
 	p.kitchen = world.kitchen
